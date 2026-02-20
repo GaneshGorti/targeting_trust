@@ -1,0 +1,30 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Administrator Instructions</h2>
+
+{% if player.group.trust_condition == "count" %}
+
+<p>
+You are required to carefully count the number of completed tasks for each citizen.
+Your bonus depends on reporting accurately.
+Accuracy — not tax size — determines your payment.
+</p>
+
+{% else %}
+
+<p>
+You will briefly see each citizen's activity record.
+You must estimate the number of completed tasks.
+Your bonus increases the higher your reported number is.
+</p>
+
+{% endif %}
+
+<p>
+Click Next to begin reviewing the activity records.
+</p>
+
+{{ next_button }}
+
+{% endblock %}

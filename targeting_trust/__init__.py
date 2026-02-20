@@ -139,13 +139,13 @@ class Player(BasePlayer):
     )
 
     trust_admin_public_funds = models.IntegerField(
-        label="How much do you trust the Administrator to manage public funds? (1 = Not at all, 7 = A great deal)",
+        label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)",
         choices=[1, 2, 3, 4, 5, 6, 7],
         widget=widgets.RadioSelect,
         blank=False
     )
     trust_administration_overall = models.IntegerField(
-        label="How much do you trust the administration overall? (1 = Not at all, 7 = A great deal)",
+        label="How much do you trust the Administrator you interacted with in this survey overall? (1 = Not at all, 7 = A great deal)",
         choices=[1, 2, 3, 4, 5, 6, 7],
         widget=widgets.RadioSelect,
         blank=False
@@ -156,6 +156,13 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
+    trust_gov = models.IntegerField(
+        label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)",
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
+    
 
     def role(self):
         return self.role_str
@@ -302,6 +309,12 @@ class CitizenWorkTask(Page):
 
 class WaitForWork(WaitPage):
     pass
+
+class AdminInstructions(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.is_admin
 
 class AdminSquares(Page):
     form_model = 'player'
@@ -619,7 +632,7 @@ class RevealIncomeAndTransfers(Page):
 class PostSurvey(Page):
     form_model = 'player'
     form_fields = [
-        'trust_admin_public_funds', 'trust_administration_overall', 'perceived_fairness',
+        'trust_admin_public_funds', 'trust_administration_overall', 'perceived_fairness', 'trust_gov',
         'age', 'gender', 'income', 'education', 'pol_lean'
     ]
 
@@ -637,6 +650,7 @@ page_sequence = [
 
     CitizenWorkTask,
     WaitForWork,
+    AdminInstructions,
     AdminSquares,
     WaitForTax,     
 
