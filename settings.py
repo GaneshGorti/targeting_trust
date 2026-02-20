@@ -29,6 +29,8 @@ LANGUAGE_CODE = 'en'
 # e.g. EUR, GBP, CNY, JPY
 REAL_WORLD_CURRENCY_CODE = 'GBP'
 USE_POINTS = True
+POINTS_DECIMAL_PLACES = 2
+
 
 ROOMS = [
     dict(
@@ -46,7 +48,6 @@ ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
 DEMO_PAGE_INTRO_HTML = """
 Here are some oTree games.
 """
-
 
 SECRET_KEY = '2210584103431'
 
