@@ -77,19 +77,24 @@
 {% endif %}
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-
-    let btn = document.getElementById("continueBtn");
-
-    if(btn){
-        btn.onclick = function(){
-            document.getElementById("part1").style.display = "none";
-            document.getElementById("part2").style.display = "block";
-            btn.style.display = "none";
-        };
-    }
-
-});
-</script>
+    document.addEventListener("DOMContentLoaded", function(){
+    
+        let btn = document.getElementById("continueBtn");
+    
+        if(btn){
+            btn.onclick = function(){
+                document.getElementById("part1").style.display = "none";
+                document.getElementById("part2").style.display = "block";
+                btn.style.display = "none";
+    
+                let nextDiv = document.getElementById("nextBtn");
+                if(nextDiv){
+                    nextDiv.style.display = "block";
+                }
+            };
+        }
+    
+    });
+    </script>
 
 {% endblock %}
