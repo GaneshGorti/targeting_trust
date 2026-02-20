@@ -239,7 +239,7 @@ def live_effort(player: Player, data):
         player.effort_points += 1
 
     gross = cu(player.effort_points)
-    tax = cu(0.2 * player.effort_points)
+    tax = cu(0.3 * player.effort_points)
 
     player.gross_income = gross
     player.net_income = gross - tax
@@ -373,7 +373,7 @@ class AdminSquares(Page):
             if r is None:
                 r = 0
 
-            tax = cu(0.2 * r)   # tax depends on admin report
+            tax = cu(0.3 * r)   # tax depends on admin report
             c.net_income = max(cu(0), c.gross_income - tax)
             total_tax += tax
 
