@@ -239,16 +239,12 @@ def live_effort(player: Player, data):
         player.effort_points += 1
 
     gross = cu(player.effort_points)
-    tax = cu(0.2 * player.effort_points)
 
     player.gross_income = gross
-    player.net_income = gross - tax
 
     return {player.id_in_group: dict(
         effort=player.effort_points,
-        gross=float(gross),
-        tax=float(tax),
-        net=float(player.net_income)
+        gross=float(gross)
     )}
 
 def debug_treatment(player: Player):
