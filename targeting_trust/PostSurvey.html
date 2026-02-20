@@ -5,7 +5,50 @@
 
 <p>Thank you for your time until now. Please answer the following final questions.</p>
 
-{{ formfields }}
+{% if not player.is_admin %}
+
+    <!-- FIRST 5 QUESTIONS -->
+    <div id="part1">
+        {{ form.trust_admin_public_funds }}
+        {{ form.trust_administration_overall }}
+        {{ form.perceived_fairness }}
+        {{ form.trust_gov }}
+        {{ form.age }}
+    </div>
+
+    <!-- REMAINING QUESTIONS -->
+    <div id="part2" style="display:none;">
+        {{ form.gender }}
+        {{ form.income }}
+        {{ form.education }}
+        {{ form.pol_lean }}
+    </div>
+
+    <button type="button" id="continueBtn">Continue</button>
+
+{% else %}
+
+    <!-- ADMIN ONLY SEES DEMOGRAPHICS -->
+    {{ formfields }}
+
+{% endif %}
+
 {{ next_button }}
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    let btn = document.getElementById("continueBtn");
+
+    if(btn){
+        btn.onclick = function(){
+            document.getElementById("part1").style.display = "none";
+            document.getElementById("part2").style.display = "block";
+            btn.style.display = "none";
+        };
+    }
+
+});
+</script>
 
 {% endblock %}

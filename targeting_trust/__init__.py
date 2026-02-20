@@ -451,6 +451,7 @@ class CitizenTaxInfo(Page):
 
 
 class RevealTax(Page):
+
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
@@ -458,22 +459,24 @@ class RevealTax(Page):
     @staticmethod
     def vars_for_template(player: Player):
         g = player.group
+
         reported = g.total_tax
         tax_ecu = g.total_tax
 
         if g.trust_condition == 'count':
-            incentive_text = (
-                "In this round, the Administrator was instructed and incentivised to count the squares accurately."
+            explanation_text = (
+                "In this round, the Administrator was instructed and incentivised to count the number of correctly placed sliders accurately. "
             )
         else:
-            incentive_text = (
-                "In this round, the Administrator was instructed to estimate the squares and was incentivised to report a higher number."
+            explanation_text = (
+                "In this round, the Administrator was shown the number of correctly placed sliders briefly and was incentivised to report a higher number."
             )
 
         return dict(
             reported_squares=reported,
             tax_ecu=tax_ecu,
-            incentive_text=incentive_text,
+            explanation_text=explanation_text,
+            trust_condition=g.trust_condition
         )
 
 class AC(Page):
@@ -631,10 +634,39 @@ class RevealIncomeAndTransfers(Page):
 
 class PostSurvey(Page):
     form_model = 'player'
-    form_fields = [
-        'trust_admin_public_funds', 'trust_administration_overall', 'perceived_fairness', 'trust_gov',
-        'age', 'gender', 'income', 'education', 'pol_lean'
-    ]
+
+    @staticmethod
+    def get_form_fields(player: Player):
+
+        # Admin sees only demographics
+        if player.is_admin:
+            return [
+                'age',
+                'gender',
+                'income',
+                'education',
+                'pol_lean'
+            ]
+
+        # Citizens see full survey
+        else:
+            return [
+                'trust_admin_public_funds',
+                'trust_administration_overall',
+                'perceived_fairness',
+                'trust_gov',
+                'age',
+                'gender',
+                'income',
+                'education',
+                'pol_lean'
+            ]
+#class PostSurvey(Page):
+#    form_model = 'player'
+#    form_fields = [
+#        'trust_admin_public_funds', 'trust_administration_overall', 'perceived_fairness', 'trust_gov',
+#        'age', 'gender', 'income', 'education', 'pol_lean'
+#    ]
 
     @staticmethod
     def is_displayed(player: Player):

@@ -1,4 +1,5 @@
 {% extends "global/Page.html" %}
+{% load static %}
 {% block content %}
 
 <h2>Tax information</h2>
@@ -15,7 +16,37 @@ Below is the tax report that will be used to calculate your net income.
 
 <hr>
 
+<h3>How the tax was determined</h3>
+
+{% if trust_condition == 'count' %}
+
+<p>
+The Administrator was shown a visual record of each participant’s completed work tasks 
+(i.e., the correctly positioned sliders). The Administrator could review this information 
+and was instructed and incentivised to count the completed tasks accurately.
+</p>
+
+{% else %}
+
+<p>
+The Administrator was shown a visual record of each participant’s completed work tasks 
+for a limited amount of time. The Administrator was instructed to estimate the number 
+of completed tasks and had a financial incentive to report a higher number.
+</p>
+
+{% endif %}
+
+<hr>
+
 <p>{{ incentive_text }}</p>
+
+<!-- OPTIONAL SCREENSHOT -->
+<p><strong>Example of what the Administrator saw:</strong></p>
+
+<img src="{% static 'admin_view.png' %}"
+     style="max-width:600px; border:1px solid #ccc; margin-top:10px;">
+
+<hr>
 
 <p>
 You will now proceed to the next stage.
