@@ -164,12 +164,21 @@
     function liveRecv(data){
         console.log("LIVE DATA:", data);
 
-        Object.values(data).forEach(function(payload){
+        for (let id in data) {
+            let payload = data[id];
+
+            if (!payload) continue;
+
+            if (payload.effort !== undefined) {
             document.getElementById("effort").innerText = payload.effort;
+            }
+
+            if (payload.gross !== undefined) {
             document.getElementById("gross").innerText =
                 Number(payload.gross).toFixed(2);
-        });
-    }
+            }
+        }
+    }   
     
     /* ---------- timer ---------- */
     populate();
