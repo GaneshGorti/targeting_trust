@@ -1,0 +1,23 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Phase 2: Before you see your net income</h2>
+
+<p>
+The Administrator has reported the number of squares, which determines the tax you pay.
+Your net income equals gross income minus the tax.
+</p>
+
+<hr>
+
+<h3>Additional information</h3>
+<p>{{ trust_message }}</p>
+
+<hr>
+
+<p>Before you see your net income, please tell us your expectation:</p>
+{{ formfields }}
+
+{{ next_button }}
+
+{% endblock %}

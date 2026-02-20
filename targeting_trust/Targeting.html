@@ -1,0 +1,19 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Phase 3: Redistribution</h2>
+
+<p>Taxes collected in your group will be redistributed as transfers. </p>
+
+<hr>
+
+<h3>{{ header }}</h3>
+<p style="white-space: pre-line;">{{ body }}</p>
+
+{% if is_apply %}
+  {{ formfields }}
+{% endif %}
+
+{{ next_button }}
+
+{% endblock %}

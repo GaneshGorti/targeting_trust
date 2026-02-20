@@ -1,0 +1,27 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Phase 4: Decision task (Trust Game)</h2>
+
+<p>
+You will now decide how much to send to the Administrator.
+This decision is made <strong>before</strong> you see the redistribution outcome.
+</p>
+
+<hr>
+
+<p>
+Your available amount is your <strong>net income (after tax)</strong>: <strong>{{ trust_budget }} ECU</strong>.
+</p>
+
+<h3>How it works</h3>
+<ul>
+  <li>You may send any amount from 0 to {{ trust_budget }} ECU.</li>
+  <li>For every ECU you send, the Administrator receives {{ mult }} ECU.</li>
+  <li>The Administrator will then decide how much to return to you.</li>
+</ul>
+
+{{ formfields }}
+{{ next_button }}
+
+{% endblock %}

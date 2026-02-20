@@ -1,0 +1,26 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Tax information</h2>
+
+<p>
+You have now entered your expectation of the tax.
+Below is the tax report that will be used to calculate your net income.
+</p>
+
+<hr>
+
+<p><strong>Administrator's reported square count (tax):</strong> {{ reported_squares }}</p>
+<p><strong>Your tax amount:</strong> {{ tax_ecu }} ECU</p>
+
+<hr>
+
+<p>{{ incentive_text }}</p>
+
+<p>
+You will now proceed to the next stage.
+</p>
+
+{{ next_button }}
+
+{% endblock %}

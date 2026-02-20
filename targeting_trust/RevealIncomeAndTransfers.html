@@ -1,0 +1,22 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Results: Income and redistribution</h2>
+
+<ul>
+  <li><strong>Gross income:</strong> {{ gross_income }} ECU</li>
+  <li><strong>Net income (after tax):</strong> {{ net_income }} ECU</li>
+  <li><strong>Transfer received:</strong> {{ received_transfer }} ECU</li>
+</ul>
+
+<hr>
+
+<h3>Trust game outcome</h3>
+<ul>
+  <li><strong>You sent:</strong> {{ sent }} ECU</li>
+  <li><strong>Administrator returned:</strong> {{ returned }} ECU</li>
+</ul>
+
+{{ next_button }}
+
+{% endblock %}

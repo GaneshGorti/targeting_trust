@@ -1,0 +1,96 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Administrator Review</h2>
+
+<p>{{ instruction_text }}</p>
+
+<p>
+You will receive <strong>{{ admin_tax_share_display }} × total taxes collected</strong>
+as a bonus payment.
+</p>
+
+<hr>
+
+{% if player.group.trust_condition == "estimate" %}
+
+<div id="timerBox" style="padding:10px; background:#ffe8e8; border:1px solid #cc0000; width:320px; margin-bottom:15px;">
+You may view the activity records for <strong><span id="time">6</span> seconds</strong>.
+After that they will disappear and you must report from memory.
+</div>
+
+{% endif %}
+
+<table class="table" style="width:100%; border-collapse: collapse;">
+<tr>
+    <th>Citizen</th>
+    <th>Activity record</th>
+    <th>Your report</th>
+</tr>
+
+{% for r in rows %}
+<tr>
+
+<td><strong>{{ r.code }}</strong></td>
+
+<td class="record">
+
+    <div class="blocks">
+    {% for b in r.blocks %}
+        <span class="block"></span>
+    {% endfor %}
+    </div>
+
+</td>
+
+<td>
+    <input type="number" name="{{ r.field }}" min="0" required style="width:120px">
+</td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+{{ next_button }}
+
+<style>
+.block{
+    display:inline-block;
+    width:14px;
+    height:14px;
+    background:#222;
+    margin:2px;
+    border-radius:2px;
+}
+.hiddenBlocks{
+    visibility:hidden;
+}
+</style>
+
+{% if player.group.trust_condition == "estimate" %}
+<script>
+
+let seconds = 10;
+let t = document.getElementById("time");
+
+let countdown = setInterval(function(){
+    seconds--;
+    t.innerText = seconds;
+
+    if(seconds <= 0){
+        clearInterval(countdown);
+
+        document.querySelectorAll(".blocks").forEach(el=>{
+            el.classList.add("hiddenBlocks");
+        });
+
+        document.getElementById("timerBox").innerHTML =
+        "<strong>The records are now hidden. Please report from memory.</strong>";
+    }
+},1000);
+
+</script>
+{% endif %}
+
+{% endblock %}

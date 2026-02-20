@@ -1,0 +1,36 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Phase 1: Income task</h2>
+
+<p>
+You will now complete a short task that determines your <strong>gross income</strong>.
+</p>
+
+<p>
+<strong>Your task:</strong> Estimate the number of <strong>triangles</strong> in the image below and enter your best estimate.
+</p>
+
+<img src="{% static image_url %}" style="max-width:520px; border:1px solid #ddd; padding:6px; margin:10px 0;">
+
+<hr>
+
+<h3>How taxes work:</h3>
+
+<p>
+After you submit your triangle estimate, an <strong>Administrator</strong> in your group will determine a <strong>tax</strong>
+by either estimating or counting how many <strong>squares</strong> appear in the same image.
+</p>
+
+<ul>
+  <li>The reported number of squares will be used as the <strong>tax</strong> you must pay.</li>
+  <li><strong>Higher square reports = higher taxes</strong>, reducing your net income.</li>
+  <li>All collected taxes are placed into a group fund.</li>
+</ul>
+
+<p><strong>Please enter your triangle estimate below.</strong></p>
+
+{{ formfields }}
+{{ next_button }}
+
+{% endblock %}

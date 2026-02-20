@@ -1,0 +1,48 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Phase 4: Return decisions (Administrator)</h2>
+
+<p>
+For each Citizen, decide how much to return.
+You will not see Citizens’ personal information.
+</p>
+
+<ul>
+  <li>If a Citizen sent X ECU, you received {{ C.TRUST_MULTIPLIER }} × X ECU.</li>
+  <li>You make a separate return decision for each Citizen.</li>
+</ul>
+
+<hr>
+
+<table class="table" style="width:100%; border-collapse: collapse;">
+  <tr>
+    <th style="border-bottom:1px solid #ddd; text-align:left; padding:6px;">Citizen code</th>
+    <th style="border-bottom:1px solid #ddd; text-align:left; padding:6px;">Sent (ECU)</th>
+    <th style="border-bottom:1px solid #ddd; text-align:left; padding:6px;">You received</th>
+    <th style="border-bottom:1px solid #ddd; text-align:left; padding:6px;">Return (ECU)</th>
+  </tr>
+
+  {% for c, tripled, fieldname in rows %}
+  <tr>
+    <td style="border-bottom:1px solid #eee; padding:6px;">{{ c.citizen_code }}</td>
+    <td style="border-bottom:1px solid #eee; padding:6px;">{{ c.send_amount }}</td>
+    <td style="border-bottom:1px solid #eee; padding:6px;">{{ tripled }}</td>
+    <td style="border-bottom:1px solid #eee; padding:6px;">
+        {% if forloop.counter == 1 %}
+        {{ form.return_to_c1 }}
+      {% elif forloop.counter == 2 %}
+        {{ form.return_to_c2 }}
+      {% elif forloop.counter == 3 %}
+        {{ form.return_to_c3 }}
+      {% elif forloop.counter == 4 %}
+        {{ form.return_to_c4 }}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{{ next_button }}
+
+{% endblock %}
