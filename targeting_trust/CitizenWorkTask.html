@@ -109,7 +109,7 @@
         slider.max = 100;
         slider.value = randomStart();
     
-        // 🔀 Random width (250–450px) – safe range
+        // Random width (250–450px) – safe range
         let width = 250 + Math.floor(Math.random() * 200);
         slider.style.width = width + "px";
     
@@ -164,19 +164,14 @@
 
         if (!data) return;
 
-        Object.values(data).forEach(function(payload){
+        if (data.effort !== undefined) {
+            document.getElementById("effort").innerText = data.effort;
+        }
 
-            if (!payload) return;
-
-            if (payload.effort !== undefined) {
-                document.getElementById("effort").innerText = payload.effort;
-            }
-
-            if (payload.gross !== undefined) {
-                document.getElementById("gross").innerText =
-                Number(payload.gross).toFixed(2);
-            }
-        });
+        if (data.gross !== undefined) {
+            document.getElementById("gross").innerText =
+                Number(data.gross).toFixed(2);
+        }
     }
     
     /* ---------- timer ---------- */
