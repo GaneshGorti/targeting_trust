@@ -443,11 +443,11 @@ class CitizenTaxInfo(Page):
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
 
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
-        g = player.group
-        tax_per_citizen = cu(g.squares_reported)
-        player.net_income = max(cu(0), player.gross_income - tax_per_citizen)
+    #@staticmethod
+    #def before_next_page(player: Player, timeout_happened):
+    #    g = player.group
+    #    tax_per_citizen = cu(g.squares_reported)
+    #    player.net_income = max(cu(0), player.gross_income - tax_per_citizen)
 
 
 class RevealTax(Page):
