@@ -336,8 +336,8 @@ class AdminSquares(Page):
             )
         else:
             instruction_text = (
-                "You must QUICKLY assess each citizen's activity record. "
-                "Your bonus increases when you report higher tax bases."
+                "You must QUICKLY assess each citizen's activity record and ESTIMATE "
+                "how many tasks they completed. Your bonus increases when you report higher completed tasks. "
             )
 
         rows = []
