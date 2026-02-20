@@ -151,6 +151,8 @@
         slider.disabled = true;
         label.innerText = "✓";
 
+        console.log("SENDING CLICK");   // ADD THIS
+
         liveSend({type:"click"});
 
         setTimeout(()=>{
@@ -162,16 +164,11 @@
     function liveRecv(data){
         console.log("LIVE DATA:", data);
 
-        if (!data) return;
-
-        if (data.effort !== undefined) {
-            document.getElementById("effort").innerText = data.effort;
-        }
-
-        if (data.gross !== undefined) {
+        Object.values(data).forEach(function(payload){
+            document.getElementById("effort").innerText = payload.effort;
             document.getElementById("gross").innerText =
-                Number(data.gross).toFixed(2);
-        }
+                Number(payload.gross).toFixed(2);
+        });
     }
     
     /* ---------- timer ---------- */
