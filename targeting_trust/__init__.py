@@ -301,7 +301,7 @@ class RoleInfo(Page):
         #player.gross_income = cu(player.triangles_guess)
 
 class CitizenWorkTask(Page):
-    live_method = 'live_effort'
+    live_method = live_effort
 
     @staticmethod
     def is_displayed(player: Player):
