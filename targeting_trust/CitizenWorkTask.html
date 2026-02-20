@@ -145,8 +145,14 @@
     
     /* ---------- earning ---------- */
     function earnPoint(container){
+        let slider = container.querySelector("input");
+        let label = container.querySelector("span");
+
+        slider.disabled = true;
+        label.innerText = "✓";
+
         liveSend({type:"click"});
-    
+
         setTimeout(()=>{
             container.replaceWith(makeSlider());
         },300);
@@ -154,11 +160,23 @@
     
     /* ---------- receive updates ---------- */
     function liveRecv(data){
-        for (let id in data) {
-            let payload = data[id];
-            document.getElementById("effort").innerText = payload.effort;
-            document.getElementById("gross").innerText = payload.gross.toFixed(2);
-        }
+        console.log("LIVE DATA:", data);
+
+        if (!data) return;
+
+        Object.values(data).forEach(function(payload){
+
+            if (!payload) return;
+
+            if (payload.effort !== undefined) {
+                document.getElementById("effort").innerText = payload.effort;
+            }
+
+            if (payload.gross !== undefined) {
+                document.getElementById("gross").innerText =
+                Number(payload.gross).toFixed(2);
+            }
+        });
     }
     
     /* ---------- timer ---------- */
