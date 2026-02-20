@@ -86,10 +86,10 @@ class Player(BasePlayer):
     amount_returned = models.CurrencyField(initial=0)
 
     # real effort outcome
-    effort_points = models.IntegerField(initial=0)
+    #effort_points = models.IntegerField(initial=0)
 
-    gross_income = models.CurrencyField(initial=0)
-    net_income = models.CurrencyField(initial=0)
+    #gross_income = models.CurrencyField(initial=0)
+    #net_income = models.CurrencyField(initial=0)
 
     # what admin reports (tax base)
     report_c1 = models.IntegerField(min=0, blank=True)
