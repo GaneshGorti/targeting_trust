@@ -433,12 +433,12 @@ class CitizenTaxInfo(Page):
         g = player.group
         if g.trust_condition == 'count':
             msg = (
-                "In this round, the Administrator was instructed to count squares accurately "
+                "In this round, the Administrator was instructed to count the number of correctly placed sliders accurately "
                 "and was incentivised to be accurate."
             )
         else:
             msg = (
-                "In this round, the Administrator was instructed to estimate squares "
+                "In this round, the Administrator was instructed to estimate the number of correctly placed sliders "
                 "and was incentivised to keep atleast 30% of the tax."
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
@@ -636,9 +636,12 @@ class PostSurvey(Page):
     form_model = 'player'
 
     @staticmethod
+    def is_displayed(player: Player):
+        return True   # allow admin and citizens
+
+    @staticmethod
     def get_form_fields(player: Player):
 
-        # Admin sees only demographics
         if player.is_admin:
             return [
                 'age',
@@ -648,7 +651,6 @@ class PostSurvey(Page):
                 'pol_lean'
             ]
 
-        # Citizens see full survey
         else:
             return [
                 'trust_admin_public_funds',
@@ -668,9 +670,9 @@ class PostSurvey(Page):
 #        'age', 'gender', 'income', 'education', 'pol_lean'
 #    ]
 
-    @staticmethod
-    def is_displayed(player: Player):
-        return not player.is_admin
+    #@staticmethod
+    #def is_displayed(player: Player):
+    #    return not player.is_admin
     
 class ThankYou(Page):
     pass

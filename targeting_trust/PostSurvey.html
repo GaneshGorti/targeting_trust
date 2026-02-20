@@ -9,26 +9,63 @@
 
     <!-- FIRST 5 QUESTIONS -->
     <div id="part1">
-        {{ form.trust_admin_public_funds }}
-        {{ form.trust_administration_overall }}
-        {{ form.perceived_fairness }}
-        {{ form.trust_gov }}
-        {{ form.age }}
+
+        <div>
+            <p><strong>{{ form.trust_admin_public_funds.label }}</strong></p>
+            {{ form.trust_admin_public_funds }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.trust_administration_overall.label }}</strong></p>
+            {{ form.trust_administration_overall }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.perceived_fairness.label }}</strong></p>
+            {{ form.perceived_fairness }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.trust_gov.label }}</strong></p>
+            {{ form.trust_gov }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.age.label }}</strong></p>
+            {{ form.age }}
+        </div>
+
     </div>
 
     <!-- REMAINING QUESTIONS -->
     <div id="part2" style="display:none;">
-        {{ form.gender }}
-        {{ form.income }}
-        {{ form.education }}
-        {{ form.pol_lean }}
+
+        <div>
+            <p><strong>{{ form.gender.label }}</strong></p>
+            {{ form.gender }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.income.label }}</strong></p>
+            {{ form.income }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.education.label }}</strong></p>
+            {{ form.education }}
+        </div>
+
+        <div>
+            <p><strong>{{ form.pol_lean.label }}</strong></p>
+            {{ form.pol_lean }}
+        </div>
+
     </div>
 
     <button type="button" id="continueBtn">Continue</button>
 
 {% else %}
 
-    <!-- ADMIN ONLY SEES DEMOGRAPHICS -->
     {{ formfields }}
 
 {% endif %}
