@@ -367,13 +367,14 @@ class AdminSquares(Page):
             player.report_c4
         ]
 
-        total_tax = 0
+        total_tax = cu(0)
 
         for c, r in zip(citizens, reports):
             if r is None:
                 r = 0
 
             tax = cu(0.3 * r)   # tax depends on admin report
+            c.tax_paid = tax
             c.net_income = max(cu(0), c.gross_income - tax)
             total_tax += tax
 
