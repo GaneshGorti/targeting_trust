@@ -83,91 +83,96 @@
 {{ next_button }}
 
 <script>
-const TARGET = 50;
-const TOLERANCE = 0;
-const SLIDERS = 10;
-let timeLeft = 90;
-
-/* ---------- create sliders ---------- */
-function makeSlider(id) {
-
-let div = document.createElement("div");
-div.className = "slider-row";
-
-// Random horizontal offset (0–120px)
-div.style.marginLeft = Math.floor(Math.random() * 120) + "px";
-
-let slider = document.createElement("input");
-slider.type = "range";
-slider.min = 0;
-slider.max = 100;
-
-// Random starting value far from 50 (optional but good)
-function randomStart() {
-    if (Math.random() < 0.5) {
-        return Math.floor(Math.random() * 20);     // 0–19
-    } else {
-        return 80 + Math.floor(Math.random() * 20); // 80–99
+    const TARGET = 50;
+    const TOLERANCE = 0;
+    const SLIDERS = 10;
+    let timeLeft = 90;
+    
+    /* ---------- random start far from 50 ---------- */
+    function randomStart() {
+        if (Math.random() < 0.5) {
+            return Math.floor(Math.random() * 20);     // 0–19
+        } else {
+            return 80 + Math.floor(Math.random() * 20); // 80–99
+        }
     }
-}
-slider.value = randomStart();
-
-// 🔀 Random width (250–550px)
-let width = 250 + Math.floor(Math.random() * 300);
-slider.style.width = width + "px";
-
-let label = document.createElement("span");
-label.style.marginLeft = "10px";
-label.innerText = slider.value;
-
-slider.oninput = function() {
-    label.innerText = slider.value;
-};
-
-slider.onchange = function() {
-    let val = parseInt(slider.value);
-    if (Math.abs(val - TARGET) <= TOLERANCE) {
-        earnPoint(slider, label);
+    
+    /* ---------- create slider ---------- */
+    function makeSlider() {
+    
+        let div = document.createElement("div");
+        div.className = "slider-row";
+    
+        let slider = document.createElement("input");
+        slider.type = "range";
+        slider.min = 0;
+        slider.max = 100;
+        slider.value = randomStart();
+    
+        // 🔀 Random width (250–450px) – safe range
+        let width = 250 + Math.floor(Math.random() * 200);
+        slider.style.width = width + "px";
+    
+        let label = document.createElement("span");
+        label.style.marginLeft = "10px";
+        label.innerText = slider.value;
+    
+        slider.oninput = function() {
+            label.innerText = slider.value;
+        };
+    
+        slider.onchange = function() {
+            let val = parseInt(slider.value);
+            if (Math.abs(val - TARGET) <= TOLERANCE) {
+                earnPoint(div);
+            }
+        };
+    
+        div.appendChild(slider);
+        div.appendChild(label);
+    
+        return div;
     }
-};
-
-div.appendChild(slider);
-div.appendChild(label);
-return div;
-}
-
-/* ---------- earning ---------- */
-function earnPoint(slider,label){
-    console.log("CLICK SENT");
-    slider.disabled=true;
-    label.innerText="✓";
-
-    liveSend({type:"click"});
-
-    // replace only this slider (not all)
-    setTimeout(()=>{
-        slider.parentElement.replaceWith(makeSlider());
-    },300);
-}
-
-/* ---------- receive updates ---------- */
-function liveRecv(data){
-    document.getElementById("effort").innerText = data.effort;
-    document.getElementById("gross").innerText = data.gross.toFixed(2);
-}
-
-/* ---------- timer ---------- */
-populate();
-
-let timer=setInterval(function(){
-    timeLeft--;
-    document.getElementById("time").innerText=timeLeft;
-
-    if(timeLeft<=0){
-        clearInterval(timer);
-        document.getElementById("slider-area").innerHTML="<p><strong>Work period finished.</strong></p>";
+    
+    /* ---------- populate sliders ---------- */
+    function populate(){
+        let area = document.getElementById("slider-area");
+        area.innerHTML = "";
+        for(let i=0;i<SLIDERS;i++){
+            area.appendChild(makeSlider());
+        }
     }
-},1000);
-</script>
+    
+    /* ---------- earning ---------- */
+    function earnPoint(container){
+        liveSend({type:"click"});
+    
+        setTimeout(()=>{
+            container.replaceWith(makeSlider());
+        },300);
+    }
+    
+    /* ---------- receive updates ---------- */
+    function liveRecv(data){
+        for (let id in data) {
+            let payload = data[id];
+            document.getElementById("effort").innerText = payload.effort;
+            document.getElementById("gross").innerText = payload.gross.toFixed(2);
+        }
+    }
+    
+    /* ---------- timer ---------- */
+    populate();
+    
+    let timer=setInterval(function(){
+        timeLeft--;
+        document.getElementById("time").innerText=timeLeft;
+    
+        if(timeLeft<=0){
+            clearInterval(timer);
+            document.getElementById("slider-area").innerHTML="<p><strong>Work period finished.</strong></p>";
+        }
+    },1000);
+    </script>
 
 {% endblock %}
