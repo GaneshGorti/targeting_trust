@@ -1,0 +1,24 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h3>Example: Your Role as Administrator</h3>
+
+<p>
+{{ example_text }}
+</p>
+
+<p>
+Example:
+If a participant completed 10 sliders and you report 12,
+tax would be:
+<br>
+12 × 0.3 ECU = 3.6 ECU.
+</p>
+
+<p>
+Your bonus equals {{ C.ADMIN_TAX_SHARE }} of the total tax collected.
+</p>
+
+{{ next_button }}
+
+{% endblock %}

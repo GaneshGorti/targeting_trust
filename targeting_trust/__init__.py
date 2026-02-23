@@ -303,7 +303,7 @@ class RoleInfo(Page):
     #def before_next_page(player: Player, timeout_happened):
         #player.gross_income = cu(player.triangles_guess)
 
-class CitizenWorkTaskInfo(Page):
+class CitizenWorkTaskInstructions(Page):
 
     @staticmethod
     def is_displayed(player: Player):
@@ -326,6 +326,29 @@ class AdminInstructions(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
+    
+class AdminExample(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.is_admin
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        g = player.group
+
+        if g.trust_condition == 'count':
+            text = (
+                "You will review each participant’s completed sliders and count them accurately. "
+                "You receive a fixed bonus for performing this task."
+            )
+        else:
+            text = (
+                "You will see each participant’s completed sliders for 10 seconds and estimate "
+                "the number completed. You receive a bonus equal to a percentage of the total tax collected."
+            )
+
+        return dict(example_text=text)
 
 class AdminSquares(Page):
     form_model = 'player'
@@ -461,6 +484,36 @@ class CitizenTaxInfo(Page):
     #    tax_per_citizen = cu(g.squares_reported)
     #    player.net_income = max(cu(0), player.gross_income - tax_per_citizen)
 
+class CitizenExample(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        g = player.group
+
+        if g.trust_condition == 'count':
+            example = dict(
+                completed=10,
+                reported=10,
+                gross=10,
+                tax=3,
+                net=7,
+                condition="The Administrator was instructed to count completed sliders accurately and received a fixed bonus."
+            )
+        else:
+            example = dict(
+                completed=10,
+                reported=12,
+                gross=10,
+                tax=3.6,
+                net=6.4,
+                condition="The Administrator was instructed to estimate the number of completed sliders and received a bonus equal to a percentage of total tax collected."
+            )
+
+        return dict(example=example)
 
 class RevealTax(Page):
 
@@ -694,14 +747,16 @@ page_sequence = [
     Consent,
     RoleInfo,
 
-    CitizenWorkTaskInfo,
+    CitizenWorkTaskInstructions,
     CitizenWorkTask,
     WaitForWork,
     AdminInstructions,
+    AdminExample,
     AdminSquares,
     WaitForTax,     
 
     CitizenTaxInfo,
+    CitizenExample,
     RevealTax,
     AC,
     Targeting,

@@ -1,0 +1,35 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h3>Example: How Your Income Is Calculated</h3>
+
+<p>
+Suppose you complete <strong>{{ example.completed }}</strong> sliders correctly.
+</p>
+
+<p>
+Your gross income:
+<br>
+{{ example.completed }} × 1 ECU = <strong>{{ example.gross }} ECU</strong>
+</p>
+
+<p>
+If the Administrator reports <strong>{{ example.reported }}</strong> sliders,
+your tax would be:
+<br>
+{{ example.reported }} × 0.3 ECU = <strong>{{ example.tax }} ECU</strong>
+</p>
+
+<p>
+Your net income:
+<br>
+{{ example.gross }} − {{ example.tax }} = <strong>{{ example.net }} ECU</strong>
+</p>
+
+<p>
+{{ example.condition }}
+</p>
+
+{{ next_button }}
+
+{% endblock %}
