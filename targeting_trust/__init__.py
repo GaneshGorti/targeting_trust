@@ -68,6 +68,8 @@ class Player(BasePlayer):
         min=0,
         blank=False
     )
+    # dummy hidden form field for work page
+    work_page_completed = models.BooleanField(initial=False)
 
     # targeting decision (only in apply condition)
     apply_transfer = models.StringField(
@@ -309,6 +311,8 @@ class CitizenWorkTaskInfo(Page):
     
 class CitizenWorkTask(Page):
     live_method = live_effort
+    form_model = 'player'
+    form_fields = ['work_page_completed']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -708,7 +712,7 @@ page_sequence = [
     AdminTrustDecisions,
     WaitForReturns,
 
-    RevealIncomeAndTransfers,
     PostSurvey,
+    RevealIncomeAndTransfers,
     ThankYou
 ]
