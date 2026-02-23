@@ -1,6 +1,28 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
+<div id="readyOverlay" style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:1000;
+">
+
+    <h2>Work Task</h2>
+    <p>The task will last up to 60 seconds.</p>
+    <button id="startBtn" style="padding:10px 25px; font-size:18px;">
+        Ready
+    </button>
+
+</div>
+
 <style>
 /* --- Layout --- */
 .main-container{
@@ -35,21 +57,12 @@
 }
 </style>
 
-<h2>Work and Earnings Phase</h2>
+<h2>Task Phase</h2>
 
 <div class="main-container">
 
     <!-- LEFT SIDE (information) -->
     <div class="info-panel">
-
-        <p>
-        In this task you will complete small work units.  
-        Each correctly positioned slider generates 1 ECU (which is equal to £0.10) and a tax of 0.3 ETU (which is equal to £0.03).
-        The more sliders you place correctly, the more income you earn, but also the more tax you pay.
-        Your tax is calculated by the administrator assigned to your group, and is either based on a true count of your completed tasks, or an estimation of the completed tasks. 
-        The tax will be deducted from your final payment.
-        All members of your group see the same work task.
-        </p>
 
         <hr>
 
@@ -62,7 +75,7 @@
         <hr>
 
         <p>
-        Time remaining: <span id="time">90</span> seconds
+        Time remaining: <span id="time">60</span> seconds
         </p>
 
     </div>
@@ -80,13 +93,25 @@
 
 </div>
 
-{{ next_button }}
+<div id="nextBtn" style="display:none;">
+    {{ next_button }}
+</div>
 
 <script>
 const TARGET = 50;
 const TOLERANCE = 0;
-const SLIDERS = 10;
-let timeLeft = 90;
+const SLIDERS = 1;
+let timeLeft = 60;
+let timer = null;
+
+/* ---------- random start far from 50 ---------- */
+function randomStart() {
+    if (Math.random() < 0.5) {
+        return Math.floor(Math.random() * 20);      // 0–19
+    } else {
+        return 80 + Math.floor(Math.random() * 20); // 80–99
+    }
+}
 
 /* ---------- create sliders ---------- */
 function makeSlider(id) {
@@ -149,18 +174,29 @@ function liveRecv(data){
     document.getElementById("gross").innerText = data.gross.toFixed(2);
 }
 
-/* ---------- timer ---------- */
-populate();
+/* ---------- start task ---------- */
+document.getElementById("startBtn").onclick = function(){
 
-let timer=setInterval(function(){
-    timeLeft--;
-    document.getElementById("time").innerText=timeLeft;
+    // hide overlay
+document.getElementById("readyOverlay").style.display = "none";
 
-    if(timeLeft<=0){
-        clearInterval(timer);
-        document.getElementById("slider-area").innerHTML="<p><strong>Work period finished.</strong></p>";
-    }
-},1000);
+    // show Next button
+document.getElementById("nextBtn").style.display = "block";
+
+    // populate sliders
+    populate();
+
+    // start timer
+    timer = setInterval(function(){
+        timeLeft--;
+        document.getElementById("time").innerText = timeLeft;
+
+        if(timeLeft <= 0){
+            clearInterval(timer);
+            document.querySelector("form").submit();
+        }
+    },1000);
+};
 </script>
 
 {% endblock %}

@@ -21,6 +21,7 @@ class C(BaseConstants):
     TRIANGLE_IMAGE = 'triangles_squares.png'  # place in _static/
     TRUST_MULTIPLIER = 3
     ADMIN_TAX_SHARE = 0.10
+    TRUST_BUDGET = cu(10)
 
 
 class Subsession(BaseSubsession):
@@ -300,6 +301,12 @@ class RoleInfo(Page):
     #def before_next_page(player: Player, timeout_happened):
         #player.gross_income = cu(player.triangles_guess)
 
+class CitizenWorkTaskInfo(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+    
 class CitizenWorkTask(Page):
     live_method = live_effort
 
@@ -434,12 +441,12 @@ class CitizenTaxInfo(Page):
         g = player.group
         if g.trust_condition == 'count':
             msg = (
-                "In this round, the Administrator was instructed to count the number of correctly placed sliders accurately "
+                "The Administrator was instructed to count the number of correctly placed sliders accurately "
                 "and was incentivised to be accurate."
             )
         else:
             msg = (
-                "In this round, the Administrator was instructed to estimate the number of correctly placed sliders "
+                "The Administrator was instructed to estimate the number of correctly placed sliders "
                 "and was incentivised to keep atleast 30% of the tax."
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
@@ -556,12 +563,12 @@ class CitizenTrustGame(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(trust_budget=float(player.net_income), mult=C.TRUST_MULTIPLIER)
+        return dict(trust_budget=float(C.TRUST_BUDGET), mult=C.TRUST_MULTIPLIER)
 
     @staticmethod
     def error_message(player: Player, values):
-        if values['send_amount'] > player.net_income:
-            return f"You cannot send more than your available amount ({player.net_income} ECU)."
+        if values['send_amount'] > C.TRUST_BUDGET:
+            return f"You cannot send more than your available amount ({C.TRUST_BUDGET} ECU)."
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
@@ -683,6 +690,7 @@ page_sequence = [
     Consent,
     RoleInfo,
 
+    CitizenWorkTaskInfo,
     CitizenWorkTask,
     WaitForWork,
     AdminInstructions,
