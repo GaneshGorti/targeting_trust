@@ -195,7 +195,7 @@ document.getElementById("nextBtn").style.display = "block";
 
         if(timeLeft <= 0){
             clearInterval(timer);
-            document.querySelector("form").submit();
+            document.querySelector("#nextBtn button").click();
         }
     },1000);
 };
