@@ -18,7 +18,9 @@
 ">
 
     <h2>Work Task</h2>
-    <p>The task will last up to 60 seconds.</p>
+    <p>The task will last up to 60 seconds. 
+        The page will auto-submit after 60 seconds.
+    </p>
     <button type="button" id="startBtn" style="padding:10px 25px; font-size:18px;">
         Ready
     </button>
@@ -125,7 +127,7 @@ function makeSlider(id) {
     slider.type = "range";
     slider.min = 0;
     slider.max = 100;
-    slider.step = 0.5;
+    slider.step = 0.1;
     slider.value = randomStart();
     //random slider width
     let width = 250 + Math.floor(Math.random() * 200); // 250–450px
