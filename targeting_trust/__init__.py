@@ -544,6 +544,7 @@ class RevealTax(Page):
             gross_income=player.gross_income,
             net_income=player.net_income,
             explanation_text=explanation_text,
+            trust_condition=g.trust_condition,
         )
 
 class AC(Page):
