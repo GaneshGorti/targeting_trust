@@ -2,17 +2,36 @@
 {% load static %}
 {% block content %}
 
-<h2>Tax information</h2>
+<h2>Your Tax Outcome</h2>
 
 <p>
-You have now entered your expectation of the tax.
 Below is the tax report that will be used to calculate your net income.
 </p>
 
 <hr>
 
-<p><strong>Administrator's reported square count (tax):</strong> {{ reported_squares }}</p>
-<p><strong>Your tax amount:</strong> {{ tax_ecu }} ECU</p>
+<p>
+<strong>Your completed sliders:</strong> {{ gross_income }}
+</p>
+
+<p>
+<strong>Administrator's reported sliders:</strong> {{ reported_for_you }}
+</p>
+
+<hr>
+
+<p>
+<strong>Your gross income:</strong> {{ gross_income }} ECU
+</p>
+
+<p>
+<strong>Your tax:</strong> {{ reported_for_you }} × 0.3 ECU = 
+{{ tax_paid }} ECU
+</p>
+
+<p>
+<strong>Your net income after tax:</strong> {{ net_income }} ECU
+</p>
 
 <hr>
 
@@ -23,7 +42,8 @@ Below is the tax report that will be used to calculate your net income.
 <p>
 The Administrator was shown a visual record of each participant’s completed work tasks 
 (i.e., the correctly positioned sliders). The Administrator could review this information 
-and was instructed and received a bonus to accurately count the number of correctly placed sliders.
+and was instructed to count the number of correctly placed sliders accurately. 
+The Administrator received a fixed bonus for performing this task.
 </p>
 
 {% else %}
@@ -38,9 +58,6 @@ The Administrator received a bonus equal to a percentage of the total tax collec
 
 <hr>
 
-<p>{{ explanation_text }}</p>
-
-<!-- SCREENSHOT -->
 <p><strong>Example of what the Administrator saw:</strong></p>
 
 <img src="{% static 'admin_view.png' %}"

@@ -20,7 +20,7 @@ class C(BaseConstants):
 
     TRIANGLE_IMAGE = 'triangles_squares.png'  # place in _static/
     TRUST_MULTIPLIER = 3
-    ADMIN_TAX_SHARE = 0.10
+    ADMIN_TAX_SHARE = 0.30
     TRUST_BUDGET = cu(10)
 
 
@@ -61,6 +61,9 @@ class Player(BasePlayer):
     effort_points = models.IntegerField(initial=0)
     gross_income = models.CurrencyField(initial=0)
     net_income = models.CurrencyField(initial=0)
+
+    # storing real effort counts by admin 
+    reported_tasks = models.IntegerField(initial=0)
 
     # citizen belief/expectation
     expected_tax_squares = models.IntegerField(
@@ -407,6 +410,7 @@ class AdminSquares(Page):
             if r is None:
                 r = 0
 
+            c.reported_tasks = r 
             tax = cu(0.3 * r)   # tax depends on admin report
             c.tax_paid = tax
             c.net_income = max(cu(0), c.gross_income - tax)
@@ -525,23 +529,21 @@ class RevealTax(Page):
     def vars_for_template(player: Player):
         g = player.group
 
-        reported = g.total_tax
-        tax_ecu = g.total_tax
-
         if g.trust_condition == 'count':
             explanation_text = (
-                "In this round, the Administrator was instructed and incentivised to count the number of correctly placed sliders accurately. "
+                "In this round, the Administrator was instructed to count completed sliders accurately."
             )
         else:
             explanation_text = (
-                "In this round, the Administrator was shown the number of correctly placed sliders briefly and was incentivised to report a higher number."
+                "In this round, the Administrator estimated the number of completed sliders after briefly viewing the activity record."
             )
 
         return dict(
-            reported_squares=reported,
-            tax_ecu=tax_ecu,
+            reported_for_you=player.reported_tasks,
+            tax_paid=player.tax_paid,
+            gross_income=player.gross_income,
+            net_income=player.net_income,
             explanation_text=explanation_text,
-            trust_condition=g.trust_condition
         )
 
 class AC(Page):
