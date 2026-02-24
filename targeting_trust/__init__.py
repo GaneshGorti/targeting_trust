@@ -22,6 +22,7 @@ class C(BaseConstants):
     TRUST_MULTIPLIER = 3
     ADMIN_TAX_SHARE = 0.30
     TRUST_BUDGET = cu(10)
+    TAX_RATE = 0.3
 
 
 class Subsession(BaseSubsession):
@@ -51,6 +52,20 @@ class Player(BasePlayer):
     # admin payoff component (for incentive framing)
     admin_bonus = models.CurrencyField(initial=0)
 
+    # creating fields for real effort task and tax outcome
+    effort_points = models.IntegerField(initial=0)
+    gross_income = models.CurrencyField(initial=0)
+    reported_tasks = models.IntegerField(initial=0)
+    true_tax = models.CurrencyField(initial=0)
+    applied_tax = models.CurrencyField(initial=0)
+    tax_distortion = models.CurrencyField(initial=0)
+    net_income_after_tax = models.CurrencyField(initial=0)  
+
+    # trust game outcomes 
+    income_after_transfer = models.CurrencyField(initial=0)
+    trust_game_net = models.CurrencyField(initial=0)
+    final_income = models.CurrencyField(initial=0)
+
     # citizen real-effort
     #Removing this to make it more interactive
     #triangles_guess = models.IntegerField(
@@ -58,12 +73,6 @@ class Player(BasePlayer):
         #min=0,
         #blank=False
     #)
-    effort_points = models.IntegerField(initial=0)
-    gross_income = models.CurrencyField(initial=0)
-    net_income = models.CurrencyField(initial=0)
-
-    # storing real effort counts by admin 
-    reported_tasks = models.IntegerField(initial=0)
 
     # citizen belief/expectation
     expected_tax_squares = models.IntegerField(
@@ -244,17 +253,11 @@ def live_effort(player: Player, data):
     if data.get('type') == 'click':
         player.effort_points += 1
 
-    gross = cu(player.effort_points)
-    tax = cu(0.3 * player.effort_points)
-
-    player.gross_income = gross
-    player.net_income = gross - tax
+    player.gross_income = cu(player.effort_points)
 
     return {player.id_in_group: dict(
         effort=player.effort_points,
-        gross=float(gross),
-        tax=float(tax),
-        net=float(player.net_income)
+        gross=float(player.gross_income),
     )}
 
 def debug_treatment(player: Player):
@@ -410,15 +413,24 @@ class AdminSquares(Page):
             if r is None:
                 r = 0
 
+            # Storing reported tasks
             c.reported_tasks = r 
-            tax = cu(0.3 * r)   # tax depends on admin report
-            c.tax_paid = tax
-            c.net_income = max(cu(0), c.gross_income - tax)
-            total_tax += tax
+            # Storing true tax (30%)
+            c.true_tax = cu(C.TAX_RATE * c.true_tasks)
+            # Admin estimated tax 
+            c.applied_tax = cu(C.TAX_RATE * r)
+            # Tax distortion
+            c.tax_distortion = c.applied_tax - c.true_tax
+            # Net income after admin tax
+            c.net_income_after_tax = max(cu(0), c.gross_income - c.applied_tax)
+            
+            total_tax += c.applied_tax
 
-        g.total_tax = total_tax
-        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * total_tax
+        g.total_applied_tax = sum(p.applied_tax for p in citizens)
+        g.total_true_tax = sum(p.true_tax for p in citizens)
 
+        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * g.total_applied_tax
+        
 #class AdminSquares(Page):
     #form_model = 'group'
     #form_fields = ['squares_reported']
@@ -681,7 +693,32 @@ class AdminTrustDecisions(Page):
 
 
 class WaitForReturns(WaitPage):
-    pass
+
+    @staticmethod
+    def after_all_players_arrive(group: Group):
+
+        citizens = [p for p in group.get_players() if not p.is_admin]
+        admin = [p for p in group.get_players() if p.is_admin][0]
+
+        # ---- Citizens ----
+        for c in citizens:
+
+            # Income after transfer
+            c.income_after_transfer = c.net_income_after_tax + c.received_transfer
+
+            # Trust game effect
+            c.trust_game_net = -c.send_amount + c.amount_returned
+
+            # Final income
+            c.final_income = c.income_after_transfer + c.trust_game_net
+
+        # ---- Admin ----
+        total_sent_tripled = sum(c.send_amount * C.TRUST_MULTIPLIER for c in citizens)
+        total_returned = sum(c.amount_returned for c in citizens)
+
+        admin.trust_game_net = total_sent_tripled - total_returned
+
+        admin.final_income = admin.admin_bonus + admin.trust_game_net
 
 
 class RevealIncomeAndTransfers(Page):
