@@ -346,7 +346,7 @@ class AdminExample(Page):
         if g.trust_condition == 'count':
             text = (
                 "You will review each participant’s completed sliders and count them accurately. "
-                "You receive a fixed bonus for performing this task."
+                "You receive a bonus for performing this task correctly."
             )
         else:
             text = (
@@ -416,7 +416,7 @@ class AdminSquares(Page):
             # Storing reported tasks
             c.reported_tasks = r 
             # Storing true tax (30%)
-            c.true_tax = cu(C.TAX_RATE * c.true_tasks)
+            c.true_tax = cu(C.TAX_RATE * c.effort_points)
             # Admin estimated tax 
             c.applied_tax = cu(C.TAX_RATE * r)
             # Tax distortion
@@ -707,7 +707,7 @@ class WaitForReturns(WaitPage):
             c.income_after_transfer = c.net_income_after_tax + c.received_transfer
 
             # Trust game effect
-            c.trust_game_net = -c.send_amount + c.amount_returned
+            c.trust_game_net =  c.TRUST_BUDGET - c.send_amount + c.amount_returned
 
             # Final income
             c.final_income = c.income_after_transfer + c.trust_game_net
@@ -722,19 +722,33 @@ class WaitForReturns(WaitPage):
 
 
 class RevealIncomeAndTransfers(Page):
-    @staticmethod
-    def is_displayed(player: Player):
-        return not player.is_admin
-
-    @staticmethod
+   @staticmethod
     def vars_for_template(player: Player):
-        return dict(
-            gross_income=player.gross_income,
-            net_income=player.net_income,
-            received_transfer=player.received_transfer,
-            sent=player.send_amount,
-            returned=player.amount_returned
-        )
+
+        if player.is_admin:
+            return dict(
+                is_admin=True,
+                admin_bonus=player.admin_bonus,
+                trust_payoff=player.payoff,
+                final_income=player.admin_bonus + player.payoff,
+            )
+
+        else:
+            income_after_transfer = player.net_income_after_tax + player.received_transfer
+
+            return dict(
+                is_admin=False,
+                gross_income=player.gross_income,
+                applied_tax=player.applied_tax,
+                net_income_after_tax=player.net_income_after_tax,
+                received_transfer=player.received_transfer,
+                income_after_transfer=income_after_transfer,
+                trust_budget=C.TRUST_BUDGET,
+                sent=player.send_amount,
+                returned=player.amount_returned,
+                trust_payoff=player.payoff,
+                final_income=income_after_transfer + player.payoff,
+            )
 
 
 class PostSurvey(Page):

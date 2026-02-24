@@ -7,6 +7,22 @@
 {{ example_text }}
 </p>
 
+{% if player.group.trust_condition == "count" %}
+
+<p>
+Example:
+If a participant completed 10 sliders and you report 10,
+tax would be:
+<br>
+10 × 0.3 ECU = 3 ECU.
+</p>
+
+<p>
+Your bonus equals 30% of the total tax collected only if you count the completed squares accurately.
+</p>
+
+{% else %}
+
 <p>
 Example:
 If a participant completed 10 sliders and you report 12,
@@ -14,7 +30,7 @@ tax would be:
 <br>
 12 × 0.3 ECU = 3.6 ECU.
 </p>
-
+    
 <p>
 Your bonus equals 30% of the total tax collected.
 </p>
