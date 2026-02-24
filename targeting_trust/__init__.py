@@ -722,7 +722,7 @@ class WaitForReturns(WaitPage):
 
 
 class RevealIncomeAndTransfers(Page):
-   @staticmethod
+    @staticmethod
     def vars_for_template(player: Player):
 
         if player.is_admin:
