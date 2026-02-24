@@ -118,7 +118,7 @@ class Player(BasePlayer):
     tax_paid = models.CurrencyField(initial=0)
 
     # post-game survey (citizens only)
-    age = models.IntegerField(label="What is your age?", min=18, max=99, blank=False)
+    age = models.IntegerField(label="What is your age?", min=18, max=99, blank=True)
 
     gender = models.StringField(
         label="What is your gender?",
@@ -138,13 +138,13 @@ class Player(BasePlayer):
     )
     education = models.StringField(
         label="What is your highest level of education?",
-        choices=['No degree', 'High school', 'Bachelor', 'Master', 'Doctorate'],
+        choices=['No degree', 'High school', 'Bachelor', 'Master', 'Doctorate', 'Prefer not to say'],
         widget=widgets.RadioSelect,
         blank=False
     )
     pol_lean = models.IntegerField(
         label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)",
-        choices=[1, 2, 3, 4, 5, 6, 7],
+        choices=[1, 2, 3, 4, 5, 6, 7, 'Prefer not to say/Do not know'],
         widget=widgets.RadioSelect,
         blank=False
     )
@@ -175,7 +175,7 @@ class Player(BasePlayer):
     )
     trust_gov = models.IntegerField(
         label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)",
-        choices=[1, 2, 3, 4, 5, 6, 7],
+        choices=[1, 2, 3, 4, 5, 6, 7, 'Prefer not to say/Do not know'],
         widget=widgets.RadioSelect,
         blank=False
     )
@@ -707,7 +707,6 @@ class AdminTrustDecisions(Page):
             c.amount_returned = r if r is not None else cu(0)
 
 
-
 class WaitForReturns(WaitPage):
 
     @staticmethod
@@ -755,6 +754,7 @@ class RevealIncomeAndTransfers(Page):
                 admin_bonus=player.admin_bonus,
                 trust_payoff=player.trust_game_net,
                 final_income=player.final_income,
+                final_income_gbp=player.final_income_gbp
             )
 
         else:
@@ -770,6 +770,7 @@ class RevealIncomeAndTransfers(Page):
                 returned=player.amount_returned,
                 trust_payoff=player.trust_game_net,
                 final_income=player.final_income,
+                final_income_gbp=player.final_income_gbp,
             )
 
 
