@@ -23,6 +23,7 @@ class C(BaseConstants):
     ADMIN_TAX_SHARE = 0.30
     TRUST_BUDGET = cu(10)
     TAX_RATE = 0.3
+    ECU_TO_GBP = 0.10
 
 
 class Subsession(BaseSubsession):
@@ -52,14 +53,15 @@ class Player(BasePlayer):
     # admin payoff component (for incentive framing)
     admin_bonus = models.CurrencyField(initial=0)
 
-    # creating fields for real effort task and tax outcome
+    # creating fields for real effort task and tax outcome and final income
     effort_points = models.IntegerField(initial=0)
     gross_income = models.CurrencyField(initial=0)
     reported_tasks = models.IntegerField(initial=0)
     true_tax = models.CurrencyField(initial=0)
     applied_tax = models.CurrencyField(initial=0)
     tax_distortion = models.CurrencyField(initial=0)
-    net_income_after_tax = models.CurrencyField(initial=0)  
+    net_income_after_tax = models.CurrencyField(initial=0) 
+    final_income_gbp = models.CurrencyField(initial=0) 
 
     # trust game outcomes 
     income_after_transfer = models.CurrencyField(initial=0)
@@ -726,6 +728,10 @@ class WaitForReturns(WaitPage):
             # Final income
             c.final_income = c.income_after_transfer + c.trust_game_net
 
+            # In GBP 
+            c.final_income_gbp = c.final_income * C.ECU_TO_GBP
+
+
         # ---- Admin ----
         total_sent_tripled = sum(c.send_amount * C.TRUST_MULTIPLIER for c in citizens)
         total_returned = sum(c.amount_returned for c in citizens)
@@ -734,8 +740,12 @@ class WaitForReturns(WaitPage):
 
         admin.final_income = admin.admin_bonus + admin.trust_game_net
 
+        admin.final_income_gbp = admin.final_income * C.ECU_TO_GBP
+
+
 
 class RevealIncomeAndTransfers(Page):
+
     @staticmethod
     def vars_for_template(player: Player):
 
@@ -743,25 +753,23 @@ class RevealIncomeAndTransfers(Page):
             return dict(
                 is_admin=True,
                 admin_bonus=player.admin_bonus,
-                trust_payoff=player.payoff,
-                final_income=player.admin_bonus + player.payoff,
+                trust_payoff=player.trust_game_net,
+                final_income=player.final_income,
             )
 
         else:
-            income_after_transfer = player.net_income_after_tax + player.received_transfer
-
             return dict(
                 is_admin=False,
                 gross_income=player.gross_income,
                 applied_tax=player.applied_tax,
                 net_income_after_tax=player.net_income_after_tax,
                 received_transfer=player.received_transfer,
-                income_after_transfer=income_after_transfer,
+                income_after_transfer=player.income_after_transfer,
                 trust_budget=C.TRUST_BUDGET,
                 sent=player.send_amount,
                 returned=player.amount_returned,
-                trust_payoff=player.payoff,
-                final_income=income_after_transfer + player.payoff,
+                trust_payoff=player.trust_game_net,
+                final_income=player.final_income,
             )
 
 

@@ -59,6 +59,13 @@
         <strong>Final income:</strong> {{ final_income }} ECU
     </p>
 
+    <hr>
+
+    <h3>Payment in Pounds</h3>
+    <p>
+    <strong>Your final payment:</strong> £{{ final_income_gbp|floatformat:2 }}
+    </p>
+
 {% endif %}
 
 {{ next_button }}
