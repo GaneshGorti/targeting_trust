@@ -662,12 +662,6 @@ class CitizenTrustGame(Page):
         if values['send_amount'] > C.TRUST_BUDGET:
             return f"You cannot send more than your available amount ({C.TRUST_BUDGET} ECU)."
 
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
-        if player.send_amount > player.net_income:
-            player.send_amount = player.net_income
-
-
 class WaitForSends(WaitPage):
     pass
 
