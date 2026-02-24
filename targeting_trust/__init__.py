@@ -505,13 +505,13 @@ class CitizenTaxInfo(Page):
         g = player.group
         if g.trust_condition == 'count':
             msg = (
-                "The Administrator was instructed to count the number of correctly placed sliders accurately "
-                "and was incentivised to be accurate."
+                "The Administrator was instructed to count the number of correctly placed sliders "
+                "and received a bonus to report the correct sliders count accurately."
             )
         else:
             msg = (
                 "The Administrator was instructed to estimate the number of correctly placed sliders "
-                "and was incentivised to keep atleast 30% of the tax."
+                "and received a bonus that was a percentage of their reported correct sliders count."
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
 
@@ -573,9 +573,9 @@ class RevealTax(Page):
 
         return dict(
             reported_for_you=player.reported_tasks,
-            tax_paid=player.tax_paid,
+            tax_paid=player.applied_tax,
             gross_income=player.gross_income,
-            net_income=player.net_income,
+            net_income=player.net_income_after_tax,
             explanation_text=explanation_text,
             trust_condition=g.trust_condition,
         )
