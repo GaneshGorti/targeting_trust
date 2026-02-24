@@ -623,7 +623,7 @@ class Targeting(Page):
             is_apply=is_apply,
             header=header,
             body=body,
-            net_income=player.net_income
+            net_income=player.net_income_after_tax
         )
 
 class WaitTargeting(WaitPage):
