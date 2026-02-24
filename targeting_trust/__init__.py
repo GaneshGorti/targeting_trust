@@ -434,25 +434,23 @@ class AdminSquares(Page):
 
         @staticmethod
         def error_message(player: Player, values):
+            g = player.group
+            if g.trust_condition != 'count':
+                return  # only enforce in count condition
 
-        g = player.group
+            citizens = [p for p in g.get_players() if not p.is_admin]
 
-        if g.trust_condition != 'count':
-            return  # only enforce in count condition
-
-        citizens = [p for p in g.get_players() if not p.is_admin]
-
-        reports = [
+            reports = [
             values.get('report_c1'),
             values.get('report_c2'),
             values.get('report_c3'),
             values.get('report_c4'),
             ]
 
-        for c, r in zip(citizens, reports):
+            for c, r in zip(citizens, reports):
 
-            if r != c.effort_points:
-                return "In this condition, you must count the completed sliders accurately."
+                if r != c.effort_points:
+                    return "In this condition, you must count the completed sliders accurately."
         
 #class AdminSquares(Page):
     #form_model = 'group'
