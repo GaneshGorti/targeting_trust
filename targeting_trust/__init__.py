@@ -449,7 +449,7 @@ class AdminSquares(Page):
 
         for c, r in zip(citizens, reports):
             if r != c.effort_points:
-                return "In this condition, you must count the completed sliders accurately."
+                return "Please count the completed sliders accurately."
         
 #class AdminSquares(Page):
     #form_model = 'group'
@@ -537,7 +537,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3,
                 net=7,
-                condition="The Administrator was instructed to count completed sliders accurately and received a fixed bonus."
+                condition="The Administrator was instructed to count correctly placed sliders accurately and received a fixed bonus."
             )
         else:
             example = dict(
@@ -546,7 +546,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3.6,
                 net=6.4,
-                condition="The Administrator was instructed to estimate the number of completed sliders and received a bonus equal to a percentage of total tax collected."
+                condition="The Administrator was instructed to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected."
             )
 
         return dict(example=example)
@@ -563,11 +563,11 @@ class RevealTax(Page):
 
         if g.trust_condition == 'count':
             explanation_text = (
-                "In this round, the Administrator was instructed to count completed sliders accurately."
+                "The Administrator was instructed to count correctly placed sliders accurately."
             )
         else:
             explanation_text = (
-                "In this round, the Administrator estimated the number of completed sliders after briefly viewing the activity record."
+                "The Administrator estimated the number of completed sliders after briefly viewing the activity record of your correctly placed sliders."
             )
 
         return dict(
