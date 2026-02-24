@@ -426,10 +426,33 @@ class AdminSquares(Page):
             
             total_tax += c.applied_tax
 
-        g.total_applied_tax = sum(p.applied_tax for p in citizens)
-        g.total_true_tax = sum(p.true_tax for p in citizens)
+        total_applied_tax = sum(p.applied_tax for p in citizens)
+        
+        total_true_tax = sum(p.true_tax for p in citizens)
 
-        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * g.total_applied_tax
+        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * total_applied_tax
+
+        @staticmethod
+        def error_message(player: Player, values):
+
+        g = player.group
+
+        if g.trust_condition != 'count':
+            return  # only enforce in count condition
+
+        citizens = [p for p in g.get_players() if not p.is_admin]
+
+        reports = [
+            values.get('report_c1'),
+            values.get('report_c2'),
+            values.get('report_c3'),
+            values.get('report_c4'),
+            ]
+
+        for c, r in zip(citizens, reports):
+
+            if r != c.effort_points:
+                return "In this condition, you must count the completed sliders accurately."
         
 #class AdminSquares(Page):
     #form_model = 'group'
