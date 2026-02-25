@@ -118,7 +118,7 @@ class Player(BasePlayer):
     # store citizen specific tax paid
     tax_paid = models.CurrencyField(initial=0)
 
-    # post-game survey (citizens only)
+    # post-game survey
     age = models.IntegerField(label="What is your age?", min=18, max=99, blank=True)
 
     gender = models.StringField(
@@ -859,6 +859,12 @@ class PostSurvey(Page):
                 'education',
                 'pol_lean'
             ]
+    @staticmethod
+    def error_message(player, values):
+        age = values.get("age")
+
+        if age is not None and age < 18:
+            return "If you choose to provide your age, you must be at least 18 years old."
 #class PostSurvey(Page):
 #    form_model = 'player'
 #    form_fields = [
