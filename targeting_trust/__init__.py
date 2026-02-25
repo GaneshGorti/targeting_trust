@@ -34,7 +34,6 @@ class Group(BaseGroup):
     # randomized at group level
     trust_condition = models.StringField(choices=['count', 'estimate'])
     targeting_condition = models.StringField(choices=['auto', 'apply'])  # auto=pre, apply=self
-    total_tax = models.CurrencyField(initial=0)
     total_true_tax = models.CurrencyField(initial=0) 
     total_applied_tax = models.CurrencyField(initial=0)
 
@@ -279,12 +278,12 @@ def assign_transfers(group: Group):
         return
 
     if group.targeting_condition == 'auto':
-        share = group.total_tax / len(citizens)
+        share = group.total_applied_tax / len(citizens)
         for p in citizens:
             p.received_transfer = share
     else:
         applicants = [p for p in citizens if p.apply_transfer == 'yes']
-        share = (group.total_tax / len(applicants)) if applicants else cu(0)
+        share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
         for p in citizens:
             p.received_transfer = share if p in applicants else cu(0)
 
@@ -473,6 +472,7 @@ class AdminSquares(Page):
             # Net income after admin tax
             c.net_income_after_tax = max(cu(0), c.gross_income - c.applied_tax)
             
+            # Using applied tax for total tax calculation since that's what admin reports and what citizens see
             total_tax += c.applied_tax
 
         g.total_applied_tax = sum(p.applied_tax for p in citizens)
@@ -684,12 +684,12 @@ class WaitTargeting(WaitPage):
             return
 
         if group.targeting_condition == 'auto':
-            share = group.total_tax / len(citizens)
+            share = group.total_applied_tax / len(citizens)
             for p in citizens:
                 p.received_transfer = share
         else:
             applicants = [p for p in citizens if p.apply_transfer == 'yes']
-            share = (group.total_tax / len(applicants)) if applicants else cu(0)
+            share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
             for p in citizens:
                 p.received_transfer = share if p in applicants else cu(0)
 
