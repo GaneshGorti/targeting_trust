@@ -62,9 +62,12 @@ class Player(BasePlayer):
     tax_distortion = models.CurrencyField(initial=0)
     net_income_after_tax = models.CurrencyField(initial=0) 
     final_income_gbp = models.CurrencyField(initial=0) 
+    total_true_tax = models.CurrencyField(initial=0) 
+    total_applied_tax = models.CurrencyField(initial=0)
 
     # trust game outcomes 
     income_after_transfer = models.CurrencyField(initial=0)
+    tripled_trust_amount = models.CurrencyField(initial=0)
     trust_game_net = models.CurrencyField(initial=0)
     final_income = models.CurrencyField(initial=0)
 
@@ -710,7 +713,14 @@ class CitizenTrustGame(Page):
             return f"You cannot send more than your available amount ({C.TRUST_BUDGET} ECU)."
 
 class WaitForSends(WaitPage):
-    pass
+
+    @staticmethod
+    def after_all_players_arrive(group: Group):
+
+        citizens = [p for p in group.get_players() if not p.is_admin]
+
+        for c in citizens:
+            c.tripled_trust_amount = c.send_amount * C.TRUST_MULTIPLIER
 
 
 class AdminTrustDecisions(Page):
@@ -724,7 +734,7 @@ class AdminTrustDecisions(Page):
     @staticmethod
     def vars_for_template(player: Player):
         citizens = citizens_in_order(player.group)
-        tripled = [c.send_amount * C.TRUST_MULTIPLIER for c in citizens]
+        tripled = [c.tripled_trust_amount for c in citizens]
         fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
         rows = list(zip(citizens, tripled, fields))
         return dict(rows=rows)
