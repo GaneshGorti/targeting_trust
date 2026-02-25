@@ -144,7 +144,16 @@ class Player(BasePlayer):
     )
     pol_lean = models.IntegerField(
         label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)",
-        choices=[1, 2, 3, 4, 5, 6, 7, 'Prefer not to say/Do not know'],
+        choices=[
+        (1, "1 - Left"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - Right"),
+        (8, "Prefer not to say / Do not know"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
@@ -157,25 +166,61 @@ class Player(BasePlayer):
 
     trust_admin_public_funds = models.IntegerField(
         label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)",
-        choices=[1, 2, 3, 4, 5, 6, 7],
+        choices=[
+        (1, "1 - Not at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - A great deal"),
+        (8, "Prefer not to say / Do not know"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
     trust_administration_overall = models.IntegerField(
         label="How much do you trust the Administrator you interacted with in this survey overall? (1 = Not at all, 7 = A great deal)",
-        choices=[1, 2, 3, 4, 5, 6, 7],
+        choices=[
+        (1, "1 - Not at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - A great deal"),
+        (8, "Prefer not to say / Do not know"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
     perceived_fairness = models.IntegerField(
         label="How fair was the redistribution process? (1 = Very unfair, 7 = Very fair)",
-        choices=[1, 2, 3, 4, 5, 6, 7],
+        choices=[
+        (1, "1 - Very unfair"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - Very fair"),
+        (8, "Prefer not to say / Do not know"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
     trust_gov = models.IntegerField(
         label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)",
-        choices=[1, 2, 3, 4, 5, 6, 7, 'Prefer not to say/Do not know'],
+        choices=[
+        (1, "1 - Not at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - A great deal"),
+        (8, "Prefer not to say / Do not know"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )

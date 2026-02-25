@@ -1,17 +1,25 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-<h2>Phase 4: Return decisions (Administrator)</h2>
+<h2>Phase 4: Return decisions</h2>
 
 <p>
-For each Citizen, decide how much to return.
-You will not see Citizens’ personal information.
+Each citizen was given an initial endowment and asked to decide how much of it to send to you, the Administrator.
 </p>
-
-<ul>
-  <li>If a Citizen sent X ECU, you received {{ C.TRUST_MULTIPLIER }} × X ECU.</li>
-  <li>You make a separate return decision for each Citizen.</li>
-</ul>
+  
+<p>
+Any amount sent to you was multiplied by {{ C.TRUST_MULTIPLIER }}.
+You will now decide how much of the multiplied amount to return to each citizen.
+</p>
+  
+  <ul>
+    <li>If a citizen sent X ECU, you received {{ C.TRUST_MULTIPLIER }} × X ECU.</li>
+  </ul>
+  
+<p>
+You must decide separately how much to return to each citizen. 
+You may return any amount between 0 and the full multiplied amount you received from that citizen.
+</p>
 
 <hr>
 
