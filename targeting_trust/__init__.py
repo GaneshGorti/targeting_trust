@@ -34,8 +34,9 @@ class Group(BaseGroup):
     # randomized at group level
     trust_condition = models.StringField(choices=['count', 'estimate'])
     targeting_condition = models.StringField(choices=['auto', 'apply'])  # auto=pre, apply=self
-
     total_tax = models.CurrencyField(initial=0)
+    total_true_tax = models.CurrencyField(initial=0) 
+    total_applied_tax = models.CurrencyField(initial=0)
 
 
 class Player(BasePlayer):
@@ -62,8 +63,6 @@ class Player(BasePlayer):
     tax_distortion = models.CurrencyField(initial=0)
     net_income_after_tax = models.CurrencyField(initial=0) 
     final_income_gbp = models.CurrencyField(initial=0) 
-    total_true_tax = models.CurrencyField(initial=0) 
-    total_applied_tax = models.CurrencyField(initial=0)
 
     # trust game outcomes 
     income_after_transfer = models.CurrencyField(initial=0)
@@ -476,11 +475,11 @@ class AdminSquares(Page):
             
             total_tax += c.applied_tax
 
-        total_applied_tax = sum(p.applied_tax for p in citizens)
+        g.total_applied_tax = sum(p.applied_tax for p in citizens)
         
-        total_true_tax = sum(p.true_tax for p in citizens)
+        g.total_true_tax = sum(p.true_tax for p in citizens)
 
-        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * total_applied_tax
+        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * g.total_applied_tax
 
     @staticmethod
     def error_message(player: Player, values):
