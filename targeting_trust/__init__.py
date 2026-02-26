@@ -332,6 +332,21 @@ class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
 
+    def vars_for_template(self):
+        if self.round_number == 1:
+            # This runs when page loads
+            prolific_id = self.request.GET.get('PROLIFIC_PID')
+
+            if prolific_id:
+                self.participant.vars['prolific_id'] = prolific_id
+                self.participant.vars['study_id'] = self.request.GET.get('STUDY_ID')
+                self.participant.vars['session_id'] = self.request.GET.get('SESSION_ID')
+
+            #if not prolific_id:
+                #raise Exception("You must access this via Prolific.")
+        
+        return {}
+
     @staticmethod
     def error_message(player, values):
         if values.get('consent') != 'agree':
@@ -340,17 +355,6 @@ class Consent(Page):
                 "please close this survey and return your submission on Prolific "
                 "by selecting the 'Stop without completing' button."
             )
-
-    def before_next_page(self, timeout_happened):
-
-        prolific_id = self.request.GET.get('PROLIFIC_PID')
-
-        #if not prolific_id:
-            #raise Exception("This study must be accessed via Prolific.")
-
-        self.participant.vars['prolific_id'] = prolific_id
-        self.participant.vars['study_id'] = self.request.GET.get('STUDY_ID')
-        self.participant.vars['session_id'] = self.request.GET.get('SESSION_ID')
 
 
 class RoleInfo(Page):
