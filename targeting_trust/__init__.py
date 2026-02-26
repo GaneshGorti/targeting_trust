@@ -42,6 +42,15 @@ class Player(BasePlayer):
     #prolific id
     prolific_id = models.StringField(blank=True)
 
+    #consent 
+    consent = models.StringField(
+        choices=[
+            ('agree', 'I agree to participate in this study'),
+            ('decline', 'I do not wish to participate')
+        ],
+        widget=widgets.RadioSelect
+    )
+
     # identity/role
     is_admin = models.BooleanField(initial=False)
     role_str = models.StringField()
@@ -320,7 +329,17 @@ def debug_treatment(player: Player):
 # -------------------------- PAGES --------------------------
 
 class Consent(Page):
-    pass
+    form_model = 'player'
+    form_fields = ['consent']
+
+    @staticmethod
+    def error_message(player, values):
+        if values.get('consent') != 'agree':
+            return (
+                "As you do not wish to participate in this study, "
+                "please close this survey and return your submission on Prolific "
+                "by selecting the 'Stop without completing' button."
+            )
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
