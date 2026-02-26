@@ -827,6 +827,50 @@ class RevealIncomeAndTransfers(Page):
                 final_income_gbp=player.final_income_gbp,
             )
 
+class PostSurveyPart1(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player):
+        return not player.is_admin
+
+    form_fields = [
+        'trust_admin_public_funds',
+        'trust_administration_overall',
+        'perceived_fairness',
+        'trust_gov',
+    ]
+
+class PostSurveyPart2(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player):
+        return not player.is_admin
+
+    form_fields = [
+        'gender',
+        'income',
+        'education',
+        'pol_lean',
+        'age'
+    ]
+
+class PostSurveyAdmin(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def is_displayed(player):
+        return player.is_admin
+
+    form_fields = [
+        'trust_gov',
+        'age',
+        'gender',
+        'income',
+        'education',
+        'pol_lean',
+    ]
 
 class PostSurvey(Page):
     form_model = 'player'
@@ -904,7 +948,9 @@ page_sequence = [
     AdminTrustDecisions,
     WaitForReturns,
 
-    PostSurvey,
+    PostSurveyPart1,
+    PostSurveyPart1,
+    PostSurveyAdmin,
     RevealIncomeAndTransfers,
     ThankYou
 ]
