@@ -949,7 +949,7 @@ page_sequence = [
     WaitForReturns,
 
     PostSurveyPart1,
-    PostSurveyPart1,
+    PostSurveyPart2,
     PostSurveyAdmin,
     RevealIncomeAndTransfers,
     ThankYou
