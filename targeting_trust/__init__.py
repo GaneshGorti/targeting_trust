@@ -331,20 +331,6 @@ def debug_treatment(player: Player):
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
-
-    def vars_for_template(self):
-        if self.round_number == 1:
-            # access URL params
-            p_id = self.request.GET.get('PROLIFIC_PID')
-            s_id = self.request.GET.get('STUDY_ID')
-            sess_id = self.request.GET.get('SESSION_ID')
-
-            if p_id:
-                # add to params defined in settings.py
-                self.participant.prolific_id = p_id
-                self.participant.prolific_study_id = s_id
-                self.participant.prolific_session_id = sess_id
-        return {}
     
     @staticmethod
     def error_message(player, values):
