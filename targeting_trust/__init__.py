@@ -187,7 +187,7 @@ class Player(BasePlayer):
         (5, "5"),
         (6, "6"),
         (7, "7 - A great deal"),
-        (8, "Prefer not to say / Do not know"),
+        (8, "Prefer not to say"),
         ],
         widget=widgets.RadioSelect,
         blank=False
@@ -202,7 +202,7 @@ class Player(BasePlayer):
         (5, "5"),
         (6, "6"),
         (7, "7 - A great deal"),
-        (8, "Prefer not to say / Do not know"),
+        (8, "Prefer not to say"),
         ],
         widget=widgets.RadioSelect,
         blank=False
@@ -217,7 +217,7 @@ class Player(BasePlayer):
         (5, "5"),
         (6, "6"),
         (7, "7 - Very fair"),
-        (8, "Prefer not to say / Do not know"),
+        (8, "Prefer not to say"),
         ],
         widget=widgets.RadioSelect,
         blank=False
@@ -233,6 +233,29 @@ class Player(BasePlayer):
         (6, "6"),
         (7, "7 - A great deal"),
         (8, "Prefer not to say / Do not know"),
+        ],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
+    fmc = models.IntegerField(
+        label="In your group, were transfers distributed automatically or did citizens have to apply?<span style='color:red;'>*</span>",
+        choices=[
+        (1, "Automatically"),
+        (2, "Application-based"),
+        (3, "Do not know / Don't remember"),
+        ],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
+    resp_targ = models.IntegerField(
+        label="How much do you agree or disagree with the following statement: The transfer system responded to my action.<span style='color:red;'>*</span>",
+        choices=[
+        (1, "Strongly disagree"),
+        (2, "Somewhat disagree"),
+        (3, "Neither agree nor disagree"),
+        (4, "Somewhat agree"),
+        (5, "Strongly agree"),
+        (6, "Prefer not to say"),
         ],
         widget=widgets.RadioSelect,
         blank=False
@@ -881,6 +904,8 @@ class PostSurveyPart1(Page):
         'trust_administration_overall',
         'perceived_fairness',
         'trust_gov',
+        'fmc',
+        'resp_targ',
     ]
 
     @staticmethod
