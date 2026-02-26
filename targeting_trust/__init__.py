@@ -332,19 +332,18 @@ class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
 
-    def vars_for_template(self):
-        if self.round_number == 1:
-            # This runs when page loads
-            prolific_id = self.request.GET.get('PROLIFIC_PID')
+    @staticmethod
+    def vars_for_template(player):
+        if player.round_number == 1:
+
+            request = player.participant._request
+            prolific_id = request.GET.get('PROLIFIC_PID')
 
             if prolific_id:
-                self.participant.vars['prolific_id'] = prolific_id
-                self.participant.vars['study_id'] = self.request.GET.get('STUDY_ID')
-                self.participant.vars['session_id'] = self.request.GET.get('SESSION_ID')
+                player.participant.vars['prolific_id'] = prolific_id
+                player.participant.vars['study_id'] = request.GET.get('STUDY_ID')
+                player.participant.vars['session_id'] = request.GET.get('SESSION_ID')
 
-            #if not prolific_id:
-                #raise Exception("You must access this via Prolific.")
-        
         return {}
 
     @staticmethod
