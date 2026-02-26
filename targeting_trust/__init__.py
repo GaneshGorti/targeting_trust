@@ -341,17 +341,16 @@ class Consent(Page):
                 "by selecting the 'Stop without completing' button."
             )
 
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
+    def before_next_page(self, timeout_happened):
 
-        prolific_id = player.request.GET.get('PROLIFIC_PID')
+        prolific_id = self.request.GET.get('PROLIFIC_PID')
 
-        if not prolific_id:
-            raise Exception("This study must be accessed via Prolific.")
+        #if not prolific_id:
+            #raise Exception("This study must be accessed via Prolific.")
 
-        player.participant.vars['prolific_id'] = prolific_id
-        player.participant.vars['study_id'] = player.request.GET.get('STUDY_ID')
-        player.participant.vars['session_id'] = player.request.GET.get('SESSION_ID')
+        self.participant.vars['prolific_id'] = prolific_id
+        self.participant.vars['study_id'] = self.request.GET.get('STUDY_ID')
+        self.participant.vars['session_id'] = self.request.GET.get('SESSION_ID')
 
 
 class RoleInfo(Page):
