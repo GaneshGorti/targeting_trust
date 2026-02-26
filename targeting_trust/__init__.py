@@ -332,20 +332,20 @@ class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
 
-    @staticmethod
-    def vars_for_template(player):
-        if player.round_number == 1:
+    def vars_for_template(self):
+        if self.round_number == 1:
+            # access URL params
+            p_id = self.request.GET.get('PROLIFIC_PID')
+            s_id = self.request.GET.get('STUDY_ID')
+            sess_id = self.request.GET.get('SESSION_ID')
 
-            request = player.participant._request
-            prolific_id = request.GET.get('PROLIFIC_PID')
-
-            if prolific_id:
-                player.participant.vars['prolific_id'] = prolific_id
-                player.participant.vars['study_id'] = request.GET.get('STUDY_ID')
-                player.participant.vars['session_id'] = request.GET.get('SESSION_ID')
-
+            if p_id:
+                # add to params defined in settings.py
+                self.participant.prolific_id = p_id
+                self.participant.study_id = s_id
+                self.participant.session_id = sess_id
         return {}
-
+    
     @staticmethod
     def error_message(player, values):
         if values.get('consent') != 'agree':
@@ -357,9 +357,6 @@ class Consent(Page):
 
 
 class RoleInfo(Page):
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(role=player.role_str)
     
     @staticmethod
     def vars_for_template(player: Player):
