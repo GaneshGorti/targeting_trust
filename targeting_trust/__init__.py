@@ -122,13 +122,13 @@ class Player(BasePlayer):
     age = models.IntegerField(label="What is your age?", min=18, max=99, blank=True)
 
     gender = models.StringField(
-        label="What is your gender?",
+        label="What is your gender?<span style='color:red;'>*</span>",
         choices=['Male', 'Female', 'Non-binary', 'Prefer not to say'],
         widget=widgets.RadioSelect,
         blank=False
     )
     income = models.StringField(
-        label="What is your household income level?",
+        label="What is your household income level?<span style='color:red;'>*</span>",
         choices=[
             'Less than £20,000', '£20,000 to £34,999', '£35,000 to £49,999',
             '£50,000 to £74,999', '£75,000 to £99,999', 'Over £100,000',
@@ -138,13 +138,13 @@ class Player(BasePlayer):
         blank=False
     )
     education = models.StringField(
-        label="What is your highest level of education?",
+        label="What is your highest level of education?<span style='color:red;'>*</span>",
         choices=['No degree', 'High school', 'Bachelor', 'Master', 'Doctorate', 'Prefer not to say'],
         widget=widgets.RadioSelect,
         blank=False
     )
     pol_lean = models.IntegerField(
-        label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)",
+        label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)<span style='color:red;'>*</span>"",
         choices=[
         (1, "1 - Left"),
         (2, "2"),
@@ -166,7 +166,7 @@ class Player(BasePlayer):
     )
 
     trust_admin_public_funds = models.IntegerField(
-        label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)",
+        label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>"",
         choices=[
         (1, "1 - Not at all"),
         (2, "2"),
@@ -181,7 +181,7 @@ class Player(BasePlayer):
         blank=False
     )
     trust_administration_overall = models.IntegerField(
-        label="How much do you trust the Administrator you interacted with in this survey overall? (1 = Not at all, 7 = A great deal)",
+        label="How much do you trust the Administrator you interacted with in this survey overall? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Not at all"),
         (2, "2"),
@@ -196,7 +196,7 @@ class Player(BasePlayer):
         blank=False
     )
     perceived_fairness = models.IntegerField(
-        label="How fair was the redistribution process? (1 = Very unfair, 7 = Very fair)",
+        label="How fair was the redistribution process? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Very unfair"),
         (2, "2"),
@@ -211,7 +211,7 @@ class Player(BasePlayer):
         blank=False
     )
     trust_gov = models.IntegerField(
-        label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)",
+        label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Not at all"),
         (2, "2"),
@@ -841,6 +841,12 @@ class PostSurveyPart1(Page):
         'trust_gov',
     ]
 
+    @staticmethod
+    def error_message(player, values):
+        for field in values:
+            if values.get(field) in [None, '', []]:
+                return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
+
 class PostSurveyPart2(Page):
     form_model = 'player'
 
@@ -855,6 +861,12 @@ class PostSurveyPart2(Page):
         'pol_lean',
         'age'
     ]
+
+    @staticmethod
+    def error_message(player, values):
+        for field in values:
+            if values.get(field) in [None, '', []]:
+                return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
 
 class PostSurveyAdmin(Page):
     form_model = 'player'
@@ -871,6 +883,12 @@ class PostSurveyAdmin(Page):
         'education',
         'pol_lean',
     ]
+
+    @staticmethod
+    def error_message(player, values):
+        for field in values:
+            if values.get(field) in [None, '', []]:
+                return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
 
 class PostSurvey(Page):
     form_model = 'player'
