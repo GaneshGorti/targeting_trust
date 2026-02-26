@@ -39,6 +39,9 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    #prolific id
+    prolific_id = models.StringField(blank=True)
+
     # identity/role
     is_admin = models.BooleanField(initial=False)
     role_str = models.StringField()
@@ -318,6 +321,18 @@ def debug_treatment(player: Player):
 
 class Consent(Page):
     pass
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+
+        prolific_id = player.request.GET.get('PROLIFIC_PID')
+
+        if not prolific_id:
+            raise Exception("This study must be accessed via Prolific.")
+
+        player.participant.vars['prolific_id'] = prolific_id
+        player.participant.vars['study_id'] = player.request.GET.get('STUDY_ID')
+        player.participant.vars['session_id'] = player.request.GET.get('SESSION_ID')
 
 
 class RoleInfo(Page):
@@ -943,7 +958,10 @@ class PostSurvey(Page):
     #    return not player.is_admin
     
 class ThankYou(Page):
-    pass
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        return "https://app.prolific.com/submissions/complete?cc=CHA7NF4G"
 
 
 page_sequence = [
