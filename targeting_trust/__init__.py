@@ -144,7 +144,7 @@ class Player(BasePlayer):
         blank=False
     )
     pol_lean = models.IntegerField(
-        label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)<span style='color:red;'>*</span>"",
+        label="In politics, people sometimes talk about 'left' and 'right'. Where would you place yourself? (1 = Left, 7 = Right)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Left"),
         (2, "2"),
@@ -166,7 +166,7 @@ class Player(BasePlayer):
     )
 
     trust_admin_public_funds = models.IntegerField(
-        label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>"",
+        label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Not at all"),
         (2, "2"),
