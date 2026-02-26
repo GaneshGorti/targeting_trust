@@ -658,14 +658,18 @@ class Targeting(Page):
         if is_apply:
             header = "Transfer application"
             body = (
-                "You may now chose to apply to receive a transfer from the administrator. Collected tax revenue will be redistributed equally to people who have applied for a transfer. "
-                "To apply, you must complete a short administrative task."
+                "Under the current policy, transfers are distributed through an application process. "
+                "Citizens may apply to receive a transfer. "
+                "Collected tax revenue will be redistributed equally among those who apply. "
+                "To receive a transfer, you must complete a short administrative task."
             )
         else:
             header = "Transfer allocation"
             body = (
-                "You have been automatically selected to receive a transfer from the administrator. Collected tax revenue will be redistributed equally to everyone in your group."
-                " No application is needed."
+                "Under the current policy, transfers are distributed automatically. "
+                "All citizens are automatically enrolled to receive a transfer. "
+                "Collected tax revenue will be redistributed equally among all citizens in your group. "
+                "No application is required."
             )
         return dict(
             is_apply=is_apply,
