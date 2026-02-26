@@ -342,8 +342,8 @@ class Consent(Page):
             if p_id:
                 # add to params defined in settings.py
                 self.participant.prolific_id = p_id
-                self.participant.study_id = s_id
-                self.participant.session_id = sess_id
+                self.participant.prolific_study_id = s_id
+                self.participant.prolific_session_id = sess_id
         return {}
     
     @staticmethod

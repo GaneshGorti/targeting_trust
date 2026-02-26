@@ -19,7 +19,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['prolific_id', 'study_id', 'session_id']
+PARTICIPANT_FIELDS = ['prolific_id', 'prolific_study_id', 'prolific_session_id']
 SESSION_FIELDS = []
 
 # ISO-639 code
