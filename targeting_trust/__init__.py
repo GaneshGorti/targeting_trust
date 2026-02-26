@@ -331,7 +331,7 @@ def debug_treatment(player: Player):
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
-    
+
     @staticmethod
     def error_message(player, values):
         if values.get('consent') != 'agree':
@@ -340,6 +340,30 @@ class Consent(Page):
                 "please close this survey and return your submission on Prolific "
                 "by selecting the 'Stop without completing' button."
             )
+        
+    class Consent(Page):
+        form_model = 'player'
+        form_fields = ['consent']
+
+        def before_next_page(self):
+            # Only capture once
+            if self.round_number == 1:
+
+                # PROLIFIC PID (already stored automatically)
+                self.participant.prolific_id = self.participant.label
+
+                # Manually capture the other two
+                self.participant.prolific_study_id = self.request.GET.get('STUDY_ID')
+                self.participant.prolific_session_id = self.request.GET.get('SESSION_ID')
+
+        @staticmethod
+        def error_message(player, values):
+            if values.get('consent') != 'agree':
+                return (
+                    "As you do not wish to participate in this study, "
+                    "please close this survey and return your submission on Prolific "
+                    "by selecting the 'Stop without completing' button."
+                )
 
 
 class RoleInfo(Page):
@@ -965,7 +989,7 @@ class ThankYou(Page):
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
-        return "https://app.prolific.com/submissions/complete?cc=CHA7NF4G"
+        return "https://app.prolific.com/submissions/complete?cc=CHLLAZ1A"
 
 
 page_sequence = [
