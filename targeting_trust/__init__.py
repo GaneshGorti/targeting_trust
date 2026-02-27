@@ -424,6 +424,28 @@ class Consent(Page):
                 "by selecting the 'Stop without completing' button."
             )
 
+"""         
+    class Consent(Page):
+        form_model = 'player'
+        form_fields = ['consent']
+
+        def before_next_page(self):
+            # Only capture once
+            if self.round_number == 1:
+
+                # PROLIFIC PID (already stored automatically)
+                self.participant.prolific_id = self.participant.label
+
+        @staticmethod
+        def error_message(player, values):
+            if values.get('consent') != 'agree':
+                return (
+                    "As you do not wish to participate in this study, "
+                    "please close this survey and return your submission on Prolific "
+                    "by selecting the 'Stop without completing' button."
+                )
+
+
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
@@ -442,7 +464,7 @@ class Consent(Page):
                 "please close this survey and return your submission on Prolific "
                 "by selecting the 'Stop without completing' button."
                 )
-
+ """
 
 class RoleInfo(Page):
     
