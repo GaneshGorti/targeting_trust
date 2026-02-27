@@ -137,7 +137,7 @@ class Player(BasePlayer):
     tax_paid = models.CurrencyField(initial=0)
 
     # post-game survey
-    age = models.IntegerField(label="What is your age?", min=18, max=99, blank=True)
+    age = models.IntegerField(label="What is your age?<span style='color:red;'>*</span>", min=18, max=99, blank=True)
 
     gender = models.StringField(
         label="What is your gender?<span style='color:red;'>*</span>",
@@ -996,7 +996,7 @@ class PostSurveyPart2(Page):
         'income',
         'education',
         'pol_lean',
-        'age'
+        'age',
     ]
 
     @staticmethod
@@ -1026,54 +1026,6 @@ class PostSurveyAdmin(Page):
         for field in values:
             if values.get(field) in [None, '', []]:
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
-
-class PostSurvey(Page):
-    form_model = 'player'
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return True   # allow admin and citizens
-
-    @staticmethod
-    def get_form_fields(player: Player):
-
-        if player.is_admin:
-            return [
-                'age',
-                'gender',
-                'income',
-                'education',
-                'pol_lean'
-            ]
-
-        else:
-            return [
-                'trust_admin_public_funds',
-                'trust_administration_overall',
-                'perceived_fairness',
-                'trust_gov',
-                'age',
-                'gender',
-                'income',
-                'education',
-                'pol_lean'
-            ]
-    @staticmethod
-    def error_message(player, values):
-        age = values.get("age")
-
-        if age is not None and age < 18:
-            return "If you choose to provide your age, you must be at least 18 years old."
-#class PostSurvey(Page):
-#    form_model = 'player'
-#    form_fields = [
-#        'trust_admin_public_funds', 'trust_administration_overall', 'perceived_fairness', 'trust_gov',
-#        'age', 'gender', 'income', 'education', 'pol_lean'
-#    ]
-
-    #@staticmethod
-    #def is_displayed(player: Player):
-    #    return not player.is_admin
     
 class ThankYou(Page):
 
