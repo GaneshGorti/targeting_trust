@@ -65,6 +65,59 @@ class Player(BasePlayer):
     # admin payoff component (for incentive framing)
     admin_bonus = models.CurrencyField(initial=0)
 
+    # Citizen comprehension fields  
+    citizen_quiz_tax = models.IntegerField(
+        label="If 10 sliders are reported, how much tax is collected?",
+        blank=True
+    )
+
+    citizen_quiz_bonus = models.StringField(
+        label="How is the Administrator’s bonus determined?",
+        choices=[
+            ('accurate', 'They receive a bonus only for accurate counting'),
+            ('percentage', 'They receive 30% of total tax collected'),
+            ('fixed', 'They receive a fixed payment regardless of tax')
+        ],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    citizen_quiz_tax_base = models.StringField(
+        label="Is your tax calculated based on the number of sliders you actually completed or the number the Administrator reports?",
+        choices=[
+            ('completed', 'Based on the number of sliders I actually completed'),
+            ('reported', 'Based on the number of sliders the Administrator reports')
+        ],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    citizen_quiz_attempts = models.IntegerField(initial=0)
+
+    # Admin comprehension fields
+    admin_quiz_bonus = models.StringField(
+        label="How is your bonus determined?",
+        choices=[
+            ('accuracy', 'I receive a bonus for counting accurately'),
+            ('percentage', 'I receive 30% of total tax collected'),
+            ('fixed', 'I receive a fixed amount regardless of tax')
+        ],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    admin_quiz_tax_base = models.StringField(
+        label="Is tax calculated based on the actual number of completed sliders or the number you report?",
+        choices=[
+            ('completed', 'Based on the actual completed sliders'),
+            ('reported', 'Based on the number I report')
+        ],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+
+    admin_quiz_attempts = models.IntegerField(initial=0)
+
     # creating fields for real effort task and tax outcome and final income
     effort_points = models.IntegerField(initial=0)
     gross_income = models.CurrencyField(initial=0)
@@ -75,11 +128,8 @@ class Player(BasePlayer):
     net_income_after_tax = models.CurrencyField(initial=0) 
     final_income_gbp = models.CurrencyField(initial=0) 
 
-    # trust game outcomes 
-    income_after_transfer = models.CurrencyField(initial=0)
-    tripled_trust_amount = models.CurrencyField(initial=0)
-    trust_game_net = models.CurrencyField(initial=0)
-    final_income = models.CurrencyField(initial=0)
+    # dummy hidden form field for work page
+    work_page_completed = models.BooleanField(initial=False)
 
     # citizen real-effort
     #Removing this to make it more interactive
@@ -95,8 +145,6 @@ class Player(BasePlayer):
         min=0,
         blank=False
     )
-    # dummy hidden form field for work page
-    work_page_completed = models.BooleanField(initial=False)
 
     # targeting decision (only in apply condition)
     apply_transfer = models.StringField(
@@ -107,6 +155,12 @@ class Player(BasePlayer):
     )
     received_transfer = models.CurrencyField(initial=0)
 
+    # Self targeting work task 
+    applicant_name = models.StringField(blank=True)
+    applicant_age = models.IntegerField(blank=True)
+    application_reference = models.StringField(blank=True)
+    application_completed = models.BooleanField(initial=False)
+
     # trust game
     send_amount = models.CurrencyField(
         label="How much do you want to send to the Administrator?",
@@ -115,11 +169,11 @@ class Player(BasePlayer):
     )
     amount_returned = models.CurrencyField(initial=0)
 
-    # Work task 
-    applicant_name = models.StringField(blank=True)
-    applicant_age = models.IntegerField(blank=True)
-    application_reference = models.StringField(blank=True)
-    application_completed = models.BooleanField(initial=False)
+    # trust game outcomes 
+    income_after_transfer = models.CurrencyField(initial=0)
+    tripled_trust_amount = models.CurrencyField(initial=0)
+    trust_game_net = models.CurrencyField(initial=0)
+    final_income = models.CurrencyField(initial=0)
 
     # real effort outcome
     #effort_points = models.IntegerField(initial=0)
@@ -356,10 +410,16 @@ def debug_treatment(player: Player):
 
 
 # -------------------------- PAGES --------------------------
-
+        
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
+
+    def before_next_page(self):
+        # Only capture once
+        if self.round_number == 1:
+            # PROLIFIC PID (already stored automatically)
+            self.participant.prolific_id = self.participant.label
 
     @staticmethod
     def error_message(player, values):
@@ -368,27 +428,8 @@ class Consent(Page):
                 "As you do not wish to participate in this study, "
                 "please close this survey and return your submission on Prolific "
                 "by selecting the 'Stop without completing' button."
-            )
-        
-    class Consent(Page):
-        form_model = 'player'
-        form_fields = ['consent']
-
-        def before_next_page(self):
-            # Only capture once
-            if self.round_number == 1:
-
-                # PROLIFIC PID (already stored automatically)
-                self.participant.prolific_id = self.participant.label
-
-        @staticmethod
-        def error_message(player, values):
-            if values.get('consent') != 'agree':
-                return (
-                    "As you do not wish to participate in this study, "
-                    "please close this survey and return your submission on Prolific "
-                    "by selecting the 'Stop without completing' button."
                 )
+
 
 class RoleInfo(Page):
     
@@ -424,12 +465,14 @@ class RoleInfo(Page):
     #def before_next_page(player: Player, timeout_happened):
         #player.gross_income = cu(player.triangles_guess)
 
+
 class CitizenWorkTaskInstructions(Page):
 
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
-    
+
+
 class CitizenWorkTask(Page):
     live_method = live_effort
     form_model = 'player'
@@ -439,8 +482,10 @@ class CitizenWorkTask(Page):
     def is_displayed(player: Player):
         return not player.is_admin
 
+
 class WaitForWork(WaitPage):
     pass
+
 
 class AdminInstructions(Page):
 
@@ -448,6 +493,7 @@ class AdminInstructions(Page):
     def is_displayed(player: Player):
         return player.is_admin
     
+
 class AdminExample(Page):
 
     @staticmethod
@@ -470,6 +516,43 @@ class AdminExample(Page):
             )
 
         return dict(example_text=text)
+
+
+class AdminComprehension(Page):
+    form_model = 'player'
+    form_fields = [
+        'admin_quiz_bonus',
+        'admin_quiz_tax_base'
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.is_admin
+
+    @staticmethod
+    def error_message(player, values):
+
+        if player.group.trust_condition == 'count':
+            correct_bonus = 'accuracy'
+        else:
+            correct_bonus = 'percentage'
+
+        correct_tax_base = 'reported'
+
+        player.admin_quiz_attempts += 1
+
+        if (
+            values['admin_quiz_bonus'] != correct_bonus
+            or values['admin_quiz_tax_base'] != correct_tax_base
+        ):
+
+            if player.admin_quiz_attempts >= 2:
+                return (
+                    "Some answers are incorrect. Please carefully review the instructions "
+                    "before continuing."
+                )
+
+            return "One or more answers are incorrect. Please review the instructions and try again."
 
 class AdminSquares(Page):
     form_model = 'player'
@@ -636,6 +719,7 @@ class CitizenTaxInfo(Page):
     #    tax_per_citizen = cu(g.squares_reported)
     #    player.net_income = max(cu(0), player.gross_income - tax_per_citizen)
 
+
 class CitizenExample(Page):
 
     @staticmethod
@@ -666,6 +750,48 @@ class CitizenExample(Page):
             )
 
         return dict(example=example)
+    
+
+class CitizenComprehension(Page):
+    form_model = 'player'
+    form_fields = [
+        'citizen_quiz_tax',
+        'citizen_quiz_bonus',
+        'citizen_quiz_tax_base'
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+
+    @staticmethod
+    def error_message(player, values):
+
+        correct_tax = 3  # Always 10 × 0.3
+
+        if player.group.trust_condition == 'count':
+            correct_bonus = 'accurate'
+        else:
+            correct_bonus = 'percentage'
+
+        correct_tax_base = 'reported'
+
+        player.citizen_quiz_attempts += 1
+
+        if (
+            values['citizen_quiz_tax'] != correct_tax
+            or values['citizen_quiz_bonus'] != correct_bonus
+            or values['citizen_quiz_tax_base'] != correct_tax_base
+        ):
+
+            if player.citizen_quiz_attempts >= 2:
+                return (
+                    "Some answers are incorrect. Please carefully review the instructions "
+                    "before continuing."
+                )
+
+            return "One or more answers are incorrect. Please review the example and try again."
+
 
 class RevealTax(Page):
 
@@ -699,6 +825,7 @@ class AC(Page):
     form_model = 'player'
     form_fields = [
         'ac']
+
 
 class Targeting(Page):
     form_model = 'player' 
@@ -1028,10 +1155,7 @@ class PostSurveyAdmin(Page):
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
     
 class ThankYou(Page):
-
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return "https://app.prolific.com/submissions/complete?cc=CHLLAZ1A"
+    pass
 
 
 page_sequence = [
@@ -1043,11 +1167,13 @@ page_sequence = [
     WaitForWork,
     AdminInstructions,
     AdminExample,
+    AdminComprehension,
     AdminSquares,
     WaitForTax,     
 
     CitizenTaxInfo,
     CitizenExample,
+    CitizenComprehension,
     RevealTax,
     AC,
     Targeting,
