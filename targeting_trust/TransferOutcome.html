@@ -1,0 +1,31 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Transfer Outcome</h2>
+
+{% if status == "automatic" %}
+
+<p>
+Under the current policy, transfers were distributed automatically.
+You have sucessfully received a transfer.
+</p>
+
+{% elif status == "applied_success" %}
+
+<p>
+You chose to apply for a transfer and successfully received
+it.
+</p>
+
+{% else %}
+
+<p>
+You chose not to apply for a transfer.
+As a result, you did not receive a transfer.
+</p>
+
+{% endif %}
+
+{{ next_button }}
+
+{% endblock %}

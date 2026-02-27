@@ -1,0 +1,34 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h2>Transfer Application Form</h2>
+
+<p>
+You selected to apply for a transfer. To receive the transfer under the current policy, you must complete
+this short administrative form.
+</p>
+
+<hr>
+
+<p>You may use the following randomly generated information and fill it in the boxes below:</p>
+
+<ul>
+<li><strong>Name:</strong> {{ suggested_name }}</li>
+<li><strong>Age:</strong> {{ suggested_age }}</li>
+<li><strong>Reference Code:</strong> {{ ref_code }}</li>
+</ul>
+
+<hr>
+
+<p><strong>Applicant Name:</strong></p>
+{{ form.applicant_name }}
+
+<p><strong>Applicant Age:</strong></p>
+{{ form.applicant_age }}
+
+<p><strong>Application Reference Code:</strong></p>
+{{ form.application_reference }}
+
+{{ next_button }}
+
+{% endblock %}

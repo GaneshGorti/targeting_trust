@@ -115,6 +115,12 @@ class Player(BasePlayer):
     )
     amount_returned = models.CurrencyField(initial=0)
 
+    # Work task 
+    applicant_name = models.StringField(blank=True)
+    applicant_age = models.IntegerField(blank=True)
+    application_reference = models.StringField(blank=True)
+    application_completed = models.BooleanField(initial=False)
+
     # real effort outcome
     #effort_points = models.IntegerField(initial=0)
 
@@ -171,7 +177,7 @@ class Player(BasePlayer):
         blank=False
     )
     ac = models.StringField(
-        label="Everyone has their favourite colour, but for this question, regardless of your actual preference, please select “Purple”.",
+        label="Everyone has their favourite colour, but for this question, regardless of your actual preference, please select Green.",
         choices=['Red', 'Blue', 'Purple', 'Green', 'Yellow', 'Another colour'],
         widget=widgets.RadioSelect,
         blank=False
@@ -208,7 +214,7 @@ class Player(BasePlayer):
         blank=False
     )
     perceived_fairness = models.IntegerField(
-        label="How fair was the redistribution process? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
+        label="A little while ago, you were paid a part of the taxes collected in your group. Thinking about it, how fair was the process? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Very unfair"),
         (2, "2"),
@@ -739,6 +745,40 @@ class Targeting(Page):
             net_income=player.net_income_after_tax
         )
 
+
+class ApplicationTask(Page):
+
+    form_model = 'player'
+    form_fields = ['applicant_name', 'applicant_age', 'application_reference']
+
+    @staticmethod
+    def is_displayed(player):
+        return (
+            not player.is_admin
+            and player.group.targeting_condition == 'apply'
+            and player.apply_transfer == 'yes'
+        )
+
+    @staticmethod
+    def vars_for_template(player):
+        import random
+        names = ["Alex Morgan", "Taylor Reed", "Jordan Blake", "Casey Patel", "Riley Khan"]
+        return dict(
+            suggested_name=random.choice(names),
+            suggested_age=random.randint(25, 55),
+            ref_code=random.randint(10000, 99999)
+        )
+
+    @staticmethod
+    def error_message(player, values):
+        if not values['applicant_name'] or not values['applicant_age'] or not values['application_reference']:
+            return "Please complete all fields to submit your application."
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.application_completed = True
+
+
 class WaitTargeting(WaitPage):
     after_all_players_arrive = assign_transfers
 
@@ -753,10 +793,39 @@ class WaitTargeting(WaitPage):
             for p in citizens:
                 p.received_transfer = share
         else:
-            applicants = [p for p in citizens if p.apply_transfer == 'yes']
+            applicants = [
+                p for p in citizens
+                if p.apply_transfer == 'yes' and p.application_completed
+            ]
             share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
             for p in citizens:
                 p.received_transfer = share if p in applicants else cu(0)
+
+
+class TransferOutcome(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        g = player.group
+
+        if g.targeting_condition == 'auto':
+            status = "automatic"
+
+        elif player.received_transfer > 0:
+            status = "applied_success"
+
+        else:
+            status = "did_not_apply"
+
+        return dict(
+            status=status,
+            received_transfer=player.received_transfer
+        )
 
 
 class CitizenTrustGame(Page):
@@ -775,6 +844,7 @@ class CitizenTrustGame(Page):
     def error_message(player: Player, values):
         if values['send_amount'] > C.TRUST_BUDGET:
             return f"You cannot send more than your available amount ({C.TRUST_BUDGET} ECU)."
+
 
 class WaitForSends(WaitPage):
 
@@ -1029,8 +1099,10 @@ page_sequence = [
     RevealTax,
     AC,
     Targeting,
+    ApplicationTask
     WaitTargeting,
 
+    TransferOutcome,
     CitizenTrustGame,
     WaitForSends,
     AdminTrustDecisions,
