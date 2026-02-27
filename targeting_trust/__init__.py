@@ -415,11 +415,6 @@ class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
 
-    def before_next_page(self, timeout_happened):
-
-        if self.round_number == 1:
-            self.participant.prolific_id = self.participant.label
-
     @staticmethod
     def error_message(player, values):
         if values.get('consent') != 'agree':
