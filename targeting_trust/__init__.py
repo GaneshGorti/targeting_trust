@@ -74,8 +74,8 @@ class Player(BasePlayer):
     citizen_quiz_bonus = models.StringField(
         label="How is the Administrator’s bonus determined?",
         choices=[
-            ('accurate', 'They receive a bonus only for accurate counting'),
-            ('percentage', 'They receive 30% of total tax collected'),
+            ('accurate', 'They receive a bonus only for accurately counting the sliders'),
+            ('percentage', 'They receive a bonus based on the total tax collected'),
             ('fixed', 'They receive a fixed payment regardless of tax')
         ],
         widget=widgets.RadioSelect,
@@ -542,12 +542,12 @@ class AdminExample(Page):
         if g.trust_condition == 'count':
             text = (
                 "You will review each participant’s completed sliders and count them accurately. "
-                "You receive a bonus for performing this task correctly."
+                "You receive a bonus equal to 30% of the tax collected for performing this task correctly."
             )
         else:
             text = (
                 "You will see each participant’s completed sliders for 10 seconds and estimate "
-                "the number completed. You receive a bonus equal to a percentage of the total tax collected."
+                "the number completed. You receive a bonus equal to 30% of the total tax collected."
             )
 
         return dict(example_text=text)
@@ -739,12 +739,14 @@ class CitizenTaxInfo(Page):
         if g.trust_condition == 'count':
             msg = (
                 "The Administrator was instructed to count the number of correctly placed sliders "
-                "and received a bonus to report the correct sliders count accurately."
+                "and received a bonus equal to 30% of the total tax collected to report the correct sliders count accurately."
             )
         else:
             msg = (
-                "The Administrator was instructed to estimate the number of correctly placed sliders "
-                "and received a bonus that was a percentage of their reported correct sliders count."
+                "The Administrator was instructed to estimate the number of correctly placed sliders. "
+                "The Administrator received a bonus equal to 30% of the total tax collected."
+                "Because tax is calculated based on the number of sliders the Administrator reports, " 
+                "reporting a higher number increases the tax collected and therefore increases the Administrator’s bonus."
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
 
@@ -772,7 +774,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3,
                 net=7,
-                condition="The Administrator was instructed to count correctly placed sliders accurately and received a fixed bonus."
+                condition="The Administrator was instructed to count correctly placed sliders accurately and received a bonus for it."
             )
         else:
             example = dict(
@@ -781,7 +783,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3.6,
                 net=6.4,
-                condition="The Administrator was instructed to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected."
+                condition="The Administrator was instructed to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected. "
             )
 
         return dict(example=example)
