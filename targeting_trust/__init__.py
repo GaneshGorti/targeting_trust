@@ -1051,7 +1051,7 @@ page_sequence = [
     RevealTax,
     AC,
     Targeting,
-    ApplicationTask
+    ApplicationTask,
     WaitTargeting,
 
     TransferOutcome,
