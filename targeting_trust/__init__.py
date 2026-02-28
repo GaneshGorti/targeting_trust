@@ -738,15 +738,17 @@ class CitizenTaxInfo(Page):
         g = player.group
         if g.trust_condition == 'count':
             msg = (
-                "The Administrator was instructed to count the number of correctly placed sliders "
-                "and received a bonus equal to 30% of the total tax collected to report the correct sliders count accurately."
+                "The Administrator was shown a visual record of the number of correctly placed sliders "
+                "and was later asked to count the number of correctly placed sliders. "
+                "The Administrator received a bonus equal to 30% of the total tax collected to report the slider counts accurately."
             )
         else:
             msg = (
-                "The Administrator was instructed to estimate the number of correctly placed sliders. "
+                "The Administrator was briefly shown the visual record of the number of correctly placed sliders " 
+                "and was later asked to estimate the number of correctly placed sliders. "
                 "The Administrator received a bonus equal to 30% of the total tax collected."
                 "Because tax is calculated based on the number of sliders the Administrator reports, " 
-                "reporting a higher number increases the tax collected and therefore increases the Administrator’s bonus."
+                "reporting a higher number increases the tax collected and therefore Administrator’s may or may not report the correct number of sliders."
             )
         return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
 
@@ -774,7 +776,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3,
                 net=7,
-                condition="The Administrator was instructed to count correctly placed sliders accurately and received a bonus for it."
+                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received a bonus for it."
             )
         else:
             example = dict(
@@ -783,7 +785,7 @@ class CitizenExample(Page):
                 gross=10,
                 tax=3.6,
                 net=6.4,
-                condition="The Administrator was instructed to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected. "
+                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected. "
             )
 
         return dict(example=example)
