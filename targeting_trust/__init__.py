@@ -1158,11 +1158,11 @@ class PostSurveyPart2(Page):
         return not player.is_admin
 
     form_fields = [
+        'pol_lean',
+        'age',
         'gender',
         'income',
         'education',
-        'pol_lean',
-        'age',
     ]
 
     @staticmethod
@@ -1180,11 +1180,11 @@ class PostSurveyAdmin(Page):
 
     form_fields = [
         'trust_gov',
+        'pol_lean',
         'age',
         'gender',
         'income',
         'education',
-        'pol_lean',
     ]
 
     @staticmethod
