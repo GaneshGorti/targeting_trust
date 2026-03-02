@@ -982,7 +982,7 @@ class TransferOutcome(Page):
         if g.targeting_condition == 'auto':
             status = "automatic"
 
-        elif player.received_transfer > 0:
+        elif player.apply_transfer == 'yes' and player.application_completed:
             status = "applied_success"
 
         else:
