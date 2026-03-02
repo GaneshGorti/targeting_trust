@@ -9,7 +9,7 @@ doc = """
 - Targeting manipulation: automatic allocation vs application-based allocation
 
 Group size: 5 (4 citizens + 1 administrator)
-Trust game budget for citizens = net income (after tax), before redistribution is revealed.
+Trust game budget for citizens = standard corpus independent of earned income
 """
 
 
@@ -83,10 +83,10 @@ class Player(BasePlayer):
     )
 
     citizen_quiz_tax_base = models.StringField(
-        label="Is your tax calculated based on the number of sliders you actually completed or the number the Administrator reports?",
+        label="What determines your tax payment?",
         choices=[
-            ('completed', 'Based on the number of sliders I actually completed'),
-            ('reported', 'Based on the number of sliders the Administrator reports')
+            ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by the Administrator'),
+            ('reported', 'The number of completed sliders reported by the Administrator for each citizen')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -107,10 +107,10 @@ class Player(BasePlayer):
     )
 
     admin_quiz_tax_base = models.StringField(
-        label="Is tax calculated based on the actual number of completed sliders or the number you report?",
+        label="What determines each citizen’s tax payment?",
         choices=[
-            ('completed', 'Based on the actual completed sliders'),
-            ('reported', 'Based on the number I report')
+            ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by me'),
+            ('reported', 'The number of completed sliders I report for each citizen')
         ],
         widget=widgets.RadioSelect,
         blank=True
