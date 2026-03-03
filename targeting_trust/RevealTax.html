@@ -2,38 +2,7 @@
 {% load static %}
 {% block content %}
 
-<h2>Your Tax Outcome</h2>
-
-<p>
-Below is the tax report that will be used to calculate your net income.
-</p>
-
-<hr>
-
-<p>
-<strong>Your completed sliders:</strong> {{ gross_income }}
-</p>
-
-<p>
-<strong>Administrator's reported sliders:</strong> {{ reported_for_you }}
-</p>
-
-<hr>
-
-<p>
-<strong>Your gross income:</strong> {{ gross_income }} 
-</p>
-
-<p>
-<strong>Your tax:</strong> {{ reported_for_you }} × 0.3 ECU = 
-{{ tax_paid }} 
-</p>
-
-<p>
-<strong>Your net income after tax:</strong> {{ net_income }} 
-</p>
-
-<hr>
+<h2>What the administrator saw</h2>
 
 <h3>How the tax was determined</h3>
 

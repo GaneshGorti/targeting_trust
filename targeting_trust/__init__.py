@@ -93,6 +93,7 @@ class Player(BasePlayer):
     )
 
     citizen_quiz_attempts = models.IntegerField(initial=0)
+    citizen_quiz_failed = models.BooleanField(initial=False)
 
     # Admin comprehension fields
     admin_quiz_bonus = models.StringField(
@@ -117,6 +118,7 @@ class Player(BasePlayer):
     )
 
     admin_quiz_attempts = models.IntegerField(initial=0)
+    admin_quiz_failed = models.BooleanField(initial=False)
 
     # creating fields for real effort task and tax outcome and final income
     effort_points = models.IntegerField(initial=0)
@@ -574,20 +576,56 @@ class AdminComprehension(Page):
 
         correct_tax_base = 'reported'
 
+        # increment attempts
         player.admin_quiz_attempts += 1
 
-        if (
+        incorrect = (
             values['admin_quiz_bonus'] != correct_bonus
             or values['admin_quiz_tax_base'] != correct_tax_base
-        ):
+        )
 
-            if player.admin_quiz_attempts >= 2:
-                return (
-                    "Some answers are incorrect. Please carefully review the instructions "
-                    "before continuing."
-                )
+        if incorrect:
 
-            return "One or more answers are incorrect. Please review the instructions and try again."
+            # If this is the 3rd failed attempt
+            if player.admin_quiz_attempts >= 3:
+                player.admin_quiz_failed = True
+                return None  # allow progression
+
+            return "One or more answers are incorrect. Please review the example and try again."
+
+        # If correct → allow progression
+        return None
+
+
+class AdminQuizFeedback(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.is_admin and player.admin_quiz_failed
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        if player.group.trust_condition == 'count':
+            admin_correct_bonus = (
+                "You receives 30% of total tax collected "
+                "but must report the number accurately."
+            )
+        else:
+            admin_correct_bonus = (
+                "You receives 30% of total tax collected. "
+                "Reporting a higher number increases your bonus."
+            )
+
+        admin_correct_tax_base = (
+            "Tax is based on the number of sliders I report."
+        )
+
+        return dict(
+            correct_bonus=admin_correct_bonus,
+            correct_tax_base=admin_correct_tax_base
+        )
+
 
 class AdminSquares(Page):
     form_model = 'player'
@@ -750,7 +788,9 @@ class CitizenTaxInfo(Page):
                 "Because tax is calculated based on the number of sliders the Administrator reports, " 
                 "reporting a higher number increases the tax collected and therefore Administrator’s may or may not report the correct number of sliders."
             )
-        return dict(trust_message=msg, admin_tax_share=C.ADMIN_TAX_SHARE)
+        return dict(trust_message=msg, 
+                    admin_tax_share=C.ADMIN_TAX_SHARE, 
+                    tasks_completed=player.effort_points)
 
     #@staticmethod
     #def before_next_page(player: Player, timeout_happened):
@@ -806,30 +846,67 @@ class CitizenComprehension(Page):
     @staticmethod
     def error_message(player, values):
 
-        correct_tax = 3  # Always 10 × 0.3
+        correct_tax = 3
+        correct_tax_base = 'reported'
 
         if player.group.trust_condition == 'count':
             correct_bonus = 'accurate'
         else:
             correct_bonus = 'percentage'
 
-        correct_tax_base = 'reported'
-
+        # increment attempts
         player.citizen_quiz_attempts += 1
 
-        if (
+        incorrect = (
             values['citizen_quiz_tax'] != correct_tax
             or values['citizen_quiz_bonus'] != correct_bonus
             or values['citizen_quiz_tax_base'] != correct_tax_base
-        ):
+        )
 
-            if player.citizen_quiz_attempts >= 2:
-                return (
-                    "Some answers are incorrect. Please carefully review the instructions "
-                    "before continuing."
-                )
+        if incorrect:
+
+            # If this is the 3rd failed attempt
+            if player.citizen_quiz_attempts >= 3:
+                player.citizen_quiz_failed = True
+                return None  # allow progression
 
             return "One or more answers are incorrect. Please review the example and try again."
+
+        # If correct → allow progression
+        return None
+
+
+class CitizenQuizFeedback(Page):
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin and player.citizen_quiz_failed
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        correct_tax = 3
+
+        if player.group.trust_condition == 'count':
+            correct_bonus = (
+                "The Administrator receives 30% of total tax collected "
+                "but must report the number accurately."
+            )
+        else:
+            correct_bonus = (
+                "The Administrator receives 30% of total tax collected. "
+                "Reporting a higher number increases their bonus."
+            )
+
+        correct_tax_base = (
+            "Tax is based on the number of sliders the Administrator reports."
+        )
+
+        return dict(
+            correct_tax=correct_tax,
+            correct_bonus=correct_bonus,
+            correct_tax_base=correct_tax_base
+        )
 
 
 class RevealTax(Page):
@@ -891,7 +968,7 @@ class Targeting(Page):
         if is_apply:
             header = "Transfer application"
             body = (
-                "Under the current policy, transfers are distributed through an application process. "
+                "The taxes collected by the administrator will be distributed through an application process. "
                 "Citizens may apply to receive a transfer. "
                 "Collected tax revenue will be redistributed equally among those who apply. "
                 "To receive a transfer, you must complete a short administrative task."
@@ -899,7 +976,7 @@ class Targeting(Page):
         else:
             header = "Transfer allocation"
             body = (
-                "Under the current policy, transfers are distributed automatically. "
+                "The taxes collected by the administrator will be distributed automatically. "
                 "All citizens are automatically enrolled to receive a transfer. "
                 "Collected tax revenue will be redistributed equally among all citizens in your group. "
                 "No application is required."
@@ -1207,12 +1284,14 @@ page_sequence = [
     AdminInstructions,
     AdminExample,
     AdminComprehension,
+    AdminQuizFeedback,
     AdminSquares,
     WaitForTax,     
 
     CitizenTaxInfo,
     CitizenExample,
     CitizenComprehension,
+    CitizenQuizFeedback,
     RevealTax,
     AC,
     Targeting,

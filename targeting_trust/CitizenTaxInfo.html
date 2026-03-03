@@ -1,7 +1,7 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-<h2>Before you see your net income</h2>
+<h2>How many sliders did you place correctly?</h2>
 
 <p>
 The Administrator has reported the number of correctly placed sliders, which determines the tax you pay.
@@ -15,7 +15,7 @@ Your net income equals gross income minus the tax.
 
 <hr>
 
-<p>Before you see your net income, please tell us your expectation:</p>
+<p>Remember, you placed {{ tasks_completed }} sliders correctly. Can you please tell us your expectation of what the Administrator would have reported is your correct sldier count?:</p>
 {{ formfields }}
 
 {{ next_button }}

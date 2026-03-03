@@ -1,0 +1,16 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h3>Correct Answers</h3>
+
+<ul>
+    <li>If 10 sliders are reported, tax = {{ correct_tax }} ECU.</li>
+    <li>{{ correct_bonus }}</li>
+    <li>{{ correct_tax_base }}</li>
+</ul>
+
+<p>Please review this carefully before continuing.</p>
+
+{{ next_button }}
+
+{% endblock %}
