@@ -86,7 +86,7 @@ class Player(BasePlayer):
         label="What determines your tax payment?",
         choices=[
             ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by the Administrator'),
-            ('reported', 'The number of completed sliders reported by the Administrator for each citizen')
+            ('reported', 'Each citizen pays tax based on the number of completed sliders reported by the Administrator')
         ],
         widget=widgets.RadioSelect,
         blank=True
