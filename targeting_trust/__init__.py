@@ -1215,7 +1215,9 @@ class RevealIncomeAndTransfers(Page):
         else:
             return dict(
                 is_admin=False,
+                effort_points=player.effort_points,
                 gross_income=player.gross_income,
+                reported_tasks=player.reported_tasks,
                 applied_tax=player.applied_tax,
                 net_income_after_tax=player.net_income_after_tax,
                 received_transfer=player.received_transfer,
