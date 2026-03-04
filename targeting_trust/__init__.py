@@ -19,9 +19,7 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     TRUST_MULTIPLIER = 3
-    ADMIN_TAX_SHARE = 0.30
     TRUST_BUDGET = cu(100)
-    TAX_RATE = 0.3
     ECU_TO_GBP = 0.01
 
     SLIDER_PAYMENT = 10          # ECU earned per slider
