@@ -1,16 +1,11 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
-<h3>Your Role as Administrator</h3>
-
-<p>
-{{ example_text }}
-</p>
+<h3>Example: How your bonus and citizen's taxes are calculated</h3>
 
 {% if player.group.trust_condition == "count" %}
 
 <p>
-<strong>Example:</strong><br>
 If a participant correctly placed <strong>10 sliders</strong> and you report <strong>10</strong>,  
 the tax would be:
 <br>

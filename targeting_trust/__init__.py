@@ -812,7 +812,6 @@ class CitizenTaxInfo(Page):
                 "The number the Administrator reports is also used to calculate the tax deducted from your income. "
             )
         return dict(trust_message=msg, 
-                    admin_tax_share=C.ADMIN_TAX_SHARE, 
                     tasks_completed=player.effort_points)
 
     #@staticmethod
