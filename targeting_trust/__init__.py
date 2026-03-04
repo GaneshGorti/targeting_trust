@@ -806,8 +806,8 @@ class CitizenTaxInfo(Page):
             )
         else:
             msg = (
-                "The Administrator was briefly shown the visual record of the number of correctly placed sliders " 
-                "and was later asked to estimate the number of correctly placed sliders. "
+                "The Administrator was shown the visual record of the number of correctly placed sliders " 
+                "for 10 seconds and was later asked to estimate the number of correctly placed sliders. "
                 "The Administrator received a bonus equal to 1 ECU for every slider they report. "
                 "Because the Administrator’s bonus depends on the number of sliders they report, "
                 "reporting a higher number results in a higher bonus. "
@@ -841,7 +841,7 @@ class CitizenExample(Page):
                 gross=100,
                 tax=30,
                 net=70,
-                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is also calculated based on this reported slider count."
+                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
             )
         else:
             example = dict(
@@ -850,7 +850,7 @@ class CitizenExample(Page):
                 gross=100,
                 tax=36,
                 net=64,
-                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is also calculated based on this reported slider count. "
+                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is calculated based on this reported slider count. "
             )
 
         return dict(example=example)
@@ -910,21 +910,19 @@ class CitizenQuizFeedback(Page):
     @staticmethod
     def vars_for_template(player: Player):
 
-        correct_tax = 3
+        correct_tax = 30
 
         if player.group.trust_condition == 'count':
             correct_bonus = (
-                "The Administrator receives 30% of total tax collected "
-                "but must report the number accurately."
+                "They receive a bonus only for accurately counting the sliders. "
             )
         else:
             correct_bonus = (
-                "The Administrator receives 30% of total tax collected. "
-                "Reporting a higher number increases their bonus."
+                "They receive a bonus based on the number of sliders they report, regardless of accuracy. "
             )
 
         correct_tax_base = (
-            "Tax is based on the number of sliders the Administrator reports."
+            "Each citizen pays tax based on the number of completed sliders reported by the Administrator. "
         )
 
         return dict(
