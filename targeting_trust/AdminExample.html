@@ -10,29 +10,35 @@
 {% if player.group.trust_condition == "count" %}
 
 <p>
-Example:
-If a participant correctly placed 10 sliders and you report 10,
-tax would be:
+<strong>Example:</strong><br>
+If a participant correctly placed <strong>10 sliders</strong> and you report <strong>10</strong>,  
+the tax would be:
 <br>
-10 × 0.3 ECU = 3 ECU.
+10 × 3 ECU = <strong>30 ECU</strong>.
 </p>
 
 <p>
-Your bonus equals 30% of the total tax collected only if you count the correctly placed sliders accurately.
+You receive a bonus of <strong>1 ECU for every slider you count correctly</strong>.  
+If you correctly report 10 sliders, your bonus would be:
+<br>
+10 × 1 ECU = <strong>10 ECU</strong>.
 </p>
 
 {% else %}
 
 <p>
-Example:
-If a participant correctly placed 10 sliders and you report 12,
-tax would be:
+<strong>Example:</strong><br>
+If a participant correctly placed <strong>10 sliders</strong> and you report <strong>12</strong>,  
+the tax would be:
 <br>
-12 × 0.3 ECU = 3.6 ECU.
+12 × 3 ECU = <strong>36 ECU</strong>.
 </p>
     
 <p>
-Your bonus equals 30% of the total tax collected.
+You receive a bonus of <strong>1 ECU for every slider you report</strong>.  
+If you report 12 sliders, your bonus would be:
+<br>
+12 × 1 ECU = <strong>12 ECU</strong>.
 </p>
 
 {% endif %}

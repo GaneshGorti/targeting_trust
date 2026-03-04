@@ -1,0 +1,47 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<h3>Reminder</h3>
+
+<p>
+You will now review the activity records of the citizens in your group.
+Each citizen's record shows a set of squares.
+<strong>Each square represents one correctly placed slider.</strong>
+</p>
+
+{% if player.group.trust_condition == "count" %}
+
+<p>
+You will be able to carefully examine each citizen’s activity record.
+Your task is to <strong>count the number of squares</strong> and report the number of completed sliders.
+</p>
+
+<p>
+You receive a bonus of <strong>1 ECU for every slider you count correctly</strong>.
+</p>
+
+{% else %}
+
+<p>
+You will see each citizen’s activity record for <strong>10 seconds</strong>.
+After the record disappears, you must <strong>estimate the number of completed sliders</strong>.
+</p>
+
+<p>
+You receive a bonus of <strong>1 ECU for every slider you report</strong>.
+Reporting a higher number results in a higher bonus.
+</p>
+
+{% endif %}
+
+<p>
+The number you report also determines how much tax will be deducted from the citizen’s income.
+</p>
+
+<p>
+Click Next to begin reviewing the activity records.
+</p>
+
+{{ next_button }}
+
+{% endblock %}

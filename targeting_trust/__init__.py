@@ -18,12 +18,15 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 5
     NUM_ROUNDS = 1
 
-    TRIANGLE_IMAGE = 'triangles_squares.png'  # place in _static/
     TRUST_MULTIPLIER = 3
     ADMIN_TAX_SHARE = 0.30
-    TRUST_BUDGET = cu(10)
+    TRUST_BUDGET = cu(100)
     TAX_RATE = 0.3
-    ECU_TO_GBP = 0.10
+    ECU_TO_GBP = 0.01
+
+    SLIDER_PAYMENT = 10          # ECU earned per slider
+    TAX_PER_SLIDER = 3           # ECU tax per slider
+    ADMIN_BONUS_PER_SLIDER = 1   # ECU admin bonus per reported slider  
 
 
 class Subsession(BaseSubsession):
@@ -67,7 +70,7 @@ class Player(BasePlayer):
 
     # Citizen comprehension fields  
     citizen_quiz_tax = models.IntegerField(
-        label="If 10 sliders are reported, how much tax is collected?",
+        label="If 10 sliders are reported, generating 100 ECU as gross income, how much tax is collected?",
         blank=True
     )
 
@@ -75,8 +78,8 @@ class Player(BasePlayer):
         label="How is the Administrator’s bonus determined?",
         choices=[
             ('accurate', 'They receive a bonus only for accurately counting the sliders'),
-            ('percentage', 'They receive a bonus based on the total tax collected'),
-            ('fixed', 'They receive a fixed payment regardless of tax')
+            ('percentage', 'They receive a bonus based on the number of sliders they report, regardless of accuracy'),
+            ('fixed', 'They receive a fixed payment regardless of the number of sliders you placed or they report')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -99,8 +102,8 @@ class Player(BasePlayer):
     admin_quiz_bonus = models.StringField(
         label="How is your bonus determined?",
         choices=[
-            ('accuracy', 'I receive a bonus for counting accurately'),
-            ('percentage', 'I receive 30% of total tax collected'),
+            ('accuracy', 'I receive 1 ECU for every slider I count accurately'),
+            ('percentage', 'I receive 1 ECU for every slider I report'),
             ('fixed', 'I receive a fixed amount regardless of tax')
         ],
         widget=widgets.RadioSelect,
@@ -111,7 +114,7 @@ class Player(BasePlayer):
         label="What determines each citizen’s tax payment?",
         choices=[
             ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by me'),
-            ('reported', 'The number of completed sliders I report for each citizen')
+            ('reported', 'Each citizen pays tax based on the number of completed sliders reported by me')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -398,7 +401,7 @@ def live_effort(player: Player, data):
     if data.get('type') == 'click':
         player.effort_points += 1
 
-    player.gross_income = cu(player.effort_points)
+    player.gross_income = cu(player.effort_points * C.SLIDER_PAYMENT)
 
     return {player.id_in_group: dict(
         effort=player.effort_points,
@@ -508,6 +511,22 @@ class CitizenWorkTaskInstructions(Page):
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
+    
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        if player.group.trust_condition == 'count':
+            admin_rule = (
+                "The Administrator assigned to your group has been instructed "
+                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for slider counted correctly."
+            )
+        else:
+            admin_rule = (
+                "The Administrator assigned to your group has been instructed "
+                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus."
+            )
+
+        return dict(admin_rule=admin_rule)
 
 
 class CitizenWorkTask(Page):
@@ -544,12 +563,12 @@ class AdminExample(Page):
         if g.trust_condition == 'count':
             text = (
                 "You will review each participant’s completed sliders and count them accurately. "
-                "You receive a bonus equal to 30% of the tax collected for performing this task correctly."
+                "You receive a bonus equal to 1 ECU for every slider you count correctly."
             )
         else:
             text = (
                 "You will see each participant’s completed sliders for 10 seconds and estimate "
-                "the number completed. You receive a bonus equal to 30% of the total tax collected."
+                "the number completed. You receive a bonus of 1 ECU for every slider you report."
             )
 
         return dict(example_text=text)
@@ -608,23 +627,27 @@ class AdminQuizFeedback(Page):
 
         if player.group.trust_condition == 'count':
             admin_correct_bonus = (
-                "You receives 30% of total tax collected "
-                "but must report the number accurately."
+                "I receive 1 ECU for every slider I count accurately."
             )
         else:
             admin_correct_bonus = (
-                "You receives 30% of total tax collected. "
-                "Reporting a higher number increases your bonus."
+                "I receive 1 ECU for every slider I report."
             )
 
         admin_correct_tax_base = (
-            "Tax is based on the number of sliders I report."
+            "Each citizen pays tax based on the number of completed sliders reported by me."
         )
 
         return dict(
             correct_bonus=admin_correct_bonus,
-            correct_tax_base=admin_correct_tax_base
+            correct_tax_base=admin_correct_tax_base, 
         )
+    
+
+class AdminInstructionsRefresh(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.is_admin 
 
 
 class AdminSquares(Page):
@@ -662,7 +685,7 @@ class AdminSquares(Page):
         return dict(
             rows=rows,
             instruction_text=instruction_text,
-            admin_tax_share_display=f"{C.ADMIN_TAX_SHARE:.2f}"
+            admin_bonus_display = C.ADMIN_BONUS_PER_SLIDER
         )
 
     @staticmethod
@@ -687,9 +710,9 @@ class AdminSquares(Page):
             # Storing reported tasks
             c.reported_tasks = r 
             # Storing true tax (30%)
-            c.true_tax = cu(C.TAX_RATE * c.effort_points)
+            c.true_tax = cu(C.TAX_PER_SLIDER * c.effort_points)
             # Admin estimated tax 
-            c.applied_tax = cu(C.TAX_RATE * r)
+            c.applied_tax = cu(C.TAX_PER_SLIDER * r)
             # Tax distortion
             c.tax_distortion = c.applied_tax - c.true_tax
             # Net income after admin tax
@@ -702,7 +725,8 @@ class AdminSquares(Page):
         
         g.total_true_tax = sum(p.true_tax for p in citizens)
 
-        player.admin_bonus = cu(C.ADMIN_TAX_SHARE) * g.total_applied_tax
+        total_reported = sum(r or 0 for r in reports)
+        player.admin_bonus = cu(total_reported * C.ADMIN_BONUS_PER_SLIDER)
 
     @staticmethod
     def error_message(player: Player, values):
@@ -778,15 +802,16 @@ class CitizenTaxInfo(Page):
             msg = (
                 "The Administrator was shown a visual record of the number of correctly placed sliders "
                 "and was later asked to count the number of correctly placed sliders. "
-                "The Administrator received a bonus equal to 30% of the total tax collected to report the slider counts accurately."
+                "The Administrator receives a bonus of 1 ECU for every slider counted correctly."
             )
         else:
             msg = (
                 "The Administrator was briefly shown the visual record of the number of correctly placed sliders " 
                 "and was later asked to estimate the number of correctly placed sliders. "
-                "The Administrator received a bonus equal to 30% of the total tax collected."
-                "Because tax is calculated based on the number of sliders the Administrator reports, " 
-                "reporting a higher number increases the tax collected and therefore Administrator’s may or may not report the correct number of sliders."
+                "The Administrator received a bonus equal to 1 ECU for every slider they report. "
+                "Because the Administrator’s bonus depends on the number of sliders they report, "
+                "reporting a higher number results in a higher bonus. "
+                "The number the Administrator reports is also used to calculate the tax deducted from your income. "
             )
         return dict(trust_message=msg, 
                     admin_tax_share=C.ADMIN_TAX_SHARE, 
@@ -813,19 +838,19 @@ class CitizenExample(Page):
             example = dict(
                 completed=10,
                 reported=10,
-                gross=10,
-                tax=3,
-                net=7,
-                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received a bonus for it."
+                gross=100,
+                tax=30,
+                net=70,
+                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is also calculated based on this reported slider count."
             )
         else:
             example = dict(
                 completed=10,
                 reported=12,
-                gross=10,
-                tax=3.6,
-                net=6.4,
-                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received a bonus equal to a percentage of total tax collected. "
+                gross=100,
+                tax=36,
+                net=64,
+                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is also calculated based on this reported slider count. "
             )
 
         return dict(example=example)
@@ -846,7 +871,7 @@ class CitizenComprehension(Page):
     @staticmethod
     def error_message(player, values):
 
-        correct_tax = 3
+        correct_tax = 30
         correct_tax_base = 'reported'
 
         if player.group.trust_condition == 'count':
@@ -1285,6 +1310,7 @@ page_sequence = [
     AdminExample,
     AdminComprehension,
     AdminQuizFeedback,
+    AdminInstructionsRefresh,
     AdminSquares,
     WaitForTax,     
 
