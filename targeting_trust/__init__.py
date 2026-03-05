@@ -289,6 +289,21 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
+    trust_cit = models.IntegerField(
+        label="How much do you trust the other citizens in your group? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
+        choices=[
+        (1, "1 - Not at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - A great deal"),
+        (8, "Prefer not to say / Do not know"),
+        ],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
     trust_gov = models.IntegerField(
         label="How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
         choices=[
@@ -1255,6 +1270,7 @@ class PostSurveyPart1(Page):
         'trust_admin_public_funds',
         'trust_administration_overall',
         'perceived_fairness',
+        'trust_cit',
         'trust_gov',
         'fmc',
         'resp_targ',
