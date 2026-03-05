@@ -1021,7 +1021,7 @@ class Targeting(Page):
             header = "Transfer application"
             body = (
                 "The taxes collected by the administrator will be distributed as transfers through an application process. "
-                "Citizens may apply to receive a transfer. "
+                "All citizens may apply to receive to receive this amount. "
                 "Collected tax revenue will be redistributed equally among those who apply in your group. "
                 "To receive a transfer, you must complete a short administrative task."
             )
