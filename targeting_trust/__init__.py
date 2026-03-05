@@ -548,7 +548,7 @@ class CitizenWorkTaskInstructions(Page):
         if player.group.trust_condition == 'count':
             admin_rule = (
                 "The Administrator assigned to your group has been instructed "
-                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for slider counted correctly."
+                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly."
             )
         else:
             admin_rule = (
