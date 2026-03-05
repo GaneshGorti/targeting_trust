@@ -275,7 +275,7 @@ class Player(BasePlayer):
         blank=False
     )
     perceived_fairness = models.IntegerField(
-        label="A little while ago, you were paid a part of the taxes collected in your group. Thinking about it, how fair was the process? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
+        label="A little while ago, you were paid a part of the taxes collected by your group's Administrator as transfers. Thinking about it, how fair was the process? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Very unfair"),
         (2, "2"),
@@ -1020,16 +1020,16 @@ class Targeting(Page):
         if is_apply:
             header = "Transfer application"
             body = (
-                "The taxes collected by the administrator will be distributed through an application process. "
+                "The taxes collected by the administrator will be distributed as transfers through an application process. "
                 "Citizens may apply to receive a transfer. "
-                "Collected tax revenue will be redistributed equally among those who apply. "
+                "Collected tax revenue will be redistributed equally among those who apply in your group. "
                 "To receive a transfer, you must complete a short administrative task."
             )
         else:
             header = "Transfer allocation"
             body = (
-                "The taxes collected by the administrator will be distributed automatically. "
-                "All citizens are automatically enrolled to receive a transfer. "
+                "The taxes collected by the administrator will be distributed as transfers automatically. "
+                "All citizens are automatically enrolled to receive this amount. "
                 "Collected tax revenue will be redistributed equally among all citizens in your group. "
                 "No application is required."
             )
