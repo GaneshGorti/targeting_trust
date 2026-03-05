@@ -202,12 +202,16 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
-    income = models.StringField(
+    income = models.IntegerField(
         label="What is your household income level?<span style='color:red;'>*</span>",
         choices=[
-            'Less than £20,000', '£20,000 to £34,999', '£35,000 to £49,999',
-            '£50,000 to £74,999', '£75,000 to £99,999', 'Over £100,000',
-            'Prefer not to say'
+        (1, "Less than £20,000"),
+        (2, "£20,000 to £34,999"),
+        (3, "£35,000 to £49,999"),
+        (4, "£50,000 to £74,999"),
+        (5, "£75,000 to £99,999"),
+        (6, "Over £100,000"),
+        (7, "Prefer not to say"),
         ],
         widget=widgets.RadioSelect,
         blank=False
@@ -311,7 +315,20 @@ class Player(BasePlayer):
         blank=False
     )
     resp_targ = models.IntegerField(
-        label="How much do you agree or disagree with the following statement: The transfer system responded to my action.<span style='color:red;'>*</span>",
+        label="How much do you agree or disagree with the following statement: The transfer process was set up to respond to citizens' actions.<span style='color:red;'>*</span>",
+        choices=[
+        (1, "Strongly disagree"),
+        (2, "Somewhat disagree"),
+        (3, "Neither agree nor disagree"),
+        (4, "Somewhat agree"),
+        (5, "Strongly agree"),
+        (6, "Prefer not to say"),
+        ],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
+    agency_targ = models.IntegerField(
+        label="How much do you agree or disagree with the following statement: I felt like an active participant in the transfer process.<span style='color:red;'>*</span>",
         choices=[
         (1, "Strongly disagree"),
         (2, "Somewhat disagree"),
@@ -1241,6 +1258,7 @@ class PostSurveyPart1(Page):
         'trust_gov',
         'fmc',
         'resp_targ',
+        'agency_targ',
     ]
 
     @staticmethod
