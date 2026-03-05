@@ -194,7 +194,7 @@ class Player(BasePlayer):
     tax_paid = models.CurrencyField(initial=0)
 
     # post-game survey
-    age = models.IntegerField(label="What is your age?<span style='color:red;'>*</span>", min=18, max=99, blank=True)
+    age = models.IntegerField(label="What is your age in years?<span style='color:red;'>*</span>", min=18, max=99, blank=True)
 
     gender = models.StringField(
         label="What is your gender?<span style='color:red;'>*</span>",
