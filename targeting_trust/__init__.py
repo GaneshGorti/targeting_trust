@@ -196,7 +196,7 @@ class Player(BasePlayer):
     # post-game survey
     age = models.IntegerField(label="What is your age in years?<span style='color:red;'>*</span>", min=0, max=99, blank=True)
 
-    models.IntegerField(
+    gender = models.IntegerField(
         label="What is your gender?<span style='color:red;'>*</span>",
         choices=[
         (1, "Male"),
@@ -1275,6 +1275,7 @@ class RevealIncomeAndTransfers(Page):
                 final_income_gbp=player.final_income_gbp,
             )
 
+
 class PostSurveyPart1(Page):
     form_model = 'player'
 
@@ -1303,6 +1304,7 @@ class PostSurveyPart1(Page):
             if values.get(field) in [None, '', []]:
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
 
+
 class PostSurveyPart2(Page):
     form_model = 'player'
 
@@ -1323,6 +1325,7 @@ class PostSurveyPart2(Page):
         for field in values:
             if values.get(field) in [None, '', []]:
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
+
 
 class PostSurveyAdmin(Page):
     form_model = 'player'
