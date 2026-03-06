@@ -1266,7 +1266,9 @@ class PostSurveyPart1(Page):
     def is_displayed(player):
         return not player.is_admin
 
-    form_fields = [
+    def get_form_fields(self):
+        import random
+        form_fields = [
         'trust_admin_public_funds',
         'trust_administration_overall',
         'perceived_fairness',
@@ -1275,7 +1277,9 @@ class PostSurveyPart1(Page):
         'fmc',
         'resp_targ',
         'agency_targ',
-    ]
+        ]
+        random.shuffle(form_fields)
+        return form_fields
 
     @staticmethod
     def error_message(player, values):
