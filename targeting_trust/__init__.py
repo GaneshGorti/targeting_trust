@@ -341,7 +341,7 @@ class Player(BasePlayer):
         blank=False
     )
     resp_targ = models.IntegerField(
-        label="To what extent was the transfer process designed to respond to citizens' actions? (1 = Not designed to respond to citizens at all, 7 = Completetly designed to respond to citizens)<span style='color:red;'>*</span>",
+        label="To what extent was the transfer process designed to respond to citizens' actions? (1 = Not designed to respond to citizens at all, 7 = Completely designed to respond to citizens)<span style='color:red;'>*</span>",
         choices=[
         (1, "1 - Not designed to respond at all"),
         (2, "2"),
