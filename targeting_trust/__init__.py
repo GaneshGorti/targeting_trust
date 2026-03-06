@@ -330,27 +330,31 @@ class Player(BasePlayer):
         blank=False
     )
     resp_targ = models.IntegerField(
-        label="How much do you agree or disagree with the following statement: The transfer process was set up to respond to citizens' actions.<span style='color:red;'>*</span>",
+        label="To what extent was the transfer process designed to respond to citizens' actions? (1 = Not designed to respond to citizens at all, 7 = Completetly designed to respond to citizens)<span style='color:red;'>*</span>",
         choices=[
-        (1, "Strongly disagree"),
-        (2, "Somewhat disagree"),
-        (3, "Neither agree nor disagree"),
-        (4, "Somewhat agree"),
-        (5, "Strongly agree"),
-        (6, "Prefer not to say"),
+        (1, "1 - Not designed to respond at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - Completely desgined to respond"),
+        (8, "Prefer not to say / Do not know"),
         ],
         widget=widgets.RadioSelect,
         blank=False
     )
     agency_targ = models.IntegerField(
-        label="How much do you agree or disagree with the following statement: I felt like an active participant in the transfer process.<span style='color:red;'>*</span>",
+        label="To what extent did you feel you had control over whether you received the transfer? (1 = Not control at all, 7 = Complete control)<span style='color:red;'>*</span>",
         choices=[
-        (1, "Strongly disagree"),
-        (2, "Somewhat disagree"),
-        (3, "Neither agree nor disagree"),
-        (4, "Somewhat agree"),
-        (5, "Strongly agree"),
-        (6, "Prefer not to say"),
+        (1, "1 - Not control at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - Complete control"),
+        (8, "Prefer not to say / Do not know"),
         ],
         widget=widgets.RadioSelect,
         blank=False
