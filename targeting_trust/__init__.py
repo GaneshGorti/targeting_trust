@@ -255,7 +255,6 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
-
     trust_admin_public_funds = models.IntegerField(
         label="How much do you trust the Administrator you interacted with in this survey to manage public funds? (1 = Not at all, 7 = A great deal)<span style='color:red;'>*</span>",
         choices=[
@@ -1285,18 +1284,24 @@ class PostSurveyPart1(Page):
 
     def get_form_fields(self):
         import random
-        form_fields = [
-        'trust_admin_public_funds',
-        'trust_administration_overall',
-        'perceived_fairness',
-        'trust_cit',
-        'trust_gov',
-        'fmc',
-        'resp_targ',
-        'agency_targ',
+        # Randomise outcome measures
+        randomised_fields = [
+            'trust_admin_public_funds',
+            'trust_administration_overall',
+            'trust_cit',
         ]
-        random.shuffle(form_fields)
-        return form_fields
+        random.shuffle(randomised_fields)
+        
+        # Fixed order fields
+        fixed_fields = [
+            'perceived_fairness',
+            'trust_gov',  
+            'fmc',                 
+            'resp_targ',           
+            'agency_targ',        
+        ]
+        
+        return randomised_fields + fixed_fields
 
     @staticmethod
     def error_message(player, values):
