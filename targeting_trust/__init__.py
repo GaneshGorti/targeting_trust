@@ -196,9 +196,14 @@ class Player(BasePlayer):
     # post-game survey
     age = models.IntegerField(label="What is your age in years?<span style='color:red;'>*</span>", min=0, max=99, blank=True)
 
-    gender = models.StringField(
+    models.IntegerField(
         label="What is your gender?<span style='color:red;'>*</span>",
-        choices=['Male', 'Female', 'Non-binary', 'Prefer not to say'],
+        choices=[
+        (1, "Male"),
+        (2, "Female"),
+        (3, "Non-binary"),
+        (4, "Prefer not to say"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
@@ -216,9 +221,16 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
-    education = models.StringField(
+    education = models.IntegerField(
         label="What is your highest level of education?<span style='color:red;'>*</span>",
-        choices=['No degree', 'High school', 'Bachelor', 'Master', 'Doctorate', 'Prefer not to say'],
+        choices=[
+        (1, "No degree"),
+        (2, "High school"),
+        (3, "Bachelor"),
+        (4, "Master"),
+        (5, "Doctorate"),
+        (6, "Prefer not to say"),
+        ],
         widget=widgets.RadioSelect,
         blank=False
     )
