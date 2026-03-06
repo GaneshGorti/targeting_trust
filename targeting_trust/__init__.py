@@ -350,7 +350,7 @@ class Player(BasePlayer):
         (4, "4"),
         (5, "5"),
         (6, "6"),
-        (7, "7 - Completely desgined to respond"),
+        (7, "7 - Completely designed to respond"),
         (8, "Prefer not to say / Do not know"),
         ],
         widget=widgets.RadioSelect,
@@ -359,7 +359,7 @@ class Player(BasePlayer):
     agency_targ = models.IntegerField(
         label="To what extent did you feel you had control over whether you received the transfer? (1 = Not control at all, 7 = Complete control)<span style='color:red;'>*</span>",
         choices=[
-        (1, "1 - Not control at all"),
+        (1, "1 - No control at all"),
         (2, "2"),
         (3, "3"),
         (4, "4"),
