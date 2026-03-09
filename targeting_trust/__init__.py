@@ -531,10 +531,6 @@ class RoleInfo(Page):
             citizens=citizens,
             debug_info=debug_treatment(player)
         )
-    
-    def before_next_page(self):
-        # PROLIFIC PID (already stored automatically)
-        self.prolific_id = self.participant.label
 
 
 #Removing this again to make the income generation interactive
