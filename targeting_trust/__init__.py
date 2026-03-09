@@ -473,6 +473,11 @@ class Consent(Page):
                 "please close this survey and return your submission on Prolific "
                 "by selecting the 'Stop without completing' button."
             )
+    
+    def before_next_page(self):
+        # PROLIFIC PID (already stored automatically)
+        self.prolific_id = self.participant.label
+pass
 
 """         
     class Consent(Page):
@@ -1004,6 +1009,7 @@ class RevealTax(Page):
             trust_condition=g.trust_condition,
         )
 
+
 class AC(Page):
     form_model = 'player'
     form_fields = [
@@ -1239,7 +1245,6 @@ class WaitForReturns(WaitPage):
         admin.final_income = admin.admin_bonus + admin.trust_game_net
 
         admin.final_income_gbp = admin.final_income * C.ECU_TO_GBP
-
 
 
 class RevealIncomeAndTransfers(Page):

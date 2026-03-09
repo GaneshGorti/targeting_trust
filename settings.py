@@ -35,11 +35,17 @@ POINTS_CUSTOM_NAME = "ECU"
 
 ROOMS = [
     dict(
-        name='econ101',
-        display_name='Econ 101 class',
-        participant_label_file='_rooms/econ101.txt',
+        name='tt_gg',
+        display_name='Public attitudes and policies',
+        # participant_label_file='_rooms/your_study.txt',
+        # use_secure_urls=True,
     ),
-    dict(name='live_demo', display_name='Room for live demo (no participant labels)'),
+    dict(
+        name='tt_gg',
+        display_name='Public attitudes and policies',
+        # participant_label_file='_rooms/your_study.txt',
+        # use_secure_urls=True,
+    ),
 ]
 
 ADMIN_USERNAME = 'admin'
