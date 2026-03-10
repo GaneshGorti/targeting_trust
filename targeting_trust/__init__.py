@@ -476,7 +476,7 @@ class Consent(Page):
         
     @staticmethod
     def before_next_page(player, timeout_happened):
-        participant.prolific_id = player.participant.label
+        player.participant.prolific_id = player.participant.label
 
 """         
     class Consent(Page):
