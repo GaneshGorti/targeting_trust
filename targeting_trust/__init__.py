@@ -473,6 +473,10 @@ class Consent(Page):
                 "please enter 'C1GR1CER' as the completion code on Prolific "
                 "to return your submission without penalty."
             )
+        
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.prolific_id = player.participant.label
 
 """         
     class Consent(Page):
