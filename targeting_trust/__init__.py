@@ -470,7 +470,7 @@ class Consent(Page):
         if values.get('consent') != 'agree':
             return (
                 "As you do not wish to participate in this study, "
-                "please enter 'CK7MKAU2' as the completion code on Prolific "
+                "please enter 'C1GR1CER' as the completion code on Prolific "
                 "to return your submission without penalty."
             )
 
