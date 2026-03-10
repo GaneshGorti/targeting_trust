@@ -520,6 +520,13 @@ class Consent(Page):
                 )
  """
 
+
+class Lobby(WaitPage):
+    wait_for_all_groups = True
+    title_text = "Waiting for other participants"
+    body_text = "Please wait while other participants join the study. This should take no more than a few minutes."
+
+
 class RoleInfo(Page):
     
     @staticmethod
@@ -1364,6 +1371,7 @@ class ThankYou(Page):
 
 page_sequence = [
     Consent,
+    Lobby,
     RoleInfo,
 
     CitizenWorkTaskInstructions,
