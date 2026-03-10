@@ -16,7 +16,7 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=0.01, participation_fee=0.00, doc=""
 )
 
 PARTICIPANT_FIELDS = ['prolific_id']
@@ -31,6 +31,7 @@ REAL_WORLD_CURRENCY_CODE = 'GBP'
 USE_POINTS = True
 POINTS_DECIMAL_PLACES = 2
 POINTS_CUSTOM_NAME = "ECU"
+REAL_WORLD_CURRENCY_DECIMAL_PLACES = 2
 
 
 ROOMS = [
