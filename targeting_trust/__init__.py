@@ -549,6 +549,7 @@ class LobbyWait(WaitPage):
                 if not p.is_admin:
                     p.citizen_code = _random_code()
 
+
 class RoleInfo(Page):
     
     @staticmethod
@@ -1387,6 +1388,7 @@ class PostSurveyAdmin(Page):
             if values.get(field) in [None, '', []]:
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
     
+
 class ThankYou(Page):
     pass
 
@@ -1394,7 +1396,7 @@ class ThankYou(Page):
 page_sequence = [
     Consent,
     NoConsent,
-    Lobby,
+    LobbyWait,
     RoleInfo,
 
     CitizenWorkTaskInstructions,
