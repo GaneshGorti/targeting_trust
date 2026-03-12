@@ -514,7 +514,8 @@ class NoConsent(Page):
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
-    timeout_seconds = 300
+    timeout_seconds = 60
+    timeout_submission = {}
 
     @staticmethod
     def is_displayed(player):
