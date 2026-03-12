@@ -47,4 +47,15 @@
  {{ formfields }}
 
 {{ next_button }}
+
+<script>
+    document.querySelectorAll('input[name="consent"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            if (this.value === 'decline') {
+                liveSend({'consent': 'decline'});
+            }
+        });
+    });
+    </script>
+
 {% endblock %}

@@ -447,11 +447,16 @@ def debug_treatment(player: Player):
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
-        
+
+    @staticmethod
+    def live_method(player, data):
+        if data.get('consent') == 'decline':
+            player.participant.finished = True
+        return {}
+
     @staticmethod
     def before_next_page(player, timeout_happened):
         player.participant.prolific_id = player.participant.label
-
         if player.consent == 'decline':
             player.participant.finished = True
 
