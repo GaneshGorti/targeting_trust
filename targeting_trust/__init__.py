@@ -377,24 +377,7 @@ class Player(BasePlayer):
 
 
 def creating_session(subsession: Subsession):
-    groups = subsession.get_groups()
-    conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
-    random.shuffle(conds)
-
-    for i, g in enumerate(groups):
-        t, s = conds[i % len(conds)]
-        g.trust_condition = t
-        g.targeting_condition = s
-
-        players = g.get_players()
-        admin = random.choice(players)
-
-        for p in players:
-            p.is_admin = (p == admin)
-            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
-            if not p.is_admin:
-                p.citizen_code = _random_code()
-
+    pass
 
 def _random_code(length=10):
     chars = string.ascii_uppercase + string.digits
@@ -464,19 +447,15 @@ def debug_treatment(player: Player):
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
-
-    @staticmethod
-    def error_message(player, values):
-        if values.get('consent') != 'agree':
-            return (
-                "As you do not wish to participate in this study, "
-                "please enter 'C1GR1CER' as the completion code on Prolific "
-                "to return your submission without penalty."
-            )
         
     @staticmethod
     def before_next_page(player, timeout_happened):
         player.participant.prolific_id = player.participant.label
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if player.consent == 'decline':
+            player.participant.finished = True
 
 """         
     class Consent(Page):
@@ -521,11 +500,54 @@ class Consent(Page):
  """
 
 
-class Lobby(WaitPage):
-    wait_for_all_groups = True
-    title_text = "Waiting for other participants"
-    body_text = "Please wait while other participants join the study. This should take no more than a few minutes."
+class NoConsent(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.consent == 'decline'
+    
 
+class LobbyWait(WaitPage):
+    wait_for_all_groups = True
+    timeout_seconds = 600
+
+    @staticmethod
+    def after_all_players_arrive(subsession):
+        
+        # Get only consenting players
+        active = [
+            p for p in subsession.get_players()
+            if p.consent == 'agree'
+        ]
+
+        # Shuffle for random group assignment
+        random.shuffle(active)
+
+        # Form clean groups of 5
+        group_matrix = [
+            active[i:i+5]
+            for i in range(0, len(active) - len(active) % 5, 5)
+        ]
+
+        # Set groups in oTree
+        subsession.set_group_matrix(group_matrix)
+
+        # Your existing condition randomization — completely unchanged
+        conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
+        random.shuffle(conds)
+
+        for i, g in enumerate(subsession.get_groups()):
+            t, s = conds[i % len(conds)]
+            g.trust_condition = t
+            g.targeting_condition = s
+
+            players = g.get_players()
+            admin = random.choice(players)
+
+            for p in players:
+                p.is_admin = (p == admin)
+                p.role_str = 'Administrator' if p.is_admin else 'Citizen'
+                if not p.is_admin:
+                    p.citizen_code = _random_code()
 
 class RoleInfo(Page):
     
@@ -1371,6 +1393,7 @@ class ThankYou(Page):
 
 page_sequence = [
     Consent,
+    NoConsent,
     Lobby,
     RoleInfo,
 
