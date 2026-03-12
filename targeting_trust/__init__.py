@@ -452,8 +452,6 @@ class Consent(Page):
     def before_next_page(player, timeout_happened):
         player.participant.prolific_id = player.participant.label
 
-    @staticmethod
-    def before_next_page(player, timeout_happened):
         if player.consent == 'decline':
             player.participant.finished = True
 
