@@ -520,7 +520,7 @@ class LobbyWait(WaitPage):
         return not player.participant.finished # does not display for those who declined consent
     
     @staticmethod
-    def after_all_players_arrive(subsession):
+    def after_all_players_arrive(group):
 
         # assign treatments
         conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
@@ -528,10 +528,11 @@ class LobbyWait(WaitPage):
 
         for i, g in enumerate(subsession.get_groups()):
             t, s = conds[i % len(conds)]
-            g.trust_condition = t
-            g.targeting_condition = s
 
-            players = g.get_players()
+            group.trust_condition = t
+            group.targeting_condition = s
+
+            players = group.get_players()
             admin = random.choice(players)
 
             for p in players:
