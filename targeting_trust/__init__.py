@@ -512,8 +512,8 @@ class NoConsent(Page):
     
 
 class LobbyWait(WaitPage):
-    wait_for_all_groups = True
-    timeout_seconds = 600
+    wait_for_all_groups = False
+    timeout_seconds = 300
 
     @staticmethod
     def after_all_players_arrive(subsession):
@@ -524,13 +524,20 @@ class LobbyWait(WaitPage):
             if p.participant.finished == False
         ]
 
+        if len(active) < C.PLAYERS_PER_GROUP:
+            return
+
         # Shuffle for random group assignment
         random.shuffle(active)
 
         # Form clean groups of 5
         group_matrix = [
-            active[i:i+5]
-            for i in range(0, len(active) - len(active) // 5 * 5, 5)
+            active[i:i + C.PLAYERS_PER_GROUP]
+            for i in range(
+                0,
+                len(active) // C.PLAYERS_PER_GROUP * C.PLAYERS_PER_GROUP,
+                C.PLAYERS_PER_GROUP
+            )
         ]
 
         # Set groups in oTree
@@ -553,6 +560,18 @@ class LobbyWait(WaitPage):
                 p.role_str = 'Administrator' if p.is_admin else 'Citizen'
                 if not p.is_admin:
                     p.citizen_code = _random_code()
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+
+        if timeout_happened:
+            player.participant.vars['lobby_timeout'] = True
+
+
+class LobbyTimeout(Page):
+
+    @staticmethod
+    def is_displayed(player):
+        return player.participant.vars.get('lobby_timeout', False)
 
 
 class RoleInfo(Page):
@@ -1407,6 +1426,7 @@ page_sequence = [
     Consent,
     NoConsent,
     LobbyWait,
+    LobbyTimeout,
     RoleInfo,
 
     CitizenWorkTaskInstructions,
