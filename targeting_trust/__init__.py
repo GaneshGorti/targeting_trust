@@ -501,15 +501,10 @@ class Consent(Page):
 
 
 class NoConsent(Page):
-    timeout_seconds = 10
     
     @staticmethod
     def is_displayed(player):
         return player.consent == 'decline'
-    
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        pass
     
 
 class LobbyWait(WaitPage):
