@@ -526,20 +526,17 @@ class LobbyWait(WaitPage):
         conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
         random.shuffle(conds)
 
-        for i, g in enumerate(subsession.get_groups()):
-            t, s = conds[i % len(conds)]
+        group.trust_condition = t
+        group.targeting_condition = s
 
-            group.trust_condition = t
-            group.targeting_condition = s
+        players = group.get_players()
+        admin = random.choice(players)
 
-            players = group.get_players()
-            admin = random.choice(players)
-
-            for p in players:
-                p.is_admin = (p == admin)
-                p.role_str = 'Administrator' if p.is_admin else 'Citizen'
-                if not p.is_admin:
-                    p.citizen_code = _random_code()
+        for p in players:
+            p.is_admin = (p == admin)
+            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
+            if not p.is_admin:
+                p.citizen_code = _random_code()
 
     @staticmethod
     def before_next_page(player, timeout_happened):
