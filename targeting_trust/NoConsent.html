@@ -6,13 +6,26 @@
 <p>As you have chosen not to participate, please return to Prolific 
 and enter the following completion code:</p>
 
-<h3><strong>C1GR1CER</strong></h3>
+<strong>C1GR1CER</strong>
 
-<p>You will be redirected automatically in 10 seconds, or click below:</p>
+<p>You will be redirected automatically in <span id="countdown">10</span> seconds, or click below:</p>
 
 <a href="https://app.prolific.com/submissions/complete?cc=C1GR1CER" 
    class="btn btn-primary">
     Click here to return to Prolific
 </a>
+
+<script>
+    var seconds = 10;
+    var countdown = document.getElementById('countdown');
+    var interval = setInterval(function() {
+        seconds--;
+        countdown.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            window.location.href = "https://app.prolific.com/submissions/complete?cc=C1GR1CER";
+        }
+    }, 1000);
+</script>
 
 {% endblock %}
