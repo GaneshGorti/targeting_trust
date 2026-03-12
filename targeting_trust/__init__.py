@@ -523,8 +523,14 @@ class LobbyWait(WaitPage):
     def after_all_players_arrive(group):
 
         # assign treatments
-        conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
-        t, s = random.shuffle(conds)
+        conds = [
+            ('count','auto'),
+            ('count','apply'),
+            ('estimate','auto'),
+            ('estimate','apply')
+        ]
+
+        t, s = random.choice(conds)
 
         group.trust_condition = t
         group.targeting_condition = s
@@ -532,13 +538,11 @@ class LobbyWait(WaitPage):
         players = group.get_players()
         admin = random.choice(players)
 
-        conds = [
-            ('count','auto'),
-            ('count','apply'),
-            ('estimate','auto'),
-            ('estimate','apply')
-        ]
-        t, s = random.choice(conds)
+        for p in players:
+            p.is_admin = (p == admin)
+            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
+            if not p.is_admin:
+                p.citizen_code = _random_code()
 
     @staticmethod
     def before_next_page(player, timeout_happened):
