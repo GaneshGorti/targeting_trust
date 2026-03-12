@@ -512,36 +512,15 @@ class NoConsent(Page):
     
 
 class LobbyWait(WaitPage):
-    wait_for_all_groups = False
+    group_by_arrival_time = True
     timeout_seconds = 300
 
     @staticmethod
+    def is_displayed(player):
+        return not player.participant.finished # does not display for those who declined consent
+    
+    @staticmethod
     def after_all_players_arrive(subsession):
-        
-        # Get only consenting players
-        active = [
-            p for p in subsession.get_players()
-            if p.participant.finished == False
-        ]
-
-        if len(active) < C.PLAYERS_PER_GROUP:
-            return
-
-        # Shuffle for random group assignment
-        random.shuffle(active)
-
-        # Form clean groups of 5
-        group_matrix = [
-            active[i:i + C.PLAYERS_PER_GROUP]
-            for i in range(
-                0,
-                len(active) // C.PLAYERS_PER_GROUP * C.PLAYERS_PER_GROUP,
-                C.PLAYERS_PER_GROUP
-            )
-        ]
-
-        # Set groups in oTree
-        subsession.set_group_matrix(group_matrix)
 
         # assign treatments
         conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
@@ -560,6 +539,7 @@ class LobbyWait(WaitPage):
                 p.role_str = 'Administrator' if p.is_admin else 'Citizen'
                 if not p.is_admin:
                     p.citizen_code = _random_code()
+
     @staticmethod
     def before_next_page(player, timeout_happened):
 
