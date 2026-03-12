@@ -532,24 +532,26 @@ class LobbyWait(WaitPage):
         players = group.get_players()
         admin = random.choice(players)
 
-        for p in players:
-            p.is_admin = (p == admin)
-            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
-            if not p.is_admin:
-                p.citizen_code = _random_code()
+        conds = [
+            ('count','auto'),
+            ('count','apply'),
+            ('estimate','auto'),
+            ('estimate','apply')
+        ]
+        t, s = random.choice(conds)
 
     @staticmethod
     def before_next_page(player, timeout_happened):
 
         if timeout_happened:
-            player.participant.vars['lobby_timeout'] = True
+            player.participant.lobby_timeout = True
 
 
 class LobbyTimeout(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.participant.vars.get('lobby_timeout', False)
+        return player.participant.lobby_timeout
 
 
 class RoleInfo(Page):
