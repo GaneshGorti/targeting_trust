@@ -623,7 +623,7 @@ class CitizenWorkTask(Page):
 
 
 class WaitForWork(WaitPage):
-    pass
+    timeout_seconds = 240
 
 
 class AdminInstructions(Page):
@@ -867,7 +867,7 @@ class AdminSquares(Page):
 
 
 class WaitForTax(WaitPage):
-    pass
+    timeout_seconds = 180
 
 
 class CitizenTaxInfo(Page):
@@ -1178,6 +1178,7 @@ class TransferOutcome(Page):
 
 
 class CitizenTrustGame(Page):
+    timeout_seconds = 180
     form_model = 'player'
     form_fields = ['send_amount']
 
@@ -1196,6 +1197,7 @@ class CitizenTrustGame(Page):
 
 
 class WaitForSends(WaitPage):
+    timeout_seconds = 180
 
     @staticmethod
     def after_all_players_arrive(group: Group):
@@ -1207,6 +1209,7 @@ class WaitForSends(WaitPage):
 
 
 class AdminTrustDecisions(Page):
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
 
@@ -1246,6 +1249,7 @@ class AdminTrustDecisions(Page):
 
 
 class WaitForReturns(WaitPage):
+    timeout_seconds = 180
 
     @staticmethod
     def after_all_players_arrive(group: Group):
