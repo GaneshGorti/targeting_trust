@@ -515,7 +515,7 @@ class LobbyWait(WaitPage):
         # Get only consenting players
         active = [
             p for p in subsession.get_players()
-            if p.consent == 'agree'
+            if p.participant.finished == False
         ]
 
         # Shuffle for random group assignment
