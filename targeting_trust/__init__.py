@@ -530,13 +530,13 @@ class LobbyWait(WaitPage):
         # Form clean groups of 5
         group_matrix = [
             active[i:i+5]
-            for i in range(0, len(active) - len(active) % 5, 5)
+            for i in range(0, len(active) - len(active) // 5 * 5, 5)
         ]
 
         # Set groups in oTree
         subsession.set_group_matrix(group_matrix)
 
-        # Your existing condition randomization — completely unchanged
+        # assign treatments
         conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
         random.shuffle(conds)
 
@@ -735,6 +735,7 @@ class AdminInstructionsRefresh(Page):
 
 
 class AdminSquares(Page):
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['report_c1','report_c2','report_c3','report_c4']
 
