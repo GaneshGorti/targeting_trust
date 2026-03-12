@@ -6,7 +6,7 @@ SESSION_CONFIGS = [
         name='targeting_trust',
         display_name='Trust x Targeting Experiment',
         app_sequence=['targeting_trust'],
-        num_demo_participants=20,
+        num_demo_participants=5,
     ),
 ]
 
