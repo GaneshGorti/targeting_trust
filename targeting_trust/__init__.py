@@ -524,7 +524,7 @@ class LobbyWait(WaitPage):
 
         # assign treatments
         conds = [(t, s) for t in ['count', 'estimate'] for s in ['auto', 'apply']]
-        random.shuffle(conds)
+        t, s = random.shuffle(conds)
 
         group.trust_condition = t
         group.targeting_condition = s
