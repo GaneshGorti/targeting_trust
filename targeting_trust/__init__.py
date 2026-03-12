@@ -379,6 +379,7 @@ class Player(BasePlayer):
 def creating_session(subsession: Subsession):
     for p in subsession.get_players():
         p.participant.finished = False
+        p.participant.lobby_timeout = False
 
 def _random_code(length=10):
     chars = string.ascii_uppercase + string.digits
