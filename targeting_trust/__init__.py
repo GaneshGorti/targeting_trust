@@ -498,6 +498,7 @@ class BeforeLobby(Page):
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
+    check_if_still_waiting = False
 
     @staticmethod
     def is_displayed(player):
@@ -506,7 +507,7 @@ class LobbyWait(WaitPage):
     @staticmethod
     def group_by_arrival_time_method(subsession, waiting_players):
 
-        WAIT_LIMIT = 300
+        WAIT_LIMIT = 120
 
         # normal grouping
         if len(waiting_players) >= C.PLAYERS_PER_GROUP:
