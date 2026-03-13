@@ -52,10 +52,6 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect
     )
 
-    #Lobby wait times
-    lobby_timeout = models.BooleanField(initial=False)
-    lobby_entry_time = models.FloatField()
-
     # identity/role
     is_admin = models.BooleanField(initial=False)
     role_str = models.StringField()
@@ -463,6 +459,11 @@ def debug_treatment(player: Player):
 
 # -------------------------- PAGES --------------------------
 
+import time
+import random
+from otree.api import *
+
+
 class Consent(Page):
     form_model = 'player'
     form_fields = ['consent']
@@ -479,87 +480,53 @@ class Consent(Page):
         if player.consent == 'decline':
             player.participant.finished = True
 
-"""         
-    class Consent(Page):
-        form_model = 'player'
-        form_fields = ['consent']
-
-        def before_next_page(self):
-            # Only capture once
-            if self.round_number == 1:
-
-                # PROLIFIC PID (already stored automatically)
-                self.participant.prolific_id = self.participant.label
-
-        @staticmethod
-        def error_message(player, values):
-            if values.get('consent') != 'agree':
-                return (
-                    "As you do not wish to participate in this study, "
-                    "please close this survey and return your submission on Prolific "
-                    "by selecting the 'Stop without completing' button."
-                )
-
-
-class Consent(Page):
-    form_model = 'player'
-    form_fields = ['consent']
-
-    def before_next_page(self):
-        # Only capture once
-        if self.round_number == 1:
-            # PROLIFIC PID (already stored automatically)
-            self.participant.prolific_id = self.participant.label
-
-    @staticmethod
-    def error_message(player, values):
-        if values.get('consent') != 'agree':
-            return (
-                "As you do not wish to participate in this study, "
-                "please close this survey and return your submission on Prolific "
-                "by selecting the 'Stop without completing' button."
-                )
- """
-
 
 class NoConsent(Page):
-    
+
     @staticmethod
     def is_displayed(player):
         return player.consent == 'decline'
-    
+
+
+class BeforeLobby(Page):
+    timeout_seconds = 1
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.participant.wait_page_arrival = time.time()
+
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
 
     @staticmethod
     def is_displayed(player):
-        return not player.participant.finished and not player.lobby_timeout
-
-    @staticmethod
-    def vars_for_template(player):
-        if not player.lobby_entry_time:
-            player.lobby_entry_time = time.time()
+        return not player.participant.finished and not player.participant.lobby_timeout
 
     @staticmethod
     def group_by_arrival_time_method(subsession, waiting_players):
 
-        WAIT_LIMIT = 30
-        now = time.time()
+        WAIT_LIMIT = 300
 
-        # mark players who waited too long
+        # normal grouping
+        if len(waiting_players) >= C.PLAYERS_PER_GROUP:
+            return waiting_players[:C.PLAYERS_PER_GROUP]
+
+        # release players who waited too long
         for p in waiting_players:
-            if p.lobby_entry_time and now - p.lobby_entry_time > WAIT_LIMIT:
-                p.lobby_timeout = True
-
-        # only match players who haven't timed out
-        eligible = [p for p in waiting_players if not p.lobby_timeout]
-
-        if len(eligible) >= C.PLAYERS_PER_GROUP:
-            return eligible[:C.PLAYERS_PER_GROUP]
+            waited = time.time() - p.participant.wait_page_arrival
+            if waited > WAIT_LIMIT:
+                return [p]
 
     @staticmethod
     def after_all_players_arrive(group):
+
+        players = group.get_players()
+
+        # single-player group → timeout
+        if len(players) == 1:
+            players[0].participant.lobby_timeout = True
+            return
 
         session = group.session
         queue = session.vars['treatment_queue']
@@ -574,7 +541,6 @@ class LobbyWait(WaitPage):
         group.trust_condition = t
         group.targeting_condition = s
 
-        players = group.get_players()
         admin = random.choice(players)
 
         for p in players:
@@ -588,8 +554,8 @@ class LobbyTimeout(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.lobby_timeout
-
+        return player.participant.lobby_timeout
+        
 
 class RoleInfo(Page):
     
@@ -1442,6 +1408,7 @@ class ThankYou(Page):
 page_sequence = [
     Consent,
     NoConsent,
+    BeforeLobby,
     LobbyWait,
     LobbyTimeout,
     RoleInfo,

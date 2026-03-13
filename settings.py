@@ -19,7 +19,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.01, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['prolific_id', 'finished', 'lobby_timeout']
+PARTICIPANT_FIELDS = ['prolific_id', 'finished', 'lobby_timeout', 'wait_page_arrival']
 SESSION_FIELDS = []
 
 # ISO-639 code
