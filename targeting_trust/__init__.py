@@ -52,6 +52,10 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect
     )
 
+    #Lobby wait times
+    lobby_timeout = models.BooleanField(initial=False)
+    lobby_entry_time = models.FloatField()
+
     # identity/role
     is_admin = models.BooleanField(initial=False)
     role_str = models.StringField()
@@ -527,17 +531,35 @@ class NoConsent(Page):
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
-    timeout_seconds = 300
-    timeout_submission = {'lobby_timeout': True}
 
     @staticmethod
     def is_displayed(player):
-        return not player.participant.finished and not player.participant.lobby_timeout # only show to those who consented and haven't timed out
-    
+        return not player.participant.finished and not player.lobby_timeout
+
+    @staticmethod
+    def vars_for_template(player):
+        if not player.lobby_entry_time:
+            player.lobby_entry_time = time.time()
+
+    @staticmethod
+    def group_by_arrival_time_method(subsession, waiting_players):
+
+        WAIT_LIMIT = 30
+        now = time.time()
+
+        # mark players who waited too long
+        for p in waiting_players:
+            if p.lobby_entry_time and now - p.lobby_entry_time > WAIT_LIMIT:
+                p.lobby_timeout = True
+
+        # only match players who haven't timed out
+        eligible = [p for p in waiting_players if not p.lobby_timeout]
+
+        if len(eligible) >= C.PLAYERS_PER_GROUP:
+            return eligible[:C.PLAYERS_PER_GROUP]
+
     @staticmethod
     def after_all_players_arrive(group):
-
-        import random
 
         session = group.session
         queue = session.vars['treatment_queue']
@@ -561,17 +583,12 @@ class LobbyWait(WaitPage):
             if not p.is_admin:
                 p.citizen_code = _random_code()
 
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        if timeout_happened:
-            player.participant.lobby_timeout = True
-
 
 class LobbyTimeout(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.participant.lobby_timeout
+        return player.lobby_timeout
 
 
 class RoleInfo(Page):
