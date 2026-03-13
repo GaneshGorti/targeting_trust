@@ -377,9 +377,23 @@ class Player(BasePlayer):
 
 
 def creating_session(subsession: Subsession):
+    import random
+
     for p in subsession.get_players():
         p.participant.finished = False
         p.participant.lobby_timeout = False
+
+    conds = [
+        ('count','auto'),
+        ('count','apply'),
+        ('estimate','auto'),
+        ('estimate','apply')
+    ]
+
+    random.shuffle(conds)
+
+    subsession.session.vars['treatment_queue'] = conds.copy()
+    subsession.session.vars['treatment_block'] = conds.copy()
 
 def _random_code(length=10):
     chars = string.ascii_uppercase + string.digits
@@ -422,7 +436,6 @@ def citizens_in_order(group: Group):
         [p for p in group.get_players() if not p.is_admin],
         key=lambda p: p.id_in_group
     )
-
 
 def live_effort(player: Player, data):
     if player.is_admin:
@@ -524,15 +537,17 @@ class LobbyWait(WaitPage):
     @staticmethod
     def after_all_players_arrive(group):
 
-        # assign treatments
-        conds = [
-            ('count','auto'),
-            ('count','apply'),
-            ('estimate','auto'),
-            ('estimate','apply')
-        ]
+        import random
 
-        t, s = random.choice(conds)
+        session = group.session
+        queue = session.vars['treatment_queue']
+
+        if len(queue) == 0:
+            new_block = session.vars['treatment_block'].copy()
+            random.shuffle(new_block)
+            queue.extend(new_block)
+
+        t, s = queue.pop()
 
         group.trust_condition = t
         group.targeting_condition = s
@@ -548,7 +563,6 @@ class LobbyWait(WaitPage):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-
         if timeout_happened:
             player.participant.lobby_timeout = True
 
