@@ -527,12 +527,12 @@ class NoConsent(Page):
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
-    timeout_seconds = 60
-    timeout_submission = {}
+    timeout_seconds = 300
+    timeout_submission = {'lobby_timeout': True}
 
     @staticmethod
     def is_displayed(player):
-        return not player.participant.finished # does not display for those who declined consent
+        return not player.participant.finished and not player.participant.lobby_timeout # only show to those who consented and haven't timed out
     
     @staticmethod
     def after_all_players_arrive(group):
