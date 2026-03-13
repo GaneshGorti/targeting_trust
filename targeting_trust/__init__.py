@@ -515,8 +515,8 @@ class LobbyWait(WaitPage):
 
         # release players who waited too long
         for p in waiting_players:
-            waited = time.time() - p.participant.wait_page_arrival
-            if waited > WAIT_LIMIT:
+            entry = p.participant.wait_page_arrival
+            if entry and time.time() - entry > WAIT_LIMIT:
                 return [p]
 
     @staticmethod
@@ -524,7 +524,7 @@ class LobbyWait(WaitPage):
 
         players = group.get_players()
 
-        # single-player group → timeout
+        # single-player group --> timeout
         if len(players) == 1:
             players[0].participant.lobby_timeout = True
             return
