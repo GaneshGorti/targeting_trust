@@ -66,6 +66,12 @@ class Player(BasePlayer):
     # admin payoff component (for incentive framing)
     admin_bonus = models.CurrencyField(initial=0)
 
+    # timeout tracking
+    timed_out_work = models.BooleanField(initial=False)
+    timed_out_citizen_trust = models.BooleanField(initial=False)
+    timed_out_admin_tax = models.BooleanField(initial=False)
+    timed_out_admin_trust = models.BooleanField(initial=False)
+
     # Citizen comprehension fields  
     citizen_quiz_tax = models.IntegerField(
         label="If 10 sliders are reported, generating 100 ECU as gross income, how much tax is collected?",
@@ -503,7 +509,7 @@ class NoConsent(Page):
 
 
 class BeforeLobby(Page):
-    timeout_seconds = 1
+    timeout_seconds = 2
 
     @staticmethod
     def before_next_page(player, timeout_happened):
@@ -622,6 +628,11 @@ class CitizenWorkTask(Page):
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
+    
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.timed_out_work = True
 
 
 class WaitForWork(WaitPage):
@@ -776,6 +787,9 @@ class AdminSquares(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
+
+        if timeout_happened:
+            player.timed_out_admin_tax = True
 
         g = player.group
         citizens = [p for p in g.get_players() if not p.is_admin]
@@ -1197,6 +1211,11 @@ class CitizenTrustGame(Page):
     def error_message(player: Player, values):
         if values['send_amount'] > C.TRUST_BUDGET:
             return f"You cannot send more than your available amount ({C.TRUST_BUDGET} ECU)."
+        
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.timed_out_citizen_trust = True
 
 
 class WaitForSends(WaitPage):
@@ -1241,6 +1260,10 @@ class AdminTrustDecisions(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
+
+        if timeout_happened:
+            player.timed_out_admin_trust = True
+
         citizens = citizens_in_order(player.group)
         returns = [
             player.return_to_c1,
@@ -1270,9 +1293,8 @@ class WaitForReturns(WaitPage):
             # Trust game effect
             send = c.send_amount or cu(0)
             returned = c.amount_returned or cu(0)
-
             c.trust_game_net = C.TRUST_BUDGET - send + returned
-            
+
             # Final income
             c.final_income = c.income_after_transfer + c.trust_game_net
 
