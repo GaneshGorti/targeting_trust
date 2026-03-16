@@ -1268,8 +1268,11 @@ class WaitForReturns(WaitPage):
             c.income_after_transfer = c.net_income_after_tax + c.received_transfer
 
             # Trust game effect
-            c.trust_game_net =  C.TRUST_BUDGET - c.send_amount + c.amount_returned
+            send = c.send_amount or cu(0)
+            returned = c.amount_returned or cu(0)
 
+            c.trust_game_net = C.TRUST_BUDGET - send + returned
+            
             # Final income
             c.final_income = c.income_after_transfer + c.trust_game_net
 
