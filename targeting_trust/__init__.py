@@ -404,6 +404,15 @@ def waiting_too_long(player):
     import time
     return time.time() - player.participant.wait_page_arrival > 60
 
+def group_by_arrival_time_method(subsession, waiting_players):
+        
+        if len(waiting_players) >= C.PLAYERS_PER_GROUP:
+            return waiting_players[:C.PLAYERS_PER_GROUP] # normal grouping when enough players are waiting
+
+        for player in waiting_players:
+            if waiting_too_long(player):
+                return [player]  # solo group, after_all_players_arrive fires
+
 def make_work_grid(points):
     # each square represents 1 completed task
     # 10 squares per row
@@ -508,15 +517,6 @@ class LobbyWait(WaitPage):
     @staticmethod
     def is_displayed(player):
         return not player.participant.finished and not player.participant.lobby_timeout
-
-    @staticmethod
-    def group_by_arrival_time_method(subsession, waiting_players):
-        if len(waiting_players) >= C.PLAYERS_PER_GROUP:
-            return waiting_players[:C.PLAYERS_PER_GROUP]
-
-        for player in waiting_players:
-            if waiting_too_long(player):
-                return [player]  # solo group, after_all_players_arrive fires
 
     @staticmethod
     def after_all_players_arrive(group):
