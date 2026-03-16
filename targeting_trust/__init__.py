@@ -498,6 +498,69 @@ class BeforeLobby(Page):
 
 class LobbyWait(WaitPage):
     group_by_arrival_time = True
+
+    @staticmethod
+    def live_method(player, data):
+        if data.get('type') == 'timeout':
+            player.participant.lobby_timeout = True
+
+    @staticmethod
+    def is_displayed(player):
+        return not player.participant.finished and not player.participant.lobby_timeout
+
+    @staticmethod
+    def group_by_arrival_time_method(subsession, waiting_players):
+        WAIT_LIMIT = 120
+
+        if len(waiting_players) >= C.PLAYERS_PER_GROUP:
+            return waiting_players[:C.PLAYERS_PER_GROUP]
+
+        for p in waiting_players:
+            entry = getattr(p.participant, 'wait_page_arrival', None)
+            if entry and time.time() - entry > WAIT_LIMIT:
+                p.participant.lobby_timeout = True
+                return [p]
+
+    @staticmethod
+    def after_all_players_arrive(group):
+        players = group.get_players()
+
+        if len(players) == 1:
+            players[0].participant.lobby_timeout = True
+            return
+
+        session = group.session
+        queue = session.vars.get('treatment_queue', [])
+
+        if not queue:
+            new_block = session.vars['treatment_block'].copy()
+            random.shuffle(new_block)
+            queue.extend(new_block)
+            session.vars['treatment_queue'] = queue
+
+        t, s = queue.pop()
+        session.vars['treatment_queue'] = queue
+
+        group.trust_condition = t
+        group.targeting_condition = s
+
+        admin = random.choice(players)
+        for p in players:
+            p.is_admin = (p == admin)
+            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
+            if not p.is_admin:
+                p.citizen_code = _random_code()
+
+
+class LobbyTimeout(Page):
+
+    @staticmethod
+    def is_displayed(player):
+        return player.participant.lobby_timeout
+
+
+class LobbyWait(WaitPage):
+    group_by_arrival_time = True
     check_if_still_waiting = False
 
     @staticmethod
