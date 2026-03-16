@@ -400,6 +400,7 @@ def _random_code(length=10):
     return ''.join(random.choice(chars) for _ in range(length))
 
 def waiting_too_long(player):
+    participant = player.participant
     import time
     return time.time() - player.participant.wait_page_arrival > 60
 
@@ -497,6 +498,7 @@ class BeforeLobby(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
+        import time
         player.participant.wait_page_arrival = time.time()
 
 
