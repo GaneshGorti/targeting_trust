@@ -399,6 +399,10 @@ def _random_code(length=10):
     chars = string.ascii_uppercase + string.digits
     return ''.join(random.choice(chars) for _ in range(length))
 
+def waiting_too_long(player):
+    import time
+    return time.time() - player.participant.wait_page_arrival > 2 * 60
+
 def make_work_grid(points):
     # each square represents 1 completed task
     # 10 squares per row
@@ -500,26 +504,17 @@ class LobbyWait(WaitPage):
     group_by_arrival_time = True
 
     @staticmethod
-    def live_method(player, data):
-        if data.get('type') == 'timeout':
-            player.participant.lobby_timeout = True
-
-    @staticmethod
     def is_displayed(player):
         return not player.participant.finished and not player.participant.lobby_timeout
 
     @staticmethod
     def group_by_arrival_time_method(subsession, waiting_players):
-        WAIT_LIMIT = 120
-
         if len(waiting_players) >= C.PLAYERS_PER_GROUP:
             return waiting_players[:C.PLAYERS_PER_GROUP]
 
-        for p in waiting_players:
-            entry = getattr(p.participant, 'wait_page_arrival', None)
-            if entry and time.time() - entry > WAIT_LIMIT:
-                p.participant.lobby_timeout = True
-                return [p]
+        for player in waiting_players:
+            if waiting_too_long(player):
+                return [player]  # solo group, after_all_players_arrive fires
 
     @staticmethod
     def after_all_players_arrive(group):

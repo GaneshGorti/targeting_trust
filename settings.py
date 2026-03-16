@@ -22,6 +22,7 @@ SESSION_CONFIG_DEFAULTS = dict(
 PARTICIPANT_FIELDS = ['prolific_id', 'finished', 'lobby_timeout', 'wait_page_arrival']
 SESSION_FIELDS = []
 
+GBAT_INACTIVE_SECONDS_UNTIL_PROMPT = 300 # changing the default of 120 seconds (2 minutes) to a longer time, so that participants are less likely to see the prompt when they are still active. 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans
 LANGUAGE_CODE = 'en'

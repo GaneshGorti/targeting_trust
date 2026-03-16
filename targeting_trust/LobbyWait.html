@@ -4,24 +4,4 @@
 <p>Please wait while we match you with a group. This may take up to 2 minutes.</p>
 <p>This page will advance automatically---you do not need to click anything.</p>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var observer = new MutationObserver(function() {
-        var btn = document.querySelector('#otree-timeout-button, .otree-btn-pk');
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                liveSend({'type': 'timeout'});
-                // Give liveSend a moment to fire, then reload
-                // is_displayed will now return false and oTree advances to LobbyTimeout
-                setTimeout(function() {
-                    window.location.reload();
-                }, 500);
-            }, true);
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-});
-</script>
 {{ endblock }}
