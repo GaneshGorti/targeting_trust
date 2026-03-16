@@ -554,68 +554,6 @@ class LobbyTimeout(Page):
     @staticmethod
     def is_displayed(player):
         return player.participant.lobby_timeout
-
-
-class LobbyWait(WaitPage):
-    group_by_arrival_time = True
-    check_if_still_waiting = False
-
-    @staticmethod
-    def is_displayed(player):
-        return not player.participant.finished and not player.participant.lobby_timeout
-
-    @staticmethod
-    def group_by_arrival_time_method(subsession, waiting_players):
-
-        WAIT_LIMIT = 120
-
-        # normal grouping
-        if len(waiting_players) >= C.PLAYERS_PER_GROUP:
-            return waiting_players[:C.PLAYERS_PER_GROUP]
-
-        # release players who waited too long
-        for p in waiting_players:
-            entry = p.participant.wait_page_arrival
-            if entry and time.time() - entry > WAIT_LIMIT:
-                return [p]
-
-    @staticmethod
-    def after_all_players_arrive(group):
-
-        players = group.get_players()
-
-        # single-player group --> timeout
-        if len(players) == 1:
-            players[0].participant.lobby_timeout = True
-            return
-
-        session = group.session
-        queue = session.vars['treatment_queue']
-
-        if len(queue) == 0:
-            new_block = session.vars['treatment_block'].copy()
-            random.shuffle(new_block)
-            queue.extend(new_block)
-
-        t, s = queue.pop()
-
-        group.trust_condition = t
-        group.targeting_condition = s
-
-        admin = random.choice(players)
-
-        for p in players:
-            p.is_admin = (p == admin)
-            p.role_str = 'Administrator' if p.is_admin else 'Citizen'
-            if not p.is_admin:
-                p.citizen_code = _random_code()
-
-
-class LobbyTimeout(Page):
-
-    @staticmethod
-    def is_displayed(player):
-        return player.participant.lobby_timeout
         
 
 class RoleInfo(Page):
