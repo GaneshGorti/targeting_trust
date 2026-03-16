@@ -401,7 +401,7 @@ def _random_code(length=10):
 
 def waiting_too_long(player):
     import time
-    return time.time() - player.participant.wait_page_arrival > 2 * 60
+    return time.time() - player.participant.wait_page_arrival > 60
 
 def make_work_grid(points):
     # each square represents 1 completed task
