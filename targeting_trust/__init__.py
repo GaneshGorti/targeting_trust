@@ -402,7 +402,7 @@ def _random_code(length=10):
 def waiting_too_long(player):
     participant = player.participant
     import time
-    return time.time() - player.participant.wait_page_arrival > 60
+    return time.time() - player.participant.wait_page_arrival > 120
 
 def group_by_arrival_time_method(subsession, waiting_players):
         
@@ -1208,7 +1208,8 @@ class WaitForSends(WaitPage):
         citizens = [p for p in group.get_players() if not p.is_admin]
 
         for c in citizens:
-            c.tripled_trust_amount = c.send_amount * C.TRUST_MULTIPLIER
+            amount = c.send_amount or cu(0)
+            c.tripled_trust_amount = amount * C.TRUST_MULTIPLIER
 
 
 class AdminTrustDecisions(Page):
