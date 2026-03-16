@@ -2,7 +2,7 @@
 
 {{ block content }}
 <p>Please wait while we match you with a group. This may take up to 2 minutes.</p>
-<p>This page will advance automatically — you do not need to click anything.</p>
+<p>This page will advance automatically---you do not need to click anything.</p>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -12,9 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                // Set timeout flag and advance to LobbyTimeout page
                 liveSend({'type': 'timeout'});
-                window.location.href = "{{ next_url }}";
+                // Give liveSend a moment to fire, then reload
+                // is_displayed will now return false and oTree advances to LobbyTimeout
+                setTimeout(function() {
+                    window.location.reload();
+                }, 500);
             }, true);
         }
     });
