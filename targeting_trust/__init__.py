@@ -1232,7 +1232,7 @@ class WaitForSends(WaitPage):
 
 
 class AdminTrustDecisions(Page):
-    timeout_seconds = 180
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
 
@@ -1267,13 +1267,13 @@ class AdminTrustDecisions(Page):
 
         citizens = citizens_in_order(player.group)
         returns = [
-            player.return_to_c1,
-            player.return_to_c2,
-            player.return_to_c3,
-            player.return_to_c4,
+            player.field_maybe_none('return_to_c1') or cu(0),
+            player.field_maybe_none('return_to_c2') or cu(0),
+            player.field_maybe_none('return_to_c3') or cu(0),
+            player.field_maybe_none('return_to_c4') or cu(0),
         ]
         for c, r in zip(citizens, returns):
-            c.amount_returned = r if r is not None else cu(0)
+            c.amount_returned = r
 
 
 class WaitForReturns(WaitPage):
