@@ -403,12 +403,12 @@ def creating_session(subsession: Subsession):
 
 def _random_code(length=10):
     chars = string.ascii_uppercase + string.digits
-    return ''.join(random.choice(chars) for _ in range(length))
+    return ''.join(random.choice(chars) for _ in range(length)) # random code for citizen identification in admin task
 
 def waiting_too_long(player):
     participant = player.participant
     import time
-    return time.time() - player.participant.wait_page_arrival > 120
+    return time.time() - player.participant.wait_page_arrival > 120 # timeout if no group is formed after 2 minutes
 
 def group_by_arrival_time_method(subsession, waiting_players):
         
