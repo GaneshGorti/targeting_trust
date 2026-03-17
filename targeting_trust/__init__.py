@@ -792,7 +792,7 @@ class AdminSquares(Page):
             player.timed_out_admin_tax = True
 
         g = player.group
-        citizens = [p for p in g.get_players() if not p.is_admin]
+        citizens = citizens_in_order(g)
 
         reports = [
             player.report_c1,
@@ -1227,8 +1227,8 @@ class WaitForSends(WaitPage):
         citizens = [p for p in group.get_players() if not p.is_admin]
 
         for c in citizens:
-            amount = c.send_amount or cu(0)
-            c.tripled_trust_amount = amount * C.TRUST_MULTIPLIER
+            c.send_amount = c.send_amount or cu(0)
+            c.tripled_trust_amount = c.send_amount * C.TRUST_MULTIPLIER
 
 
 class AdminTrustDecisions(Page):
