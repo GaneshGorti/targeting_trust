@@ -1254,7 +1254,8 @@ class AdminTrustDecisions(Page):
         fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
         for c, f in zip(citizens, fields):
             if values.get(f) is not None:
-                max_return = c.send_amount * C.TRUST_MULTIPLIER
+                send = c.send_amount or cu(0)
+                max_return = send * C.TRUST_MULTIPLIER
                 if values[f] > max_return:
                     return f"You cannot return more than {max_return} ECU."
 
