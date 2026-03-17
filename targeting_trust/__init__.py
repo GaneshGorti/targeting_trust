@@ -747,7 +747,7 @@ class AdminInstructionsRefresh(Page):
 
 
 class AdminSquares(Page):
-    timeout_seconds = 180
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['report_c1','report_c2','report_c3','report_c4']
 
@@ -795,10 +795,10 @@ class AdminSquares(Page):
         citizens = citizens_in_order(g)
 
         reports = [
-            player.report_c1,
-            player.report_c2,
-            player.report_c3,
-            player.report_c4
+            player.field_maybe_none('report_c1') or 0,
+            player.field_maybe_none('report_c2') or 0,
+            player.field_maybe_none('report_c3') or 0,
+            player.field_maybe_none('report_c4') or 0,
         ]
 
         total_tax = cu(0)
@@ -1195,7 +1195,7 @@ class TransferOutcome(Page):
 
 
 class CitizenTrustGame(Page):
-    timeout_seconds = 180
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['send_amount']
 
