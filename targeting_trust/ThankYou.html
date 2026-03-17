@@ -4,17 +4,23 @@
 <h2>Thank you!</h2>
 
 <p>
-Thank you for your participation. Your responses have been recorded.
+Thank you for your participation. Your responses have been recorded. Please return to Prolific 
+and enter the following completion code: <strong>C17UVJ10</strong> </p>
 </p>
 
-<p>
+<p>If not, you will be redirected automatically in <span id="countdown">10</span> seconds.</p>
 
-<a href="https://app.prolific.com/submissions/complete?cc=C17UVJ10" 
-   class="btn btn-primary btn-lg">
-    Click here to confirm your participation on Prolific
-</a>
-
-
-</p>
+<script>
+    var seconds = 10;
+    var countdown = document.getElementById('countdown');
+    var interval = setInterval(function() {
+        seconds--;
+        countdown.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            window.location.href = "https://app.prolific.com/submissions/complete?cc=C17UVJ10";
+        }
+    }, 1000);
+</script>
 
 {% endblock %}
