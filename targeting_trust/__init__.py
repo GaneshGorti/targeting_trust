@@ -747,7 +747,7 @@ class AdminInstructionsRefresh(Page):
 
 
 class AdminSquares(Page):
-    timeout_seconds = 120
+    timeout_seconds = 180
     form_model = 'player'
     form_fields = ['report_c1','report_c2','report_c3','report_c4']
 
@@ -1232,7 +1232,7 @@ class WaitForSends(WaitPage):
 
 
 class AdminTrustDecisions(Page):
-    timeout_seconds = 120
+    timeout_seconds = 180
     form_model = 'player'
     form_fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
 
