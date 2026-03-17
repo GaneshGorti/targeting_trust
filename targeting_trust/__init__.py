@@ -702,11 +702,11 @@ class AdminComprehension(Page):
         if incorrect:
 
             # If this is the 3rd failed attempt
-            if player.admin_quiz_attempts >= 3:
+            if player.admin_quiz_attempts >= 2:
                 player.admin_quiz_failed = True
                 return None  # allow progression
 
-            return "One or more answers are incorrect. Please review the example and try again."
+            return "One or more answers are incorrect. Please review the example and try once more."
 
         # If correct → allow progression
         return None
@@ -990,11 +990,11 @@ class CitizenComprehension(Page):
         if incorrect:
 
             # If this is the 3rd failed attempt
-            if player.citizen_quiz_attempts >= 3:
+            if player.citizen_quiz_attempts >= 2:
                 player.citizen_quiz_failed = True
                 return None  # allow progression
 
-            return "One or more answers are incorrect. Please review the example and try again."
+            return "One or more answers are incorrect. Please review the example and try once more."
 
         # If correct → allow progression
         return None
