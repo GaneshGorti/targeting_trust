@@ -1067,6 +1067,8 @@ class AC(Page):
 
 
 class Targeting(Page):
+    timeout_seconds = 60
+
     form_model = 'player' 
 
     @staticmethod
@@ -1113,6 +1115,7 @@ class Targeting(Page):
 
 
 class ApplicationTask(Page):
+    timeout_seconds = 60
 
     form_model = 'player'
     form_fields = ['applicant_name', 'applicant_age', 'application_reference']
@@ -1172,7 +1175,8 @@ class WaitTargeting(WaitPage):
 
 
 class TransferOutcome(Page):
-
+    timeout_seconds = 60
+    
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
