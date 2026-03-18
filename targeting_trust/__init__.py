@@ -1142,12 +1142,15 @@ class ApplicationTask(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        player.application_completed = True
+        if timeout_happened:
+            player.application_completed = False
+        else:
+            player.application_completed = True
 
 
 class WaitTargeting(WaitPage):
-    after_all_players_arrive = assign_transfers
-
+    timeout_seconds = 120
+    
     @staticmethod
     def assign_transfers(group: Group):
         citizens = [p for p in group.get_players() if not p.is_admin]
