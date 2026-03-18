@@ -408,7 +408,7 @@ def _random_code(length=10):
 def waiting_too_long(player):
     participant = player.participant
     import time
-    return time.time() - player.participant.wait_page_arrival > 180 # timeout if no group is formed after 2 minutes
+    return time.time() - player.participant.wait_page_arrival > 240 # timeout if no group is formed after 2 minutes
 
 def group_by_arrival_time_method(subsession, waiting_players):
         
