@@ -436,20 +436,20 @@ def make_work_grid(points):
 
     return rows
 
-def assign_transfers(group: Group):
-    citizens = [p for p in group.get_players() if not p.is_admin]
-    if not citizens:
-        return
+# def assign_transfers(group: Group):
+#     citizens = [p for p in group.get_players() if not p.is_admin]
+#     if not citizens:
+#         return
 
-    if group.targeting_condition == 'auto':
-        share = group.total_applied_tax / len(citizens)
-        for p in citizens:
-            p.received_transfer = share
-    else:
-        applicants = [p for p in citizens if p.apply_transfer == 'yes']
-        share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
-        for p in citizens:
-            p.received_transfer = share if p in applicants else cu(0)
+#     if group.targeting_condition == 'auto':
+#         share = group.total_applied_tax / len(citizens)
+#         for p in citizens:
+#             p.received_transfer = share
+#     else:
+#         applicants = [p for p in citizens if p.apply_transfer == 'yes']
+#         share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
+#         for p in citizens:
+#             p.received_transfer = share if p in applicants else cu(0)
 
 def citizens_in_order(group: Group):
     return sorted(
