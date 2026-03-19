@@ -1075,8 +1075,8 @@ class AC(Page):
         'ac']
 
 
-class Targeting(Page):
-    timeout_seconds = 60
+class Targeting(Page): #need to include a timeout tracking here
+    timeout_seconds = 100
 
     form_model = 'player' 
 
@@ -1124,7 +1124,7 @@ class Targeting(Page):
 
 
 class ApplicationTask(Page):
-    timeout_seconds = 60
+    timeout_seconds = 80
 
     form_model = 'player'
     form_fields = ['applicant_name', 'applicant_age', 'application_reference']
