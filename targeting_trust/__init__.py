@@ -408,7 +408,7 @@ def _random_code(length=10):
 def waiting_too_long(player):
     participant = player.participant
     import time
-    return time.time() - player.participant.wait_page_arrival > 240 # timeout if no group is formed after 2 minutes
+    return time.time() - player.participant.wait_page_arrival > 240 # timeout if no group is formed after 4 minutes
 
 def group_by_arrival_time_method(subsession, waiting_players):
         
@@ -563,7 +563,7 @@ class LobbyTimeout(Page):
         
 
 class RoleInfo(Page):
-    
+    timeout_seconds = 100
     @staticmethod
     def vars_for_template(player: Player):
         g = player.group
@@ -598,7 +598,7 @@ class RoleInfo(Page):
 
 
 class CitizenWorkTaskInstructions(Page):
-
+    timeout_seconds = 60
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
@@ -632,7 +632,7 @@ class CitizenWorkTask(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
-            player.timed_out_work = True
+            player.timed_out_work = True #this is not being captured right now, note that! 
 
 
 class WaitForWork(WaitPage):
@@ -640,14 +640,14 @@ class WaitForWork(WaitPage):
 
 
 class AdminInstructions(Page):
-
+    timeout_seconds = 100
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
     
 
 class AdminExample(Page):
-
+    timeout_seconds = 60
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
@@ -671,6 +671,7 @@ class AdminExample(Page):
 
 
 class AdminComprehension(Page):
+    timeout_seconds = 60
     form_model = 'player'
     form_fields = [
         'admin_quiz_bonus',
@@ -713,7 +714,7 @@ class AdminComprehension(Page):
 
 
 class AdminQuizFeedback(Page):
-
+    timeout_seconds = 60
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin and player.admin_quiz_failed
@@ -741,6 +742,7 @@ class AdminQuizFeedback(Page):
     
 
 class AdminInstructionsRefresh(Page):
+    timeout_seconds = 60
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin 
@@ -888,6 +890,7 @@ class WaitForTax(WaitPage):
 
 
 class CitizenTaxInfo(Page):
+    timeout_seconds = 60
     form_model = 'player'
     form_fields = ['expected_tax_squares']
 
@@ -924,6 +927,7 @@ class CitizenTaxInfo(Page):
 
 
 class CitizenExample(Page):
+    timeout_seconds = 60
 
     @staticmethod
     def is_displayed(player: Player):
@@ -956,6 +960,8 @@ class CitizenExample(Page):
     
 
 class CitizenComprehension(Page):
+    timeout_seconds = 60
+
     form_model = 'player'
     form_fields = [
         'citizen_quiz_tax',
@@ -1001,6 +1007,7 @@ class CitizenComprehension(Page):
 
 
 class CitizenQuizFeedback(Page):
+    timeout_seconds = 60
 
     @staticmethod
     def is_displayed(player: Player):
@@ -1032,6 +1039,7 @@ class CitizenQuizFeedback(Page):
 
 
 class RevealTax(Page):
+    timeout_seconds = 60
 
     @staticmethod
     def is_displayed(player: Player):
@@ -1160,7 +1168,7 @@ class WaitTargeting(WaitPage):
         if not citizens:
             return
 
-        if group.targeting_condition == 'auto':
+        if group.targeting_condition == 'auto':                 #need to add explicit no handling for apply_transfer == None, code does not do this right now
             share = group.total_applied_tax / len(citizens)
             for p in citizens:
                 p.received_transfer = share
@@ -1176,7 +1184,7 @@ class WaitTargeting(WaitPage):
 
 class TransferOutcome(Page):
     timeout_seconds = 60
-    
+
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin

@@ -1,6 +1,12 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
+<style>
+    .otree-timer {
+        display: none;
+    }
+  </style>
+
 <h3>Example: How your bonus and citizen's taxes are calculated</h3>
 
 {% if player.group.trust_condition == "count" %}

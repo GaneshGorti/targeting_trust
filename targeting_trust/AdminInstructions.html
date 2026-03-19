@@ -1,6 +1,12 @@
 {% extends "global/Page.html" %}
 {% block content %}
 
+<style>
+    .otree-timer {
+        display: none;
+    }
+  </style>
+
 <h2>Administrator Instructions</h2>
 
 {% if player.group.trust_condition == "count" %}
