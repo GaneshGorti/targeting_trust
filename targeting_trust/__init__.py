@@ -886,7 +886,7 @@ class AdminSquares(Page):
 
 
 class WaitForTax(WaitPage):
-    timeout_seconds = 240
+    timeout_seconds = 300
 
 
 class CitizenTaxInfo(Page):
