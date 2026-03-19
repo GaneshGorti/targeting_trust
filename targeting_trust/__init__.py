@@ -598,7 +598,7 @@ class RoleInfo(Page):
 
 
 class CitizenWorkTaskInstructions(Page):
-    timeout_seconds = 60
+    timeout_seconds = 100
     @staticmethod
     def is_displayed(player: Player):
         return not player.is_admin
@@ -640,7 +640,7 @@ class WaitForWork(WaitPage):
 
 
 class AdminInstructions(Page):
-    timeout_seconds = 100
+    timeout_seconds = 80
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
@@ -749,7 +749,7 @@ class AdminInstructionsRefresh(Page):
 
 
 class AdminSquares(Page):
-    timeout_seconds = 120
+    timeout_seconds = 150
     form_model = 'player'
     form_fields = ['report_c1','report_c2','report_c3','report_c4']
 
@@ -886,11 +886,11 @@ class AdminSquares(Page):
 
 
 class WaitForTax(WaitPage):
-    timeout_seconds = 180
+    timeout_seconds = 240
 
 
 class CitizenTaxInfo(Page):
-    timeout_seconds = 60
+    timeout_seconds = 70
     form_model = 'player'
     form_fields = ['expected_tax_squares']
 
@@ -1069,6 +1069,7 @@ class RevealTax(Page):
 
 
 class AC(Page):
+    timeout_seconds = 60
     form_model = 'player'
     form_fields = [
         'ac']
@@ -1234,7 +1235,7 @@ class CitizenTrustGame(Page):
 
 
 class WaitForSends(WaitPage):
-    timeout_seconds = 180
+    timeout_seconds = 150
 
     @staticmethod
     def after_all_players_arrive(group: Group):
@@ -1247,7 +1248,7 @@ class WaitForSends(WaitPage):
 
 
 class AdminTrustDecisions(Page):
-    timeout_seconds = 120
+    timeout_seconds = 150
     form_model = 'player'
     form_fields = ['return_to_c1', 'return_to_c2', 'return_to_c3', 'return_to_c4']
 
@@ -1292,7 +1293,7 @@ class AdminTrustDecisions(Page):
 
 
 class WaitForReturns(WaitPage):
-    timeout_seconds = 180
+    timeout_seconds = 150
 
     @staticmethod
     def after_all_players_arrive(group: Group):
