@@ -1068,8 +1068,8 @@ class RevealTax(Page):
         )
 
 
-class AC(Page):
-    timeout_seconds = 60
+class AC(Page): #a few of them are skipping AC, need to think about what this means for our design
+    timeout_seconds = 80
     form_model = 'player'
     form_fields = [
         'ac']
@@ -1443,7 +1443,7 @@ class PostSurveyAdmin(Page):
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
     
 
-class ThankYou(Page):
+class ThankYou(Page): #need to include end time! 
     pass
 
 
