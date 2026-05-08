@@ -20,12 +20,11 @@ In your group, you have been assigned the role: <strong>{{ role }}</strong>.
 
 {% if not is_admin %}
 <p>
-In this study, citizens within a group earn different amounts per correctly placed slider. This is determined randomly.
+Citizens within are assigned randomly to earn different amounts per correctly placed slider.
 Two citizens earn <strong>{{ rich_rate }} ECU per slider</strong> and two others earn <strong>{{ poor_rate }} ECU per slider</strong>.
 </p>
 <p>
 You have been assigned a piece rate of <strong>{{ piece_rate }} ECU per slider</strong>. 
-This means you are a <strong>{{ citizen_type }}</strong> citizen.
 </p>
 {% endif %}
 
