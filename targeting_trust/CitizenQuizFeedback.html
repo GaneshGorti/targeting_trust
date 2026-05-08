@@ -5,16 +5,17 @@
     .otree-timer {
         display: none;
     }
-  </style>
+</style>
 
 <h3>Correct Answers</h3>
 
 <p>Your answers were incorrect. The correct responses are detailed below.</p>
 
 <ul>
-    <li>If 10 sliders are reported, tax = {{ correct_tax }} ECU.</li>
+    <li>If 10 sliders are reported, the tax is <strong>{{ correct_tax }} ECU</strong> (10 × 3 ECU).</li>
+    <li>If you ({{ piece_rate }} ECU per slider) complete 10 sliders, your gross income is <strong>{{ correct_own }} ECU</strong> (10 × {{ piece_rate }} ECU).</li>
+    <li>If the other citizen type ({{ other_rate }} ECU per slider) completes 10 sliders, their gross income is <strong>{{ correct_other }} ECU</strong> (10 × {{ other_rate }} ECU).</li>
     <li>{{ correct_bonus }}</li>
-    <li>{{ correct_tax_base }}</li>
 </ul>
 
 <p>Please review this carefully before continuing.</p>

@@ -5,37 +5,67 @@
     .otree-timer {
         display: none;
     }
-  </style>
+</style>
 
 <h3>Example: How Your Income Is Calculated</h3>
 
-<p>Remember, each slider generates 10 ECU and a tax of 3 ECU.</p>
+<p>
+  In your group, <strong>2 citizens earn {{ piece_rate }} ECU per slider</strong> and 
+  <strong>2 citizens earn {{ other_rate }} ECU per slider</strong>.
+  You are one of the citizens earning <strong>{{ piece_rate }} ECU per slider</strong>.
+  All citizens pay a tax of <strong>3 ECU per reported slider</strong>, regardless of piece rate.
+</p>
+
+<hr>
+
+<h4>Your example ({{ piece_rate }} ECU per slider):</h4>
 
 <p>
-Suppose you complete <strong>{{ example.completed }}</strong> sliders correctly.
+    Suppose you complete <strong>{{ example_sliders }}</strong> sliders correctly.
+</p>
+<p>
+    Your gross income:
+    <br>
+    {{ example_sliders }} × {{ piece_rate }} ECU = <strong>{{ gross }} ECU</strong>
+</p>
+<p>
+    Your tax:
+    <br>
+    {{ example_sliders }} × 3 ECU = <strong>{{ tax }} ECU</strong>
+</p>
+<p>
+    Your net income:
+    <br>
+    {{ gross }} − {{ tax }} = <strong>{{ net }} ECU</strong>
+</p>
+
+<hr>
+
+<h4>Example for the 2 other citizens ({{ other_rate }} ECU per slider):</h4>
+
+<p>
+    Suppose they complete <strong>{{ example_sliders }}</strong> sliders correctly.
+</p>
+<p>
+    Their gross income:
+    <br>
+    {{ example_sliders }} × {{ other_rate }} ECU = <strong>{{ other_gross }} ECU</strong>
+</p>
+<p>
+    Their tax:
+    <br>
+    {{ example_sliders }} × 3 ECU = <strong>{{ tax }} ECU</strong>
+</p>
+<p>
+    Their net income:
+    <br>
+    {{ other_gross }} − {{ tax }} = <strong>{{ other_net }} ECU</strong>
 </p>
 
 <p>
-Your gross income:
-<br>
-{{ example.completed }} × 10 ECU = <strong>{{ example.gross }} ECU</strong>
-</p>
-
-<p>
-If the Administrator reports <strong>{{ example.reported }}</strong> sliders,
-your tax would be:
-<br>
-{{ example.reported }} × 3 ECU = <strong>{{ example.tax }} ECU</strong>
-</p>
-
-<p>
-Your net income:
-<br>
-{{ example.gross }} − {{ example.tax }} = <strong>{{ example.net }} ECU</strong>
-</p>
-
-<p>
-{{ example.condition }}
+    Remember, the Administrator was asked to count the correctly placed sliders accurately 
+    and received 1 ECU for every slider they count correctly as a bonus. 
+    Your tax is calculated based on this reported slider count.
 </p>
 
 {{ next_button }}

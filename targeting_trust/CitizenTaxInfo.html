@@ -5,14 +5,18 @@
     .otree-timer {
         display: none;
     }
-  </style>
-
+</style>
 
 <h2>How many sliders did you place correctly?</h2>
 
 <p>
 The Administrator has reported the number of correctly placed sliders, which determines the tax you pay.
 Your net income equals gross income minus the tax.
+</p>
+
+<p>
+As a reminder, your piece rate is <strong>{{ piece_rate }} ECU per slider</strong>.
+Each reported slider incurs a tax of <strong>3 ECU</strong>, regardless of piece rate.
 </p>
 
 <hr>
@@ -22,7 +26,7 @@ Your net income equals gross income minus the tax.
 
 <hr>
 
-<p>Note that you placed {{ tasks_completed }} sliders correctly.</p>
+<p>You placed <strong>{{ tasks_completed }}</strong> sliders correctly.</p>
 
 {{ formfields }}
 

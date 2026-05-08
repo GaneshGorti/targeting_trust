@@ -22,7 +22,8 @@ class C(BaseConstants):
     TRUST_BUDGET = cu(100)
     ECU_TO_GBP = 0.01
 
-    SLIDER_PAYMENT = 10          # ECU earned per slider
+    RICH_SLIDER_PAYMENT = 15     # Rich ECU earned per slider (for inequality framing)
+    POOR_SLIDER_PAYMENT = 5      # Poor ECU earned per slider (for inequality framing)
     TAX_PER_SLIDER = 3           # ECU tax per slider
     ADMIN_BONUS_PER_SLIDER = 1   # ECU admin bonus per reported slider  
 
@@ -33,7 +34,6 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
     # randomized at group level
-    trust_condition = models.StringField(choices=['count', 'estimate'])
     targeting_condition = models.StringField(choices=['auto', 'apply'])  # auto=pre, apply=self
     total_true_tax = models.CurrencyField(initial=0) 
     total_applied_tax = models.CurrencyField(initial=0)
@@ -56,6 +56,8 @@ class Player(BasePlayer):
     is_admin = models.BooleanField(initial=False)
     role_str = models.StringField()
     citizen_code = models.StringField(blank=True)
+    citizen_type = models.StringField(blank=True)  # 'rich' or 'poor'
+    piece_rate = models.IntegerField(initial=0)
 
     #create player identity fields for trust game
     return_to_c1 = models.CurrencyField(min=0, blank=True)
@@ -71,6 +73,7 @@ class Player(BasePlayer):
     timed_out_citizen_trust = models.BooleanField(initial=False)
     timed_out_admin_tax = models.BooleanField(initial=False)
     timed_out_admin_trust = models.BooleanField(initial=False)
+    timed_out_targeting = models.BooleanField(initial=False)
 
     # Citizen comprehension fields  
     citizen_quiz_tax = models.IntegerField(
@@ -78,22 +81,22 @@ class Player(BasePlayer):
         blank=True
     )
 
-    citizen_quiz_bonus = models.StringField(
-        label="How is the Administrator’s bonus determined?",
-        choices=[
-            ('accurate', 'They receive a bonus only for accurately counting the sliders'),
-            ('percentage', 'They receive a bonus based on the number of sliders they report, regardless of accuracy'),
-            ('fixed', 'They receive a fixed payment regardless of the number of sliders you placed or they report')
-        ],
-        widget=widgets.RadioSelect,
+    citizen_quiz_own_payout = models.IntegerField(
+        label="If you completed 10 sliders, what would your gross income be (before tax)?",
         blank=True
     )
 
-    citizen_quiz_tax_base = models.StringField(
-        label="What determines your tax payment?",
+    citizen_quiz_other_payout = models.IntegerField(
+        label="If another citizen of the other type completed 10 sliders, what would their gross income be (before tax)?",
+        blank=True
+    )
+
+    citizen_quiz_admin_bonus = models.StringField(
+        label="How is the Administrator's bonus determined?",
         choices=[
-            ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by the Administrator'),
-            ('reported', 'Each citizen pays tax based on the number of completed sliders reported by the Administrator')
+            ('accurate', 'They receive a bonus only for accurately counting the sliders'),
+            ('percentage', 'They receive a bonus based on the number of sliders they report, regardless of accuracy'),
+            ('fixed', 'They receive a fixed payment regardless of the number of sliders completed')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -108,7 +111,7 @@ class Player(BasePlayer):
         choices=[
             ('accuracy', 'I receive 1 ECU for every slider I count accurately'),
             ('percentage', 'I receive 1 ECU for every slider I report'),
-            ('fixed', 'I receive a fixed amount regardless of tax')
+            ('fixed', 'I receive a fixed amount regardless of sliders counted')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -119,6 +122,17 @@ class Player(BasePlayer):
         choices=[
             ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by me'),
             ('reported', 'Each citizen pays tax based on the number of completed sliders reported by me')
+        ],
+        widget=widgets.RadioSelect,
+        blank=True
+    )
+    
+    admin_quiz_rates = models.StringField(
+        label="Which of the following best describes the piece rates in this experiment?",
+        choices=[
+            ('same', 'All citizens earn the same amount per slider'),
+            ('different', 'Some citizens earn more per slider than others'),
+            ('admin', 'The administrator sets the piece rates')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -376,6 +390,24 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
+    fairness_piece_rates = models.IntegerField(
+        label="How fair was the difference in piece rates between citizens in your group? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
+        choices=[(1, "1 - Very unfair"), (2, "2"), (3, "3"), (4, "4"), (5, "5"), (6, "6"), (7, "7 - Very fair"), (8, "Prefer not to say")],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
+    fairness_own_earnings = models.IntegerField(
+        label="How fair was your earnings outcome compared to other citizens in your group? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
+        choices=[(1, "1 - Very unfair"), (2, "2"), (3, "3"), (4, "4"), (5, "5"), (6, "6"), (7, "7 - Very fair"), (8, "Prefer not to say")],
+        widget=widgets.RadioSelect,
+        blank=False
+    )   
+    fairness_tax_system = models.IntegerField(
+        label="To what extent did the tax system treat all citizens equally, regardless of their piece rate? (1 = Not at all equally, 7 = Completely equally)<span style='color:red;'>*</span>",
+        choices=[(1, "1 - Not at all equally"), (2, "2"), (3, "3"), (4, "4"), (5, "5"), (6, "6"), (7, "7 - Completely equally"), (8, "Prefer not to say")],
+        widget=widgets.RadioSelect,
+        blank=False
+    )
     
 
     def role(self):
@@ -389,12 +421,8 @@ def creating_session(subsession: Subsession):
         p.participant.finished = False
         p.participant.lobby_timeout = False
 
-    conds = [
-        ('count','auto'),
-        ('count','apply'),
-        ('estimate','auto'),
-        ('estimate','apply')
-    ]
+    conds = ['auto', 'apply']
+
 
     random.shuffle(conds)
 
@@ -464,7 +492,7 @@ def live_effort(player: Player, data):
     if data.get('type') == 'click':
         player.effort_points += 1
 
-    player.gross_income = cu(player.effort_points * C.SLIDER_PAYMENT)
+    player.gross_income = cu(player.effort_points * player.piece_rate)
 
     return {player.id_in_group: dict(
         effort=player.effort_points,
@@ -473,7 +501,7 @@ def live_effort(player: Player, data):
 
 def debug_treatment(player: Player):
     g = player.group
-    return f"Trust={g.trust_condition} | Targeting={g.targeting_condition}"
+    return f"Targeting={g.targeting_condition} | Type={player.citizen_type} | Rate={player.piece_rate}"
 
 
 
@@ -541,13 +569,22 @@ class LobbyWait(WaitPage):
             queue.extend(new_block)
             session.vars['treatment_queue'] = queue
 
-        t, s = queue.pop()
+        s = queue.pop()
         session.vars['treatment_queue'] = queue
-
-        group.trust_condition = t
         group.targeting_condition = s
 
         admin = random.choice(players)
+        citizens = [p for p in players if p != admin]
+
+        random.shuffle(citizens)
+        for i, p in enumerate(citizens):
+            if i < 2:
+                p.citizen_type = 'rich'
+                p.piece_rate = C.RICH_SLIDER_PAYMENT
+            else:
+                p.citizen_type = 'poor'
+                p.piece_rate = C.POOR_SLIDER_PAYMENT
+
         for p in players:
             p.is_admin = (p == admin)
             p.role_str = 'Administrator' if p.is_admin else 'Citizen'
@@ -572,8 +609,11 @@ class RoleInfo(Page):
         return dict(
             role=player.role_str,
             is_admin=player.is_admin,
-            trust_condition=g.trust_condition,
             targeting_condition=g.targeting_condition,
+            citizen_type=player.citizen_type,
+            piece_rate=player.piece_rate,
+            rich_rate=C.RICH_SLIDER_PAYMENT,
+            poor_rate=C.POOR_SLIDER_PAYMENT,
             citizens=citizens,
             debug_info=debug_treatment(player)
         )
@@ -605,19 +645,18 @@ class CitizenWorkTaskInstructions(Page):
     
     @staticmethod
     def vars_for_template(player: Player):
-
-        if player.group.trust_condition == 'count':
-            admin_rule = (
+        other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
+        return dict(
+            piece_rate=player.piece_rate,
+            other_rate=other_rate,
+            citizen_type=player.citizen_type,
+            tax_per_slider=C.TAX_PER_SLIDER,
+            admin_rule=(
                 "The Administrator assigned to your group has been instructed "
-                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly."
+                "to count the number of correctly placed sliders accurately. "
+                "They receive a bonus of 1 ECU for every slider counted correctly."
             )
-        else:
-            admin_rule = (
-                "The Administrator assigned to your group has been instructed "
-                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus."
-            )
-
-        return dict(admin_rule=admin_rule)
+        )
 
 
 class CitizenWorkTask(Page):
@@ -644,8 +683,17 @@ class AdminInstructions(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
-    
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            rich_rate=C.RICH_SLIDER_PAYMENT,
+            poor_rate=C.POOR_SLIDER_PAYMENT,
+            tax_per_slider=C.TAX_PER_SLIDER,
+            admin_bonus=C.ADMIN_BONUS_PER_SLIDER
+        )
+    
+    
 class AdminExample(Page):
     timeout_seconds = 60
     @staticmethod
@@ -656,27 +704,20 @@ class AdminExample(Page):
     def vars_for_template(player: Player):
         g = player.group
 
-        if g.trust_condition == 'count':
-            text = (
-                "You will review each participant’s completed sliders and count them accurately. "
+        return dict(
+            text=(
+                "You will review each participant's completed sliders and count them accurately. "
                 "You receive a bonus equal to 1 ECU for every slider you count correctly."
-            )
-        else:
-            text = (
-                "You will see each participant’s completed sliders for 10 seconds and estimate "
-                "the number completed. You receive a bonus of 1 ECU for every slider you report."
-            )
-
-        return dict(example_text=text)
+            ),
+            rich_rate=C.RICH_SLIDER_PAYMENT,
+            poor_rate=C.POOR_SLIDER_PAYMENT,
+        )
 
 
 class AdminComprehension(Page):
     timeout_seconds = 60
     form_model = 'player'
-    form_fields = [
-        'admin_quiz_bonus',
-        'admin_quiz_tax_base'
-    ]
+    form_fields = ['admin_quiz_bonus', 'admin_quiz_tax_base', 'admin_quiz_rates']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -684,32 +725,17 @@ class AdminComprehension(Page):
 
     @staticmethod
     def error_message(player, values):
-
-        if player.group.trust_condition == 'count':
-            correct_bonus = 'accuracy'
-        else:
-            correct_bonus = 'percentage'
-
-        correct_tax_base = 'reported'
-
-        # increment attempts
         player.admin_quiz_attempts += 1
-
         incorrect = (
-            values['admin_quiz_bonus'] != correct_bonus
-            or values['admin_quiz_tax_base'] != correct_tax_base
+            values['admin_quiz_bonus'] != 'accuracy'
+            or values['admin_quiz_tax_base'] != 'reported'
+            or values['admin_quiz_rates'] != 'different'
         )
-
         if incorrect:
-
-            # If this is the 3rd failed attempt
             if player.admin_quiz_attempts >= 2:
                 player.admin_quiz_failed = True
-                return None  # allow progression
-
+                return None
             return "One or more answers are incorrect. Please review the example and try once more."
-
-        # If correct → allow progression
         return None
 
 
@@ -721,23 +747,10 @@ class AdminQuizFeedback(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-
-        if player.group.trust_condition == 'count':
-            admin_correct_bonus = (
-                "I receive 1 ECU for every slider I count accurately."
-            )
-        else:
-            admin_correct_bonus = (
-                "I receive 1 ECU for every slider I report."
-            )
-
-        admin_correct_tax_base = (
-            "Each citizen pays tax based on the number of completed sliders reported by me."
-        )
-
         return dict(
-            correct_bonus=admin_correct_bonus,
-            correct_tax_base=admin_correct_tax_base, 
+            correct_bonus="I receive 1 ECU for every slider I count accurately.",
+            correct_tax_base="Each citizen pays tax based on the number of completed sliders reported by me.",
+            correct_rates="Some citizens earn more per slider than others."
         )
     
 
@@ -760,31 +773,23 @@ class AdminSquares(Page):
     @staticmethod
     def vars_for_template(player: Player):
         g = player.group
-        citizens = [p for p in g.get_players() if not p.is_admin]
-
-        if g.trust_condition == 'count':
-            instruction_text = (
-                "You must carefully review each citizen's activity record and COUNT "
-                "how many tasks they completed."
-            )
-        else:
-            instruction_text = (
-                "You must QUICKLY assess each citizen's activity record and ESTIMATE "
-                "how many tasks they completed. Your bonus increases when you report higher completed tasks. "
-            )
-
+        citizens = citizens_in_order(g)
         rows = []
         for i, c in enumerate(citizens, start=1):
             rows.append(dict(
                 code=c.citizen_code,
+                citizen_type=c.citizen_type,
+                piece_rate=c.piece_rate,
                 blocks=list(range(c.effort_points)),
                 field=f"report_c{i}"
             ))
-
         return dict(
             rows=rows,
-            instruction_text=instruction_text,
-            admin_bonus_display = C.ADMIN_BONUS_PER_SLIDER
+            instruction_text=(
+                "You must carefully review each citizen's activity record and COUNT "
+                "how many tasks they completed."
+            ),
+            admin_bonus_display=C.ADMIN_BONUS_PER_SLIDER
         )
 
     @staticmethod
@@ -833,8 +838,6 @@ class AdminSquares(Page):
     @staticmethod
     def error_message(player: Player, values):
         g = player.group
-        if g.trust_condition != 'count':
-                return  # only enforce in count condition
 
         citizens = [p for p in g.get_players() if not p.is_admin]
 
@@ -901,23 +904,16 @@ class CitizenTaxInfo(Page):
     @staticmethod
     def vars_for_template(player: Player):
         g = player.group
-        if g.trust_condition == 'count':
-            msg = (
+        return dict(
+            trust_message=(
                 "The Administrator was shown a visual record of the number of correctly placed sliders "
-                "and was later asked to count the number of correctly placed sliders. "
+                "and was asked to count the number of correctly placed sliders. "
                 "The Administrator receives a bonus of 1 ECU for every slider counted correctly."
-            )
-        else:
-            msg = (
-                "The Administrator was shown the visual record of the number of correctly placed sliders " 
-                "for 10 seconds and was later asked to estimate the number of correctly placed sliders. "
-                "The Administrator received a bonus equal to 1 ECU for every slider they report. "
-                "Because the Administrator’s bonus depends on the number of sliders they report, "
-                "reporting a higher number results in a higher bonus. "
-                "The number the Administrator reports is also used to calculate the tax deducted from your income. "
-            )
-        return dict(trust_message=msg, 
-                    tasks_completed=player.effort_points)
+            ),
+            tasks_completed=player.effort_points,
+            piece_rate=player.piece_rate,
+            citizen_type=player.citizen_type
+        )
 
     #@staticmethod
     #def before_next_page(player: Player, timeout_happened):
@@ -935,28 +931,24 @@ class CitizenExample(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        g = player.group
-
-        if g.trust_condition == 'count':
-            example = dict(
-                completed=10,
-                reported=10,
-                gross=100,
-                tax=30,
-                net=70,
-                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
-            )
-        else:
-            example = dict(
-                completed=10,
-                reported=12,
-                gross=100,
-                tax=36,
-                net=64,
-                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is calculated based on this reported slider count. "
-            )
-
-        return dict(example=example)
+        example_sliders = 10
+        gross = example_sliders * player.piece_rate
+        tax = example_sliders * C.TAX_PER_SLIDER
+        net = gross - tax
+        other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
+        other_gross = example_sliders * other_rate
+        other_net = other_gross - tax
+        return dict(
+            example_sliders=example_sliders,
+            piece_rate=player.piece_rate,
+            citizen_type=player.citizen_type,
+            gross=gross,
+            tax=tax,
+            net=net,
+            other_rate=other_rate,
+            other_gross=other_gross,
+            other_net=other_net,
+        )
     
 
 class CitizenComprehension(Page):
@@ -965,8 +957,9 @@ class CitizenComprehension(Page):
     form_model = 'player'
     form_fields = [
         'citizen_quiz_tax',
-        'citizen_quiz_bonus',
-        'citizen_quiz_tax_base'
+        'citizen_quiz_own_payout',
+        'citizen_quiz_other_payout',
+        'citizen_quiz_admin_bonus',
     ]
 
     @staticmethod
@@ -975,34 +968,26 @@ class CitizenComprehension(Page):
 
     @staticmethod
     def error_message(player, values):
+        example_sliders = 10
+        correct_tax = example_sliders * C.TAX_PER_SLIDER  # 30
+        correct_own = example_sliders * player.piece_rate
+        other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
+        correct_other = example_sliders * other_rate
 
-        correct_tax = 30
-        correct_tax_base = 'reported'
-
-        if player.group.trust_condition == 'count':
-            correct_bonus = 'accurate'
-        else:
-            correct_bonus = 'percentage'
-
-        # increment attempts
         player.citizen_quiz_attempts += 1
 
         incorrect = (
             values['citizen_quiz_tax'] != correct_tax
-            or values['citizen_quiz_bonus'] != correct_bonus
-            or values['citizen_quiz_tax_base'] != correct_tax_base
+            or values['citizen_quiz_own_payout'] != correct_own
+            or values['citizen_quiz_other_payout'] != correct_other
+            or values['citizen_quiz_admin_bonus'] != 'accurate'
         )
 
         if incorrect:
-
-            # If this is the 3rd failed attempt
             if player.citizen_quiz_attempts >= 2:
                 player.citizen_quiz_failed = True
-                return None  # allow progression
-
+                return None
             return "One or more answers are incorrect. Please review the example and try once more."
-
-        # If correct → allow progression
         return None
 
 
@@ -1015,26 +1000,16 @@ class CitizenQuizFeedback(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-
-        correct_tax = 30
-
-        if player.group.trust_condition == 'count':
-            correct_bonus = (
-                "They receive a bonus only for accurately counting the sliders. "
-            )
-        else:
-            correct_bonus = (
-                "They receive a bonus based on the number of sliders they report, regardless of accuracy. "
-            )
-
-        correct_tax_base = (
-            "Each citizen pays tax based on the number of completed sliders reported by the Administrator. "
-        )
-
+        example_sliders = 10
+        other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
         return dict(
-            correct_tax=correct_tax,
-            correct_bonus=correct_bonus,
-            correct_tax_base=correct_tax_base
+            correct_tax=example_sliders * C.TAX_PER_SLIDER,
+            correct_own=example_sliders * player.piece_rate,
+            correct_other=example_sliders * other_rate,
+            correct_bonus="They receive a bonus only for accurately counting the sliders.",
+            citizen_type=player.citizen_type,
+            piece_rate=player.piece_rate,
+            other_rate=other_rate,
         )
 
 
@@ -1047,24 +1022,14 @@ class RevealTax(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        g = player.group
-
-        if g.trust_condition == 'count':
-            explanation_text = (
-                "The Administrator was instructed to count correctly placed sliders accurately."
-            )
-        else:
-            explanation_text = (
-                "The Administrator estimated the number of completed sliders after briefly viewing the activity record of your correctly placed sliders."
-            )
-
         return dict(
             reported_for_you=player.reported_tasks,
             tax_paid=player.applied_tax,
             gross_income=player.gross_income,
             net_income=player.net_income_after_tax,
-            explanation_text=explanation_text,
-            trust_condition=g.trust_condition,
+            explanation_text="The Administrator was instructed to count correctly placed sliders accurately.",
+            citizen_type=player.citizen_type,
+            piece_rate=player.piece_rate,
         )
 
 
@@ -1094,6 +1059,11 @@ class Targeting(Page): #need to include a timeout tracking here
     def error_message(player: Player, values):
         if player.group.targeting_condition == 'apply' and not values.get('apply_transfer'):
             return "Please choose whether you want to apply for a transfer."
+    
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.timed_out_targeting = True
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -1102,24 +1072,27 @@ class Targeting(Page): #need to include a timeout tracking here
         if is_apply:
             header = "Transfer application"
             body = (
-                "The taxes collected by the administrator will be distributed as transfers through an application process. "
-                "All citizens may apply to receive this amount. "
-                "Collected tax revenue will be redistributed equally among those who apply in your group. "
-                "To receive a transfer, you must complete a short administrative task."
+                "The taxes collected by the administrator will be distributed as transfers "
+                "through an application process. While all citizens may apply, this transfer is intended to support citizens "
+                "with a lower piece rate are. Collected tax revenue will be redistributed equally "
+                "among those who apply in your group. To receive a transfer, you must complete a "
+                "short administrative task."
             )
         else:
             header = "Transfer allocation"
             body = (
-                "The taxes collected by the administrator will be distributed as transfers automatically. "
-                "All citizens are automatically enrolled to receive this amount. "
-                "Collected tax revenue will be redistributed equally among all citizens in your group. "
-                "No application is required."
+                "The taxes collected by the administrator will be distributed as transfers "
+                "automatically to citizens with a lower piece rate. "
+                "Collected tax revenue will be redistributed equally among citizens with a "
+                "lower piece rate. No application is required."
             )
         return dict(
             is_apply=is_apply,
             header=header,
             body=body,
-            net_income=player.net_income_after_tax
+            net_income=player.net_income_after_tax, 
+            citizen_type=player.citizen_type,
+            piece_rate=player.piece_rate,
         )
 
 
@@ -1169,10 +1142,11 @@ class WaitTargeting(WaitPage):
         if not citizens:
             return
 
-        if group.targeting_condition == 'auto':                 #need to add explicit no handling for apply_transfer == None, code does not do this right now
-            share = group.total_applied_tax / len(citizens)
+        if group.targeting_condition == 'auto': #need to add explicit handling for apply_transfer == None, code does not do this right now
+            poor_citizens = [p for p in citizens if p.citizen_type == 'poor']
+            share = group.total_applied_tax / len(poor_citizens)
             for p in citizens:
-                p.received_transfer = share
+                p.received_transfer = share if p.citizen_type == 'poor' else cu(0)
         else:
             applicants = [
                 p for p in citizens
@@ -1180,7 +1154,7 @@ class WaitTargeting(WaitPage):
             ]
             share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
             for p in citizens:
-                p.received_transfer = share if p in applicants else cu(0)
+                p.received_transfer = share if p in applicants else cu(0)    
 
 
 class TransferOutcome(Page):
@@ -1206,7 +1180,8 @@ class TransferOutcome(Page):
 
         return dict(
             status=status,
-            received_transfer=player.received_transfer
+            received_transfer=player.received_transfer, 
+            citizen_type=player.citizen_type,
         )
 
 
@@ -1221,7 +1196,7 @@ class CitizenTrustGame(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(trust_budget=float(C.TRUST_BUDGET), mult=C.TRUST_MULTIPLIER)
+        return dict(trust_budget=float(C.TRUST_BUDGET), mult=C.TRUST_MULTIPLIER, citizen_type=player.citizen_type)
 
     @staticmethod
     def error_message(player: Player, values):
@@ -1347,6 +1322,8 @@ class RevealIncomeAndTransfers(Page):
         else:
             return dict(
                 is_admin=False,
+                citizen_type=player.citizen_type,
+                piece_rate=player.piece_rate,
                 effort_points=player.effort_points,
                 gross_income=player.gross_income,
                 reported_tasks=player.reported_tasks,
@@ -1377,6 +1354,9 @@ class PostSurveyPart1(Page):
             'trust_admin_public_funds',
             'trust_administration_overall',
             'trust_cit',
+            'fairness_piece_rates',
+            'fairness_own_earnings',
+            'fairness_tax_system',
         ]
         random.shuffle(randomised_fields)
         

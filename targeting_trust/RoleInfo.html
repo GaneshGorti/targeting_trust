@@ -18,6 +18,17 @@ Both, groups, and roles are assigned randomly.
 In your group, you have been assigned the role: <strong>{{ role }}</strong>.
 </p>
 
+{% if not is_admin %}
+<p>
+In this study, citizens within a group earn different amounts per correctly placed slider. This is determined randomly.
+Two citizens earn <strong>{{ rich_rate }} ECU per slider</strong> and two others earn <strong>{{ poor_rate }} ECU per slider</strong>.
+</p>
+<p>
+You have been assigned a piece rate of <strong>{{ piece_rate }} ECU per slider</strong>. 
+This means you are a <strong>{{ citizen_type }}</strong> citizen.
+</p>
+{% endif %}
+
 <p>
 You will not be told the identities of other participants in your group.
 All interactions happen through the computer and within your group.

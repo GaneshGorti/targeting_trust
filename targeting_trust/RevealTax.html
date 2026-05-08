@@ -3,27 +3,18 @@
 {% block content %}
 
 <style>
-     .otree-timer {
-         display: none;
-     }
-   </style>
+    .otree-timer {
+        display: none;
+    }
+</style>
 
-<h2>What the administrator saw</h2>
-
-{% if trust_condition == 'count' %}
+<h2>What the Administrator Saw</h2>
 
 <p>
-The Administrator was shown the below visual record of each participant’s completed sliders, where each square represents a slider that was correctly positioned.
+    The Administrator was shown the visual record of each participant's completed sliders, 
+    where each square represents a slider that was correctly positioned.
+    The Administrator was instructed to count the sliders accurately.
 </p>
-
-{% else %}
-
-<p>
-The Administrator was shown the below visual record of each participant’s completed sliders, where each square represents a slider that was correctly positioned,  
-for only 10 seconds.
-</p>
-
-{% endif %}
 
 <hr>
 
@@ -34,8 +25,35 @@ for only 10 seconds.
 
 <hr>
 
+<h3>Your Income Summary</h3>
+
+<table style="width:100%; border-collapse:collapse;">
+    <tr>
+        <td>Your piece rate</td>
+        <td><strong>{{ piece_rate }} ECU per slider</strong></td>
+    </tr>
+    <tr>
+        <td>Sliders reported by the Administrator</td>
+        <td><strong>{{ reported_for_you }}</strong></td>
+    </tr>
+    <tr>
+        <td>Your gross income</td>
+        <td><strong>{{ gross_income }} ECU</strong></td>
+    </tr>
+    <tr>
+        <td>Tax deducted ({{ reported_for_you }} × 3 ECU)</td>
+        <td><strong>{{ tax_paid }} ECU</strong></td>
+    </tr>
+    <tr style="border-top: 2px solid black;">
+        <td><strong>Your net income after tax</strong></td>
+        <td><strong>{{ net_income }} ECU</strong></td>
+    </tr>
+</table>
+
+<hr>
+
 <p>
-You will now proceed to the next stage.
+    You will now proceed to the next stage.
 </p>
 
 {{ next_button }}

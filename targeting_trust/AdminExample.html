@@ -5,47 +5,47 @@
     .otree-timer {
         display: none;
     }
-  </style>
+</style>
 
-<h3>Example: How your bonus and citizen's taxes are calculated</h3>
-
-{% if player.group.trust_condition == "count" %}
+<h3>Example: How your bonus and citizens' taxes are calculated</h3>
 
 <p>
-If a participant correctly placed <strong>10 sliders</strong> and you report <strong>10</strong>,  
-the tax would be:
-<br>
-10 × 3 ECU = <strong>30 ECU</strong>.
+    Citizens in your group earn different amounts per correctly placed slider:
+</p>
+<ul>
+    <li>Two citizens earn <strong>{{ rich_rate }} ECU per slider</strong></li>
+    <li>Two others earn <strong>{{ poor_rate }} ECU per slider</strong></li>
+</ul>
+
+<p>
+    Regardless of their piece rate, each citizen pays a tax of <strong>3 ECU per slider reported</strong>.
 </p>
 
 <p>
-You receive a bonus of <strong>1 ECU for every slider you count correctly</strong>.  
-If you correctly report 10 sliders, your bonus would be:
-<br>
-10 × 1 ECU = <strong>10 ECU</strong>.
+    <strong>Example — Citizen with {{ rich_rate }} ECU piece rate:</strong><br>
+    If this citizen correctly placed <strong>10 sliders</strong> and you report <strong>10</strong>,
+    the tax would be:
+    <br>
+    10 × 3 ECU = <strong>30 ECU</strong>.
 </p>
 
-{% else %}
-
 <p>
-<strong>Example:</strong><br>
-If a participant correctly placed <strong>10 sliders</strong> and you report <strong>12</strong>,  
-the tax would be:
-<br>
-12 × 3 ECU = <strong>36 ECU</strong>.
-</p>
-    
-<p>
-You receive a bonus of <strong>1 ECU for every slider you report</strong>.  
-If you report 12 sliders, your bonus would be:
-<br>
-12 × 1 ECU = <strong>12 ECU</strong>.
+    <strong>Example — Citizen with {{ poor_rate }} ECU piece rate:</strong><br>
+    If this citizen correctly placed <strong>10 sliders</strong> and you report <strong>10</strong>,
+    the tax would be:
+    <br>
+    10 × 3 ECU = <strong>30 ECU</strong>.
 </p>
 
-{% endif %}
+<p>
+    You receive a bonus of <strong>1 ECU for every slider you count correctly</strong>.
+    If you correctly report 10 sliders for each of the 4 citizens, your bonus would be:
+    <br>
+    40 × 1 ECU = <strong>40 ECU</strong>.
+</p>
 
 <p>
-If you have understood the instructions and the example, click Next.
+    If you have understood the instructions and the example, click Next.
 </p>
 
 {{ next_button }}
