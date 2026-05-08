@@ -1158,7 +1158,7 @@ class WaitTargeting(WaitPage):
             ]
             share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
             for p in citizens:
-            p.received_transfer = share if p in applicants else cu(0)
+                p.received_transfer = share if p in applicants else cu(0)
 
 
 class TransferOutcome(Page):
