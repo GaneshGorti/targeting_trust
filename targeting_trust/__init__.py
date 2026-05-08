@@ -128,7 +128,7 @@ class Player(BasePlayer):
     )
     
     admin_quiz_rates = models.StringField(
-        label="Which of the following best describes the piece rates in this experiment?",
+        label="Which of the following best describes the piece rates in this study?",
         choices=[
             ('same', 'All citizens earn the same amount per slider'),
             ('different', 'Some citizens earn more per slider than others'),
