@@ -501,7 +501,9 @@ def live_effort(player: Player, data):
 
 def debug_treatment(player: Player):
     g = player.group
-    return f"Targeting={g.targeting_condition} | Type={player.citizen_type} | Rate={player.piece_rate}"
+    citizen_type = player.field_maybe_none('citizen_type')
+    piece_rate = player.field_maybe_none('piece_rate')
+    return f"Targeting={g.targeting_condition} | Type={citizen_type} | Rate={piece_rate}"
 
 
 
