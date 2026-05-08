@@ -1141,14 +1141,14 @@ class WaitTargeting(WaitPage):
     timeout_seconds = 120
     
     @staticmethod
-    def assign_transfers(group: Group):
+    def after_all_players_arrive(group: Group):
         citizens = [p for p in group.get_players() if not p.is_admin]
         if not citizens:
             return
 
-        if group.targeting_condition == 'auto': #need to add explicit handling for apply_transfer == None, code does not do this right now
+        if group.targeting_condition == 'auto':
             poor_citizens = [p for p in citizens if p.citizen_type == 'poor']
-            share = group.total_applied_tax / len(poor_citizens)
+            share = (group.total_applied_tax / len(poor_citizens)) if poor_citizens else cu(0)
             for p in citizens:
                 p.received_transfer = share if p.citizen_type == 'poor' else cu(0)
         else:
@@ -1158,7 +1158,7 @@ class WaitTargeting(WaitPage):
             ]
             share = (group.total_applied_tax / len(applicants)) if applicants else cu(0)
             for p in citizens:
-                p.received_transfer = share if p in applicants else cu(0)    
+            p.received_transfer = share if p in applicants else cu(0)
 
 
 class TransferOutcome(Page):
