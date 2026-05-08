@@ -611,7 +611,7 @@ class RoleInfo(Page):
             is_admin=player.is_admin,
             targeting_condition=g.targeting_condition,
             citizen_type=player.field_maybe_none('citizen_type'),
-            piece_rate=player.field_maybe_none('player.piece_rate'),
+            piece_rate=player.field_maybe_none('piece_rate'),
             rich_rate=C.RICH_SLIDER_PAYMENT,
             poor_rate=C.POOR_SLIDER_PAYMENT,
             citizens=citizens,
