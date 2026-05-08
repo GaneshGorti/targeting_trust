@@ -972,17 +972,17 @@ class CitizenComprehension(Page):
     @staticmethod
     def error_message(player, values):
         example_sliders = 10
-        correct_tax = example_sliders * C.TAX_PER_SLIDER  # 30
-        correct_own = example_sliders * player.piece_rate
+        correct_tax = int(example_sliders * C.TAX_PER_SLIDER)
+        correct_own = int(example_sliders * player.piece_rate)
         other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
-        correct_other = example_sliders * other_rate
+        correct_other = int(example_sliders * other_rate)
 
         player.citizen_quiz_attempts += 1
 
         incorrect = (
-            values['citizen_quiz_tax'] != correct_tax
-            or values['citizen_quiz_own_payout'] != correct_own
-            or values['citizen_quiz_other_payout'] != correct_other
+            int(values['citizen_quiz_tax']) != correct_tax
+            or int(values['citizen_quiz_own_payout']) != correct_own
+            or int(values['citizen_quiz_other_payout']) != correct_other
             or values['citizen_quiz_admin_bonus'] != 'accurate'
         )
 
@@ -1033,6 +1033,7 @@ class RevealTax(Page):
             explanation_text="The Administrator was instructed to count correctly placed sliders accurately.",
             citizen_type=player.citizen_type,
             piece_rate=player.piece_rate,
+            effort_points=player.effort_points
         )
 
 
