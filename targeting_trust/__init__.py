@@ -899,7 +899,6 @@ class WaitForTax(WaitPage):
 class CitizenTaxInfo(Page):
     timeout_seconds = 70
     form_model = 'player'
-    form_fields = ['expected_tax_squares']
 
     @staticmethod
     def is_displayed(player: Player):
