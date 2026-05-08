@@ -613,7 +613,7 @@ class RoleInfo(Page):
             is_admin=player.is_admin,
             targeting_condition=g.targeting_condition,
             citizen_type=player.field_maybe_none('citizen_type'),
-            piece_rate=player.field_maybe_none('piece_rate'),
+            piece_rate=player.field_maybe_none('piece_rate') or 0,
             rich_rate=C.RICH_SLIDER_PAYMENT,
             poor_rate=C.POOR_SLIDER_PAYMENT,
             citizens=citizens,
@@ -1321,7 +1321,20 @@ class RevealIncomeAndTransfers(Page):
                 admin_bonus=player.admin_bonus,
                 trust_payoff=player.trust_game_net,
                 final_income=player.final_income,
-                final_income_gbp=player.final_income_gbp
+                final_income_gbp=player.final_income_gbp, 
+                # citizen fields set to safe defaults
+                citizen_type=None,
+                piece_rate=0,
+                effort_points=0,
+                gross_income=cu(0),
+                reported_tasks=0,
+                applied_tax=cu(0),
+                net_income_after_tax=cu(0),
+                received_transfer=cu(0),
+                income_after_transfer=cu(0),
+                trust_budget=C.TRUST_BUDGET,
+                sent=cu(0),
+                returned=cu(0),
             )
 
         else:
@@ -1342,6 +1355,8 @@ class RevealIncomeAndTransfers(Page):
                 trust_payoff=player.trust_game_net,
                 final_income=player.final_income,
                 final_income_gbp=player.final_income_gbp,
+                # admin fields set to safe defaults
+                admin_bonus=cu(0),
             )
 
 
