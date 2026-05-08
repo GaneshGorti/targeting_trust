@@ -610,8 +610,8 @@ class RoleInfo(Page):
             role=player.role_str,
             is_admin=player.is_admin,
             targeting_condition=g.targeting_condition,
-            citizen_type=player.citizen_type,
-            piece_rate=player.piece_rate,
+            citizen_type=player.field_maybe_none('citizen_type'),
+            piece_rate=player.field_maybe_none('player.piece_rate'),
             rich_rate=C.RICH_SLIDER_PAYMENT,
             poor_rate=C.POOR_SLIDER_PAYMENT,
             citizens=citizens,
@@ -1174,6 +1174,9 @@ class TransferOutcome(Page):
 
         elif player.apply_transfer == 'yes' and player.application_completed:
             status = "applied_success"
+
+        elif player.timed_out_targeting:
+            status = "timed_out"
 
         else:
             status = "did_not_apply"
