@@ -653,6 +653,8 @@ class CitizenWorkTaskInstructions(Page):
             other_rate=other_rate,
             citizen_type=player.citizen_type,
             tax_per_slider=C.TAX_PER_SLIDER,
+            rich_rate=C.RICH_SLIDER_PAYMENT,
+            poor_rate=C.POOR_SLIDER_PAYMENT,
             admin_rule=(
                 "The Administrator assigned to your group has been instructed "
                 "to count the number of correctly placed sliders accurately. "
@@ -945,7 +947,6 @@ class CitizenExample(Page):
             piece_rate=player.piece_rate,
             citizen_type=player.citizen_type,
             gross=gross,
-            tax=tax,
             net=net,
             other_rate=other_rate,
             other_gross=other_gross,
