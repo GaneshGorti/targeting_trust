@@ -934,7 +934,7 @@ class CitizenExample(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        example_sliders = 10
+        example_sliders = 5
         gross = example_sliders * player.piece_rate
         tax = example_sliders * C.TAX_PER_SLIDER
         net = gross - tax
@@ -971,7 +971,7 @@ class CitizenComprehension(Page):
 
     @staticmethod
     def error_message(player, values):
-        example_sliders = 10
+        example_sliders = 5
         correct_tax = int(example_sliders * C.TAX_PER_SLIDER)
         correct_own = int(example_sliders * player.piece_rate)
         other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
@@ -1011,7 +1011,7 @@ class CitizenQuizFeedback(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        example_sliders = 10
+        example_sliders = 5
         other_rate = C.POOR_SLIDER_PAYMENT if player.citizen_type == 'rich' else C.RICH_SLIDER_PAYMENT
         return dict(
             correct_tax=example_sliders * C.TAX_PER_SLIDER,
