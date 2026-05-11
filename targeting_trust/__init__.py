@@ -979,6 +979,14 @@ class CitizenComprehension(Page):
 
         player.citizen_quiz_attempts += 1
 
+        # Guard against None values from auto-submission on timeout
+        if any(values.get(f) is None for f in [
+            'citizen_quiz_tax', 'citizen_quiz_own_payout',
+            'citizen_quiz_other_payout', 'citizen_quiz_admin_bonus'
+         ]):
+            player.citizen_quiz_failed = True
+            return None
+
         incorrect = (
             int(values['citizen_quiz_tax']) != correct_tax
             or int(values['citizen_quiz_own_payout']) != correct_own
