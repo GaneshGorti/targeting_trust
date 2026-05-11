@@ -926,7 +926,7 @@ class CitizenTaxInfo(Page):
 
 
 class CitizenExample(Page):
-    timeout_seconds = 60
+    timeout_seconds = 80
 
     @staticmethod
     def is_displayed(player: Player):
