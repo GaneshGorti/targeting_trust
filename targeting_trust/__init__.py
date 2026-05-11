@@ -109,9 +109,9 @@ class Player(BasePlayer):
     admin_quiz_bonus = models.StringField(
         label="How is your bonus determined?",
         choices=[
-            ('accuracy', 'I receive 1 ECU for every slider I count accurately'),
-            ('percentage', 'I receive 1 ECU for every slider I report'),
-            ('fixed', 'I receive a fixed amount regardless of sliders counted')
+            ('accuracy', 'I receive 1 ECU for every slider I count and report accurately'),
+            ('percentage', 'I receive 1 ECU for every slider I report, regardless of accuracy'),
+            ('fixed', 'I receive a fixed amount regardless of the sliders I count')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -120,8 +120,8 @@ class Player(BasePlayer):
     admin_quiz_tax_base = models.StringField(
         label="What determines each citizen’s tax payment?",
         choices=[
-            ('completed', 'Each citizen pays a fixed amount irrespective of the number of completed sliders reported by me'),
-            ('reported', 'Each citizen pays tax based on the number of completed sliders reported by me')
+            ('completed', 'Each citizen pays a fixed amount amount of tax'),
+            ('reported', 'Each citizen pays tax based on the number of completed sliders counted and reported by me')
         ],
         widget=widgets.RadioSelect,
         blank=True
