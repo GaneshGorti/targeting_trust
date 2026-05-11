@@ -657,8 +657,9 @@ class CitizenWorkTaskInstructions(Page):
             poor_rate=C.POOR_SLIDER_PAYMENT,
             admin_rule=(
                 "The Administrator assigned to your group has been instructed "
-                "to count the number of correctly placed sliders accurately. "
-                "They receive a bonus of 1 ECU for every slider counted correctly."
+                "to count the number of correctly placed sliders accurately and report it to the system." 
+                "They receive a bonus of 1 ECU for every slider counted accurately, "
+                "and the system does not allow the number of completed sliders to be misreported. "
             )
         )
 
