@@ -128,11 +128,11 @@ class Player(BasePlayer):
     )
     
     admin_quiz_rates = models.StringField(
-        label="Which of the following best describes the piece rates in this study?",
+        label="Which of the following best describes the amount earned by citizens for every completed slider?",
         choices=[
             ('same', 'All citizens earn the same amount per slider'),
             ('different', 'Some citizens earn more per slider than others'),
-            ('admin', 'The administrator sets the piece rates')
+            ('admin', 'The administrator sets the amount earned per slider')
         ],
         widget=widgets.RadioSelect,
         blank=True
