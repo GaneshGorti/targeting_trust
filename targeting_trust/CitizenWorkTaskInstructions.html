@@ -10,36 +10,29 @@
 <h2>Task Phase</h2>
 
 <p>
-    You will now complete a task in which you must move sliders exactly to the middle (at 50).
-    Each time you position a slider correctly, it will be replaced with a new one.
-    You can complete as many sliders as you wish within 60 seconds.
+    You will now complete a slider task. Your goal is to move each slider exactly to the middle (50). 
+    Each correctly placed slider is replaced with a new one. You have <strong>60 seconds</strong> to complete as many as you can.
 </p>
 
 <p>
-    Each correctly positioned slider generates <strong>{{ piece_rate }} ECU</strong> for you (1 ECU = £0.01) and a tax of <strong>{{ tax_per_slider }} ECU</strong>.
-    The more sliders you place correctly, the more income you earn, but also the more tax you pay.
+    Your piece rate is <strong>{{ piece_rate }} ECU per correctly placed slider</strong> (1 ECU = £0.01). 
+    Note that in your group, 2 citizens earn <strong>{{ rich_rate }} ECU</strong> per slider and 
+    2 citizens earn <strong>{{ poor_rate }} ECU</strong> per slider — you are one of the {{ piece_rate }} ECU citizens.
 </p>
 
 <p>
-    Note that citizens in your group may earn different amounts per slider. 
-    Two citizens earn <strong>{{ rich_rate }} ECU per slider</strong>.
-    Two others earn <strong>{{ poor_rate }} ECU per slider</strong>.
-    Your piece rate is <strong>{{ piece_rate }} ECU per slider</strong>. 
+    After the task, the Administrator will count your completed sliders and report the number. 
+    A tax of <strong>{{ tax_per_slider }} ECU</strong> is then deducted from your earnings for every slider reported. 
+    The Administrator receives a bonus of <strong>1 ECU per slider counted correctly</strong>, 
+    and the system does not allow misreporting.
 </p>
-
-<p>
-    The tax is calculated by the Administrator assigned to your group.
-
-</p>
-
- <p>{{ admin_rule }}</p>
 
  <p>
-    The tax will be deducted from your final payment. Thus, your <strong>net income</strong> from this task is calculated as follows:
+    Your <strong>net income</strong> from this task is calculated as follows:
 </p>
     
     <p>
-    For every slider you position correctly, you earn <strong>10 ECU</strong>.
+    For every slider you position correctly, you earn <strong>{{ piece_rate }} ECU</strong>.
     For every slider the Administrator reports, a tax of <strong>3 ECU</strong> is deducted from your earnings.
     </p>
     
