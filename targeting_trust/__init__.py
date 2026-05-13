@@ -391,7 +391,7 @@ class Player(BasePlayer):
         blank=False
     )
     fairness_piece_rates = models.IntegerField(
-        label="How fair was the difference in piece rates between citizens in your group? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
+        label="How fair was the size of the difference in earnings per slider between citizens in your group? (1 = Very unfair, 7 = Very fair)<span style='color:red;'>*</span>",
         choices=[(1, "1 - Very unfair"), (2, "2"), (3, "3"), (4, "4"), (5, "5"), (6, "6"), (7, "7 - Very fair"), (8, "Prefer not to say")],
         widget=widgets.RadioSelect,
         blank=False
@@ -403,7 +403,7 @@ class Player(BasePlayer):
         blank=False
     )   
     fairness_tax_system = models.IntegerField(
-        label="To what extent did the tax system treat all citizens equally, regardless of their piece rate? (1 = Not at all equally, 7 = Completely equally)<span style='color:red;'>*</span>",
+        label="To what extent did the tax system treat all citizens equally, regardless of their earnings per slider? (1 = Not at all equally, 7 = Completely equally)<span style='color:red;'>*</span>",
         choices=[(1, "1 - Not at all equally"), (2, "2"), (3, "3"), (4, "4"), (5, "5"), (6, "6"), (7, "7 - Completely equally"), (8, "Prefer not to say")],
         widget=widgets.RadioSelect,
         blank=False
@@ -791,7 +791,7 @@ class AdminSquares(Page):
         return dict(
             rows=rows,
             instruction_text=(
-                "You must carefully review each citizen's activity record and COUNT "
+                "You must carefully review each citizen's activity record and count "
                 "how many tasks they completed."
             ),
             admin_bonus_display=C.ADMIN_BONUS_PER_SLIDER
@@ -1087,7 +1087,7 @@ class Targeting(Page): #need to include a timeout tracking here
             body = (
                 "The taxes collected by the administrator will be distributed as transfers "
                 "through an application process. While all citizens may apply, this transfer is intended to support citizens "
-                "with a lower piece rate are. Collected tax revenue will be redistributed equally "
+                "with a lower per slider earning rate. Collected tax revenue will be redistributed equally "
                 "among those who apply in your group. To receive a transfer, you must complete a "
                 "short administrative task."
             )
@@ -1095,9 +1095,9 @@ class Targeting(Page): #need to include a timeout tracking here
             header = "Transfer allocation"
             body = (
                 "The taxes collected by the administrator will be distributed as transfers "
-                "automatically to citizens with a lower piece rate. "
+                "automatically to citizens with a lower per slider earning rate. "
                 "Collected tax revenue will be redistributed equally among citizens with a "
-                "lower piece rate. No application is required."
+                "lower per slider earning rate. No application is required."
             )
         return dict(
             is_apply=is_apply,

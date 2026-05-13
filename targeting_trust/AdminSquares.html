@@ -14,24 +14,20 @@
 <table class="table" style="width:100%; border-collapse: collapse;">
 <tr>
     <th>Citizen</th>
-    <th>Piece rate</th>
     <th>Activity record</th>
     <th>Your report</th>
 </tr>
 
 {% for r in rows %}
 <tr>
-    <td><strong>{{ r.code }}</strong></td>
-    <td>{{ r.piece_rate }} ECU per slider</td>
-    <td class="record">
-        <div class="blocks">
+    <td>Citizen {{ forloop.counter }}</td>
+    <td>
         {% for b in r.blocks %}
             <span class="block"></span>
         {% endfor %}
-        </div>
     </td>
     <td>
-        <input type="number" name="{{ r.field }}" min="0" required style="width:120px">
+        <input type="number" name="{{ r.field }}" min="0" required style="width:80px">
     </td>
 </tr>
 {% endfor %}
