@@ -11,44 +11,31 @@
 
 {% if status == "automatic" %}
     {% if citizen_type == "poor" %}
-    <p>
-        Transfers were automatically allocated to citizens with a lower piece rate.
-        As a citizen with a lower piece rate, you have received a transfer.
+    <p>Transfers were automatically allocated to citizens with a lower per slider earning rate.
+    As a citizen with a lower earning rate, you were allocated a transfer of <strong>{{ received_transfer }}</strong>.
+    {% if received_transfer == 0 %}
+    No tax was collected in your group, so the transfer amount is zero.
+    {% endif %}
     </p>
     {% else %}
-    <p>
-        Transfers were automatically allocated to citizens with a lower piece rate.
-        As a citizen with a higher piece rate, you did not receive a transfer.
-    </p>
+    <p>Transfers were automatically allocated to citizens with a lower per slider earning rate.
+    As a citizen with a higher earning rate, you did not receive a transfer.</p>
     {% endif %}
 
 {% elif status == "applied_success" %}
-<p>
-    You chose to apply for a transfer and your application was successful.
+<p>You applied for a transfer and your application was successful.
+You received a transfer of <strong>{{ received_transfer }}</strong>.
+{% if received_transfer == 0 %}
+No tax was collected in your group, so the transfer amount is zero.
+{% endif %}
 </p>
 
 {% elif status == "timed_out" %}
-<p>
-    You did not respond in time to the transfer application.
-    As a result, you did not receive a transfer.
-</p>
+<p>You did not respond in time to the transfer application. You did not receive a transfer.</p>
 
 {% else %}
-<p>
-    You chose not to apply for a transfer.
-    As a result, you did not receive a transfer.
-</p>
+<p>You chose not to apply for a transfer. You did not receive a transfer.</p>
 
-{% endif %}
-
-{% if received_transfer > 0 %}
-<p>
-    You received a transfer of <strong>{{ received_transfer }} </strong>.
-</p>
-{% else %}
-<p>
-    You did not receive a transfer.
-</p>
 {% endif %}
 
 {{ next_button }}

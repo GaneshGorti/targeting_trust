@@ -912,7 +912,7 @@ class CitizenTaxInfo(Page):
             trust_message=(
                 "The Administrator was shown a visual record of the number of correctly placed sliders "
                 "and was asked to count the number of correctly placed sliders. "
-                "The Administrator receives a bonus of 1 ECU for every slider counted correctly."
+                "The Administrator received a bonus of 1 ECU for every slider counted correctly."
             ),
             tasks_completed=player.effort_points,
             piece_rate=player.piece_rate,
