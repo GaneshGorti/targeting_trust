@@ -408,6 +408,21 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
+    transfer_targeting_accuracy = models.IntegerField(
+    label="To what extent do you think the transfer reached the citizens who needed it most? (1 = Not at all, 7 = Completely)<span style='color:red;'>*</span>",
+    choices=[
+        (1, "1 - Not at all"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+        (6, "6"),
+        (7, "7 - Completely"),
+        (8, "Prefer not to say / Do not know"),
+    ],
+    widget=widgets.RadioSelect,
+    blank=False
+    )
     
 
     def role(self):
@@ -1386,7 +1401,7 @@ class PostSurveyPart1(Page):
             'trust_administration_overall',
             'trust_cit',
             'fairness_piece_rates',
-            'fairness_own_earnings',
+            'transfer_targeting_accuracy',
             'fairness_tax_system',
         ]
         random.shuffle(randomised_fields)
