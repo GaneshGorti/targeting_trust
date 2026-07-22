@@ -1346,39 +1346,6 @@ class WaitForReturns(WaitPage):
         admin.final_income_gbp = admin.final_income * C.ECU_TO_GBP
 
 
-class RevealIncomeAndTransfers(Page):
-
-    @staticmethod
-    def vars_for_template(player: Player):
-
-        if player.is_admin:
-            return dict(
-                is_admin=True,
-                admin_bonus=player.admin_bonus,
-                trust_payoff=player.trust_game_net,
-                final_income=player.final_income,
-                final_income_gbp=player.final_income_gbp
-            )
-
-        else:
-            return dict(
-                is_admin=False,
-                effort_points=player.effort_points,
-                gross_income=player.gross_income,
-                reported_tasks=player.reported_tasks,
-                applied_tax=player.applied_tax,
-                net_income_after_tax=player.net_income_after_tax,
-                received_transfer=player.received_transfer,
-                income_after_transfer=player.income_after_transfer,
-                trust_budget=C.TRUST_BUDGET,
-                sent=player.send_amount,
-                returned=player.amount_returned,
-                trust_payoff=player.trust_game_net,
-                final_income=player.final_income,
-                final_income_gbp=player.final_income_gbp,
-            )
-
-
 class PostSurveyPart1(Page):
     form_model = 'player'
 
@@ -1460,6 +1427,39 @@ class PostSurveyAdmin(Page):
             if values.get(field) in [None, '', []]:
                 return "Please answer all questions marked with <span style='color:red;'>*</span> before continuing."
     
+
+class RevealIncomeAndTransfers(Page):
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        if player.is_admin:
+            return dict(
+                is_admin=True,
+                admin_bonus=player.admin_bonus,
+                trust_payoff=player.trust_game_net,
+                final_income=player.final_income,
+                final_income_gbp=player.final_income_gbp
+            )
+
+        else:
+            return dict(
+                is_admin=False,
+                effort_points=player.effort_points,
+                gross_income=player.gross_income,
+                reported_tasks=player.reported_tasks,
+                applied_tax=player.applied_tax,
+                net_income_after_tax=player.net_income_after_tax,
+                received_transfer=player.received_transfer,
+                income_after_transfer=player.income_after_transfer,
+                trust_budget=C.TRUST_BUDGET,
+                sent=player.send_amount,
+                returned=player.amount_returned,
+                trust_payoff=player.trust_game_net,
+                final_income=player.final_income,
+                final_income_gbp=player.final_income_gbp,
+            )
+
 
 class ThankYou(Page): #need to include end time! 
     pass
