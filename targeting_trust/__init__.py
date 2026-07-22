@@ -150,7 +150,7 @@ class Player(BasePlayer):
 
     # citizen belief/expectation
     expected_tax_squares = models.IntegerField(
-        label="What do you think the number of correctly placed sliders reported by the administrator will be?",
+        label="How many correctly placed sliders do you think the Administrator reported for you?",
         min=0,
         blank=False
     )
