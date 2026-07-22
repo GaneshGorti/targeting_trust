@@ -71,6 +71,7 @@ class Player(BasePlayer):
     timed_out_citizen_trust = models.BooleanField(initial=False)
     timed_out_admin_tax = models.BooleanField(initial=False)
     timed_out_admin_trust = models.BooleanField(initial=False)
+    timed_out_tax_info = models.BooleanField(initial=False)
 
     # Citizen comprehension fields  
     citizen_quiz_tax = models.IntegerField(
@@ -930,6 +931,10 @@ class CitizenTaxInfo(Page):
         return dict(trust_message=msg, 
                     tasks_completed=player.effort_points)
 
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.timed_out_tax_info = True
     #@staticmethod
     #def before_next_page(player: Player, timeout_happened):
     #    g = player.group
