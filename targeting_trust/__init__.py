@@ -255,6 +255,17 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         blank=False
     )
+    risk_pref = models.IntegerField(
+        label="How do you see yourself: are you generally a person who is fully prepared to take risks or do you try to avoid taking risks? Please tick a box on the scale, where 0 means 'not at all willing to take risks' and 10 means 'very willing to take risks'.<span style='color:red;'>*</span>",
+        choices=[
+            (0, "0 - Not at all willing to take risks"),
+            (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, "5"),
+            (6, "6"), (7, "7"), (8, "8"), (9, "9"),
+            (10, "10 - Very willing to take risks"),
+        ],  
+        widget=widgets.RadioSelect,
+        blank=False
+    )
     ac = models.StringField(
         label="Everyone has their favourite colour, but for this question, regardless of your actual preference, please select Green.",
         choices=['Red', 'Blue', 'Purple', 'Green', 'Yellow', 'Another colour'],
@@ -1406,6 +1417,7 @@ class PostSurveyPart2(Page):
         return not player.is_admin
 
     form_fields = [
+        'risk_pref',
         'pol_lean',
         'age',
         'gender',
@@ -1429,6 +1441,7 @@ class PostSurveyAdmin(Page):
 
     form_fields = [
         'trust_gov',
+        'risk_pref',
         'pol_lean',
         'age',
         'gender',
