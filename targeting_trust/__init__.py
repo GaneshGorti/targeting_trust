@@ -575,7 +575,7 @@ class LobbyTimeout(Page):
         
 
 class RoleInfo(Page):
-    timeout_seconds = 100
+    timeout_seconds = 120
     @staticmethod
     def vars_for_template(player: Player):
         g = player.group
@@ -652,14 +652,14 @@ class WaitForWork(WaitPage):
 
 
 class AdminInstructions(Page):
-    timeout_seconds = 80
+    timeout_seconds = 100
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
     
 
 class AdminExample(Page):
-    timeout_seconds = 60
+    timeout_seconds = 80
     @staticmethod
     def is_displayed(player: Player):
         return player.is_admin
@@ -976,7 +976,7 @@ class CitizenExample(Page):
     
 
 class CitizenComprehension(Page):
-    timeout_seconds = 60
+    timeout_seconds = 80
 
     form_model = 'player'
     form_fields = [
@@ -1023,7 +1023,7 @@ class CitizenComprehension(Page):
 
 
 class CitizenQuizFeedback(Page):
-    timeout_seconds = 60
+    timeout_seconds = 80
 
     @staticmethod
     def is_displayed(player: Player):
