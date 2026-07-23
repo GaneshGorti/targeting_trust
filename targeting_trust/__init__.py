@@ -960,7 +960,7 @@ class CitizenExample(Page):
                 gross=100,
                 tax=30,
                 net=70,
-                condition="Remember, the Administrator was asked to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
+                condition="Remember, the Administrator was required to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
             )
         else:
             example = dict(
