@@ -7,14 +7,14 @@ This amount will be distributed to you as bonus payments through Prolific. Pleas
 
 {% if is_admin %}
 
-    <h3>Bonus from citizen slider count</h3>
+    <h3>Bonus from citizen work task (slider count)</h3>
     <ul>
         <li><strong>Bonus from tax revenue:</strong> {{ admin_bonus }}</li>
     </ul>
 
     <hr>
 
-    <h3>Sending game</h3>
+    <h3>Decision task</h3>
     <ul>
         <li><strong>Your sending game payoff:</strong> {{ trust_payoff }}</li>
     </ul>
@@ -33,7 +33,7 @@ This amount will be distributed to you as bonus payments through Prolific. Pleas
 
 {% else %}
 
-    <h3>Work phase</h3>
+    <h3>Work task phase</h3>
     <ul>
         <li><strong>Sliders completed:</strong> {{ effort_points }}</li>
         <li><strong>Gross income from sliders:</strong> {{ gross_income }}</li>
@@ -52,7 +52,7 @@ This amount will be distributed to you as bonus payments through Prolific. Pleas
 
     <hr>
 
-    <h3>Sending game</h3>
+    <h3>Decision task</h3>
     <ul>
         <li><strong>Endowment:</strong> {{ trust_budget }}</li>
         <li><strong>You sent:</strong> {{ sent }}</li>
