@@ -1,0 +1,31 @@
+{% extends "global/Page.html" %}
+{% load static %}
+{% block content %}
+
+<h2>How Your Tax Was Determined</h2>
+
+<p>
+The Administrator has reported the number of correctly placed sliders, which
+determines the tax you pay. Your net income equals gross income minus the tax.
+</p>
+
+<hr>
+
+<h3>What the Administrator was asked to do</h3>
+
+<p>{{ trust_message }}</p>
+
+<p>
+The Administrator was shown a visual record of each participant’s completed
+sliders{% if viewing_note %} {{ viewing_note }}{% endif %}, where each square
+represents a slider that was correctly positioned.
+</p>
+
+<p><strong>A random example of what the Administrator would have seen:</strong></p>
+
+<img src="{% static 'admin_view.png' %}"
+     style="max-width:600px; border:1px solid #ccc; margin-top:10px;">
+
+{{ next_button }}
+
+{% endblock %}

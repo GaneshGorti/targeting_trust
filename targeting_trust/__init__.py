@@ -72,6 +72,7 @@ class Player(BasePlayer):
     timed_out_admin_tax = models.BooleanField(initial=False)
     timed_out_admin_trust = models.BooleanField(initial=False)
     timed_out_tax_info = models.BooleanField(initial=False)
+    timed_out_expectation = models.BooleanField(initial=False)
 
     # Citizen comprehension fields  
     citizen_quiz_tax = models.IntegerField(
@@ -901,10 +902,8 @@ class WaitForTax(WaitPage):
     timeout_seconds = 300
 
 
-class CitizenTaxInfo(Page):
-    timeout_seconds = 70
-    form_model = 'player'
-    form_fields = ['expected_tax_squares']
+class CitizenAdminInfo(Page):
+    timeout_seconds = 75
 
     @staticmethod
     def is_displayed(player: Player):
@@ -914,32 +913,30 @@ class CitizenTaxInfo(Page):
     def vars_for_template(player: Player):
         g = player.group
         if g.trust_condition == 'count':
-            msg = (
-                "The Administrator was shown a visual record of the number of correctly placed sliders "
-                "and was later asked to count the number of correctly placed sliders. "
-                "The Administrator receives a bonus of 1 ECU for every slider counted correctly."
+            trust_message = (
+                "The Administrator was shown the visual record below of the "
+                "number of correctly placed sliders and was asked to count "
+                "the number of correctly placed sliders. The Administrator "
+                "receives a bonus of 1 ECU for every slider counted correctly."
             )
+            viewing_note = ""
         else:
-            msg = (
-                "The Administrator was shown the visual record of the number of correctly placed sliders " 
-                "for 10 seconds and was later asked to estimate the number of correctly placed sliders. "
-                "The Administrator received a bonus equal to 1 ECU for every slider they report. "
-                "Because the Administrator’s bonus depends on the number of sliders they report, "
-                "reporting a higher number results in a higher bonus. "
-                "The number the Administrator reports is also used to calculate the tax deducted from your income. "
+            trust_message = (
+                "The Administrator was shown the visual record below of the "
+                "number of correctly placed sliders for 10 seconds and was "
+                "asked to estimate the number of correctly placed sliders. "
+                "The Administrator received a bonus equal to 1 ECU for every "
+                "slider they report. Because the Administrator’s bonus depends "
+                "on the number of sliders they report, reporting a higher "
+                "number results in a higher bonus."
             )
-        return dict(trust_message=msg, 
-                    tasks_completed=player.effort_points)
+            viewing_note = "for only 10 seconds"
+        return dict(trust_message=trust_message, viewing_note=viewing_note)
 
     @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.timed_out_tax_info = True
-    #@staticmethod
-    #def before_next_page(player: Player, timeout_happened):
-    #    g = player.group
-    #    tax_per_citizen = cu(g.squares_reported)
-    #    player.net_income = max(cu(0), player.gross_income - tax_per_citizen)
 
 
 class CitizenExample(Page):
@@ -1054,8 +1051,10 @@ class CitizenQuizFeedback(Page):
         )
 
 
-class RevealTax(Page):
-    timeout_seconds = 60
+class CitizenExpectation(Page):
+    timeout_seconds = 70
+    form_model = 'player'
+    form_fields = ['expected_tax_squares']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -1063,25 +1062,12 @@ class RevealTax(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        g = player.group
+        return dict(tasks_completed=player.effort_points)
 
-        if g.trust_condition == 'count':
-            explanation_text = (
-                "The Administrator was instructed to count correctly placed sliders accurately."
-            )
-        else:
-            explanation_text = (
-                "The Administrator estimated the number of completed sliders after briefly viewing the activity record of your correctly placed sliders."
-            )
-
-        return dict(
-            reported_for_you=player.reported_tasks,
-            tax_paid=player.applied_tax,
-            gross_income=player.gross_income,
-            net_income=player.net_income_after_tax,
-            explanation_text=explanation_text,
-            trust_condition=g.trust_condition,
-        )
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.timed_out_expectation = True
 
 
 class AC(Page): #a few of them are skipping AC, need to think about what this means for our design
@@ -1484,11 +1470,11 @@ page_sequence = [
     AdminSquares,
     WaitForTax,     
 
-    CitizenTaxInfo,
+    CitizenAdminInfo,
     CitizenExample,
     CitizenComprehension,
     CitizenQuizFeedback,
-    RevealTax,
+    CitizenExpectation,
     AC,
     Targeting,
     ApplicationTask,
