@@ -789,7 +789,7 @@ class AdminSquares(Page):
         rows = []
         for i, c in enumerate(citizens, start=1):
             rows.append(dict(
-                code=c.citizen_code,
+                serial=i,
                 blocks=list(range(c.effort_points)),
                 field=f"report_c{i}"
             ))
