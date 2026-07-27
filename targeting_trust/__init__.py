@@ -83,9 +83,9 @@ class Player(BasePlayer):
     citizen_quiz_bonus = models.StringField(
         label="How is the Administrator’s bonus determined?",
         choices=[
-            ('accurate', 'They receive a bonus only for accurately counting the sliders'),
-            ('percentage', 'They receive a bonus based on the number of sliders they report, regardless of accuracy'),
-            ('fixed', 'They receive a fixed payment regardless of the number of sliders you placed or they report')
+            ('accurate', 'Administrators receive a bonus only for accurately counting the sliders'),
+            ('percentage', 'Administrators receive a bonus based on the number of sliders they report, regardless of accuracy'),
+            ('fixed', 'Administrators receive a fixed payment regardless of the number of sliders you placed or they report')
         ],
         widget=widgets.RadioSelect,
         blank=True
@@ -1035,11 +1035,11 @@ class CitizenQuizFeedback(Page):
 
         if player.group.trust_condition == 'count':
             correct_bonus = (
-                "They receive a bonus only for accurately counting the sliders. "
+                "Administrators receive a bonus only for accurately counting the sliders. "
             )
         else:
             correct_bonus = (
-                "They receive a bonus based on the number of sliders they report, regardless of accuracy. "
+                "Administrators receive a bonus based on the number of sliders they report, regardless of accuracy. "
             )
 
         correct_tax_base = (
