@@ -41,7 +41,7 @@ You may return any amount between 0 and the full multiplied amount you received 
 
   {% for c, tripled, fieldname in rows %}
   <tr>
-    <td style="border-bottom:1px solid #eee; padding:6px;">{{ c.citizen_code }}</td>
+    <td style="border-bottom:1px solid #eee; padding:6px;">{{ forloop.counter }}</td>
     <td style="border-bottom:1px solid #eee; padding:6px;">{{ c.send_amount }}</td>
     <td style="border-bottom:1px solid #eee; padding:6px;">{{ tripled }}</td>
     <td style="border-bottom:1px solid #eee; padding:6px;">
