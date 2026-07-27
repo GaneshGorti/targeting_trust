@@ -622,12 +622,14 @@ class CitizenWorkTaskInstructions(Page):
         if player.group.trust_condition == 'count':
             admin_rule = (
                 "The Administrator assigned to your group has been instructed "
-                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly."
+                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly. The bonus was paid "
+                "from a separate bonus pool and did not reduce the taxes collected from citizens."
             )
         else:
             admin_rule = (
                 "The Administrator assigned to your group has been instructed "
-                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus."
+                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus. The bonus was paid "
+                "from a separate bonus pool and did not reduce the taxes collected from citizens."
             )
 
         return dict(admin_rule=admin_rule)
