@@ -1387,8 +1387,7 @@ class PostSurveyPart1(Page):
         # Fixed order fields
         fixed_fields = [
             'perceived_fairness',
-            'trust_gov',  
-            'fmc',                 
+            'trust_gov',                
             'resp_targ',           
             'agency_targ',        
         ]
@@ -1416,6 +1415,7 @@ class PostSurveyPart2(Page):
         'gender',
         'income',
         'education',
+        'fmc',   
     ]
 
     @staticmethod
