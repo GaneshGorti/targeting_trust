@@ -1256,6 +1256,33 @@ class WaitForSends(WaitPage):
             c.send_amount = c.send_amount or cu(0)
             c.tripled_trust_amount = c.send_amount * C.TRUST_MULTIPLIER
 
+class AdminTargetingInfo(Page):
+    timeout_seconds = 30
+
+    @staticmethod
+    def is_displayed(player):
+        return player.is_admin
+
+    @staticmethod
+    def vars_for_template(player):
+        g = player.group
+
+        if g.targeting_condition == "auto":
+            redistribution_message = (
+                "The taxes collected from citizens have been redistributed "
+                "equally among all citizens in your group."
+            )
+        else:
+            redistribution_message = (
+                "The taxes collected from citizens have been redistributed "
+                "equally among the citizens who applied for a transfer and completed "
+                "the application."
+            )
+
+        return dict(
+            redistribution_message=redistribution_message,
+        )
+
 
 class AdminTrustDecisions(Page):
     timeout_seconds = 150
