@@ -1519,6 +1519,7 @@ page_sequence = [
     TransferOutcome,
     CitizenTrustGame,
     WaitForSends,
+    AdminTargetingInfo,
     AdminTrustDecisions,
     WaitForReturns,
 
