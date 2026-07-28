@@ -634,6 +634,119 @@ class CitizenWorkTaskInstructions(Page):
 
         return dict(admin_rule=admin_rule)
 
+
+class CitizenExample(Page):
+    timeout_seconds = 60
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        g = player.group
+
+        if g.trust_condition == 'count':
+            example = dict(
+                completed=10,
+                reported=10,
+                gross=100,
+                tax=30,
+                net=70,
+                condition="Remember, the Administrator was required to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
+            )
+        else:
+            example = dict(
+                completed=10,
+                reported=12,
+                gross=100,
+                tax=36,
+                net=64,
+                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is calculated based on this reported slider count. "
+            )
+
+        return dict(example=example)
+    
+
+class CitizenComprehension(Page):
+    timeout_seconds = 80
+
+    form_model = 'player'
+    form_fields = [
+        'citizen_quiz_tax',
+        'citizen_quiz_bonus',
+        'citizen_quiz_tax_base'
+    ]
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
+
+    @staticmethod
+    def error_message(player, values):
+
+        correct_tax = 30
+        correct_tax_base = 'reported'
+
+        if player.group.trust_condition == 'count':
+            correct_bonus = 'accurate'
+        else:
+            correct_bonus = 'percentage'
+
+        # increment attempts
+        player.citizen_quiz_attempts += 1
+
+        incorrect = (
+            values['citizen_quiz_tax'] != correct_tax
+            or values['citizen_quiz_bonus'] != correct_bonus
+            or values['citizen_quiz_tax_base'] != correct_tax_base
+        )
+
+        if incorrect:
+
+            # If this is the 3rd failed attempt
+            if player.citizen_quiz_attempts >= 2:
+                player.citizen_quiz_failed = True
+                return None  # allow progression
+
+            return "One or more answers are incorrect. Please review the example and try once more."
+
+        # If correct → allow progression
+        return None
+
+
+class CitizenQuizFeedback(Page):
+    timeout_seconds = 80
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin and player.citizen_quiz_failed
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        correct_tax = 30
+
+        if player.group.trust_condition == 'count':
+            correct_bonus = (
+                "Administrators receive a bonus only for accurately counting the sliders. "
+            )
+        else:
+            correct_bonus = (
+                "Administrators receive a bonus based on the number of sliders they report, regardless of accuracy. "
+            )
+
+        correct_tax_base = (
+            "Each citizen pays tax based on the number of completed sliders reported by the Administrator. "
+        )
+
+        return dict(
+            correct_tax=correct_tax,
+            correct_bonus=correct_bonus,
+            correct_tax_base=correct_tax_base
+        )
+
+
 class CitizenWorkTaskStart(Page):
     timeout_seconds = 30
     @staticmethod
@@ -944,118 +1057,6 @@ class CitizenAdminInfo(Page):
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.timed_out_tax_info = True
-
-
-class CitizenExample(Page):
-    timeout_seconds = 60
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return not player.is_admin
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        g = player.group
-
-        if g.trust_condition == 'count':
-            example = dict(
-                completed=10,
-                reported=10,
-                gross=100,
-                tax=30,
-                net=70,
-                condition="Remember, the Administrator was required to count the correctly placed sliders accurately and received 1 ECU for every slider they count correctly as a bonus. Your tax is calculated based on this reported slider count."
-            )
-        else:
-            example = dict(
-                completed=10,
-                reported=12,
-                gross=100,
-                tax=36,
-                net=64,
-                condition="Remember, the Administrator was asked to estimate the number of correctly placed sliders and received 1 ECU for every slider they report. Your tax is calculated based on this reported slider count. "
-            )
-
-        return dict(example=example)
-    
-
-class CitizenComprehension(Page):
-    timeout_seconds = 80
-
-    form_model = 'player'
-    form_fields = [
-        'citizen_quiz_tax',
-        'citizen_quiz_bonus',
-        'citizen_quiz_tax_base'
-    ]
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return not player.is_admin
-
-    @staticmethod
-    def error_message(player, values):
-
-        correct_tax = 30
-        correct_tax_base = 'reported'
-
-        if player.group.trust_condition == 'count':
-            correct_bonus = 'accurate'
-        else:
-            correct_bonus = 'percentage'
-
-        # increment attempts
-        player.citizen_quiz_attempts += 1
-
-        incorrect = (
-            values['citizen_quiz_tax'] != correct_tax
-            or values['citizen_quiz_bonus'] != correct_bonus
-            or values['citizen_quiz_tax_base'] != correct_tax_base
-        )
-
-        if incorrect:
-
-            # If this is the 3rd failed attempt
-            if player.citizen_quiz_attempts >= 2:
-                player.citizen_quiz_failed = True
-                return None  # allow progression
-
-            return "One or more answers are incorrect. Please review the example and try once more."
-
-        # If correct → allow progression
-        return None
-
-
-class CitizenQuizFeedback(Page):
-    timeout_seconds = 80
-
-    @staticmethod
-    def is_displayed(player: Player):
-        return not player.is_admin and player.citizen_quiz_failed
-
-    @staticmethod
-    def vars_for_template(player: Player):
-
-        correct_tax = 30
-
-        if player.group.trust_condition == 'count':
-            correct_bonus = (
-                "Administrators receive a bonus only for accurately counting the sliders. "
-            )
-        else:
-            correct_bonus = (
-                "Administrators receive a bonus based on the number of sliders they report, regardless of accuracy. "
-            )
-
-        correct_tax_base = (
-            "Each citizen pays tax based on the number of completed sliders reported by the Administrator. "
-        )
-
-        return dict(
-            correct_tax=correct_tax,
-            correct_bonus=correct_bonus,
-            correct_tax_base=correct_tax_base
-        )
 
 
 class CitizenExpectation(Page):
