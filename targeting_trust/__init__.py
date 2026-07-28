@@ -622,18 +622,23 @@ class CitizenWorkTaskInstructions(Page):
         if player.group.trust_condition == 'count':
             admin_rule = (
                 "The Administrator assigned to your group has been instructed "
-                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly. The bonus was paid "
-                "from a separate bonus pool and did not reduce the taxes collected from citizens."
+                "to count the number of correctly placed sliders accurately and received a bonus of 1 ECU for every slider counted correctly. The bonus will be paid "
+                "from a separate bonus pool and will not reduce the taxes collected from citizens."
             )
         else:
             admin_rule = (
                 "The Administrator assigned to your group has been instructed "
-                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus. The bonus was paid "
-                "from a separate bonus pool and did not reduce the taxes collected from citizens."
+                "to estimate the number of correctly placed sliders, and received a bonus of 1 ECU for every slider they report. Reporting a higher number results in a higher bonus. The bonus will be paid "
+                "from a separate bonus pool and will not reduce the taxes collected from citizens."
             )
 
         return dict(admin_rule=admin_rule)
 
+class CitizenWorkTaskStart(Page):
+    timeout_seconds = 30
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.is_admin
 
 class CitizenWorkTask(Page):
     live_method = live_effort
@@ -1462,6 +1467,10 @@ page_sequence = [
     RoleInfo,
 
     CitizenWorkTaskInstructions,
+    CitizenExample,
+    CitizenComprehension,
+    CitizenQuizFeedback,
+    CitizenWorkTaskStart,
     CitizenWorkTask,
     WaitForWork,
     AdminInstructions,
@@ -1473,9 +1482,6 @@ page_sequence = [
     WaitForTax,     
 
     CitizenAdminInfo,
-    CitizenExample,
-    CitizenComprehension,
-    CitizenQuizFeedback,
     CitizenExpectation,
     AC,
     Targeting,
