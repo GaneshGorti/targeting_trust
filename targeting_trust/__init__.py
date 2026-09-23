@@ -1479,6 +1479,7 @@ class RevealIncomeAndTransfers(Page):
                 trust_payoff=player.trust_game_net,
                 final_income=player.final_income,
                 final_income_gbp=player.final_income_gbp,
+                final_income_gbp_display=f"{float(player.final_income_gbp):.2f}"
             )
 
 
